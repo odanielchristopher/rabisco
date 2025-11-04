@@ -31,7 +31,8 @@ jobs:
         run: pnpm install --frozen-lockfile
 
       - name: Generate Prisma client
-        run: pnpm --filter api prisma generate
+        working-directory: apps/api
+        run: npx prisma generate
 
       - name: Linting
         run: pnpm ci:lint
