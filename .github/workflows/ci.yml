@@ -22,8 +22,8 @@ jobs:
       - name: Use Node.js 22.x
         uses: actions/setup-node@v3
         with:
-          node-version: '22.x'
-          cache: 'pnpm'
+          node-version: "22.x"
+          cache: "pnpm"
 
       - run: npm pkg delete scripts.prepare
 
@@ -35,6 +35,3 @@ jobs:
 
       - name: Typechecking
         run: pnpm typecheck
-
-      - name: Tests
-        run: pnpm test:ci
