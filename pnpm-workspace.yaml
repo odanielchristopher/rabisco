@@ -1,0 +1,4 @@
+packages:
+  - "api/*"
+
+ignore-workspace-root-check: true

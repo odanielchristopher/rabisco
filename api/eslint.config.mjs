@@ -1,10 +1,13 @@
 // @ts-check
 import eslint from '@eslint/js';
+import importPlugin from 'eslint-plugin-import';
+import eslintPluginPrettier from 'eslint-plugin-prettier';
 import eslintPluginPrettierRecommended from 'eslint-plugin-prettier/recommended';
+import { defineConfig } from 'eslint/config';
 import globals from 'globals';
 import tseslint from 'typescript-eslint';
 
-export default tseslint.config(
+export default defineConfig(
   {
     ignores: ['eslint.config.mjs'],
   },
@@ -23,18 +26,23 @@ export default tseslint.config(
         tsconfigRootDir: import.meta.dirname,
       },
     },
+    plugins: {
+      import: importPlugin,
+      prettier: eslintPluginPrettier,
+    },
+    settings: {
+      'import/resolver': {
+        typescript: {
+          project: './tsconfig.json',
+        },
+      },
+    },
   },
   {
     rules: {
       '@typescript-eslint/no-explicit-any': 'off',
       '@typescript-eslint/no-floating-promises': 'off',
-      '@typescript-eslint/no-unsafe-argument': 'warn'
-    },
-  },
-  {
-    rules: {
-      '@typescript-eslint/no-namespace': 'off',
-      '@typescript-eslint/no-explicit-any': 'off',
+      '@typescript-eslint/no-unsafe-argument': 'warn',
       'prettier/prettier': 'error',
       quotes: ['error', 'single'],
       semi: ['error', 'always'],
