@@ -46,9 +46,18 @@ model ForgotPasswordCode {
   @@map("forgot_password_codes")
 }
 
+enum TextType {
+  DIARY
+  DAY_PROMPT
+  FREE
+
+  @@map("text_type")
+}
+
 model Text {
   id        String   @id @default(uuid()) @db.Uuid
   userId    String   @map("user_id") @db.Uuid
+  type      TextType @default(FREE)
   title     String
   content   String
   wordCount Int      @default(0) @map("word_count")
