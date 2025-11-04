@@ -33,6 +33,8 @@ jobs:
       - name: Generate Prisma client
         working-directory: apps/api
         run: npx prisma generate
+        env:
+          DATABASE_URL: postgresql://user:password@localhost:5432/db
 
       - name: Linting
         run: pnpm ci:lint
