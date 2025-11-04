@@ -40,7 +40,7 @@ export class UsersRepository implements IUsersRepository {
     return findedUser as User;
   }
 
-  async create(createUserDto: CreateUserDto): Promise<User | null> {
+  async create(createUserDto: CreateUserDto): Promise<User> {
     const { data } = createUserDto;
 
     const newUser = await this.prismaService.user.create({
@@ -56,7 +56,7 @@ export class UsersRepository implements IUsersRepository {
     return newUser;
   }
 
-  async update(updateUserDto: UpdateUserDto): Promise<User | null> {
+  async update(updateUserDto: UpdateUserDto): Promise<User> {
     const { data } = updateUserDto;
 
     const updatedUser = await this.prismaService.user.update({

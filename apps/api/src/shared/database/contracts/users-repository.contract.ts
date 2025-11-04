@@ -9,8 +9,8 @@ export interface IUsersRepository {
   findUniqueByEmail(
     findUniqueByEmail: FindUniqueUserByEmailDto,
   ): Promise<User | null>;
-  create(createUserDto: CreateUserDto): Promise<User | null>;
-  update(updateUserDto: UpdateUserDto): Promise<User | null>;
+  create(createUserDto: CreateUserDto): Promise<User>;
+  update(updateUserDto: UpdateUserDto): Promise<User>;
   delete(deleteUserDto: DeleteUserDto): Promise<void>;
 }
 
