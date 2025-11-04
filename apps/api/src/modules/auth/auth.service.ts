@@ -7,7 +7,10 @@ import {
 import { JwtService } from '@nestjs/jwt';
 import { compare, hash } from 'bcryptjs';
 
-import { IUsersRepository } from '@shared/database/contracts/users-repository.contract';
+import {
+  CreateUserDto,
+  IUsersRepository,
+} from '@shared/database/contracts/users-repository.contract';
 
 import { IAuthService } from './contracts/auth-service.contract';
 import { SigninDto } from './dto/signin.dto';
@@ -54,6 +57,7 @@ export class AuthService implements IAuthService {
 
     const user = await this.userRespository.create({
       data: { name, email, password: hashedPassword },
+      relations: this.getUserDefaultRelations(),
     });
 
     const accessToken = await this.generateAccessToken(user.id);
@@ -63,5 +67,19 @@ export class AuthService implements IAuthService {
 
   private generateAccessToken(userId: string) {
     return this.jwtService.signAsync({ sub: userId });
+  }
+
+  private getUserDefaultRelations(): CreateUserDto['relations'] {
+    return {
+      categories: [
+        { name: 'pessoal' },
+        { name: 'escola' },
+        { name: 'família' },
+        { name: 'amigos' },
+        { name: 'reflexões' },
+        { name: 'aventuras' },
+        { name: 'objetivos' },
+      ],
+    };
   }
 }
