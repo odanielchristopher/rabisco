@@ -2,16 +2,14 @@
 
 ## Equipe
 
-- **Nome do Aluno(a) 1:** Daniel Lucas Ulisses Magalhães
-- **Nome do Aluno(a) 2:** Daniel Christopher Souza Rodrigues
-- **Nome do Aluno(a) 3:** Kleyton Kluesriton Ferreira Pereira
-- **Nome do Aluno(a) 4:** João Evangelista de Souza Alves
+- **Nome do Aluno(a) 1:** Daniel Lucas Ulisses Magalhães - Daniel145l
+- **Nome do Aluno(a) 2:** Daniel Christopher Souza Rodrigues - odanielchristopher
+- **Nome do Aluno(a) 3:** Kleyton Kluesriton Ferreira Pereira - Kleytonferreiraa
+- **Nome do Aluno(a) 4:** João Evangelista de Souza Alves - joaoev
 
 ---
 
-## Título do Projeto
-
-Rabisco - um app de incentivo à escrita
+## Rabisco - um app de incentivo à escrita
 
 ## Descrição do Projeto
 
