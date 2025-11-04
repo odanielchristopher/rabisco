@@ -1,0 +1,9 @@
+name: rabisco
+services:
+  postgres:
+    image: postgres:latest
+    container_name: rabisco
+    env_file:
+      - .env
+    ports:
+      - '5432:5432'
