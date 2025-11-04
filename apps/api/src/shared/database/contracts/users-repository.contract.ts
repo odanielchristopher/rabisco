@@ -24,9 +24,6 @@ export type FindUniqueUserByEmailDto = {
 
 export type CreateUserDto = {
   data: User | Omit<User, 'id'>;
-  relations?: {
-    productCategories?: { icon: string; name: string }[];
-  };
 };
 
 export type UpdateUserDto = {
