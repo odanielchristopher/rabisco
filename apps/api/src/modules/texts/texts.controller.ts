@@ -3,41 +3,53 @@ import {
   Controller,
   Delete,
   Get,
+  HttpCode,
+  HttpStatus,
+  Inject,
   Param,
   Post,
   Put,
 } from '@nestjs/common';
 
+import { ActiveUserId } from '@shared/decorators/active-user-id.decorator';
+
+import { ITextsService } from './contracts/text-service.contract';
 import { CreateTextDto } from './dto/create-text.dto';
 import { UpdateTextDto } from './dto/update-text.dto';
-import { TextsService } from './texts.service';
 
 @Controller('texts')
 export class TextsController {
-  constructor(private readonly textsService: TextsService) {}
+  constructor(
+    @Inject(ITextsService) private readonly textsService: ITextsService,
+  ) {}
 
   @Get()
-  findAll() {
-    return this.textsService.findAll();
+  findAll(@ActiveUserId() userId: string) {
+    return this.textsService.findAll({ userId });
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.textsService.findOne(+id);
+  @Get(':textId')
+  findOne(@ActiveUserId() userId: string, @Param('textId') textId: string) {
+    return this.textsService.findOne({ userId, textId });
   }
 
   @Post()
-  create(@Body() createTextDto: CreateTextDto) {
-    return this.textsService.create(createTextDto);
+  create(@ActiveUserId() userId: string, @Body() createTextDto: CreateTextDto) {
+    return this.textsService.create({ userId, createTextDto });
   }
 
-  @Put(':id')
-  update(@Param('id') id: string, @Body() updateTextDto: UpdateTextDto) {
-    return this.textsService.update(+id, updateTextDto);
+  @Put(':textId')
+  update(
+    @ActiveUserId() userId: string,
+    @Param('textId') textId: string,
+    @Body() updateTextDto: UpdateTextDto,
+  ) {
+    return this.textsService.update({ userId, textId, updateTextDto });
   }
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.textsService.remove(+id);
+  @HttpCode(HttpStatus.NO_CONTENT)
+  @Delete(':textId')
+  remove(@ActiveUserId() userId: string, @Param('textId') textId: string) {
+    return this.textsService.delete({ userId, textId });
   }
 }

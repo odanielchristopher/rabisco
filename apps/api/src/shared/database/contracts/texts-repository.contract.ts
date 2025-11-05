@@ -4,35 +4,41 @@ import { BaseDto } from '@shared/types/utils.type';
 export const ITextsRepository = Symbol('ITextsRepository');
 
 export interface ITextsRepository {
-  findAllByUserId(findAllDto: FindAllTextsDto): Promise<Text[]>;
+  findAllByUserId(
+    findAllDto: ITextsRepository.FindAllTextsDto,
+  ): Promise<Text[]>;
 
-  findOneById(findOneDto: FindOneTextDto): Promise<Text | null>;
+  findOneById(
+    findOneDto: ITextsRepository.FindOneTextDto,
+  ): Promise<Text | null>;
 
-  create(createTextDto: CreateTextDto): Promise<Text>;
+  create(createTextDto: ITextsRepository.CreateTextDto): Promise<Text>;
 
-  update(updateTextDto: UpdateTextDto): Promise<Text>;
+  update(updateTextDto: ITextsRepository.UpdateTextDto): Promise<Text>;
 
-  delete(deleteTextDto: DeleteTextDto): Promise<void>;
+  delete(deleteTextDto: ITextsRepository.DeleteTextDto): Promise<void>;
 }
 
-export type FindAllTextsDto = BaseDto & {
-  filters?: {
-    category?: string;
-    searchQuery?: string;
+export namespace ITextsRepository {
+  export type FindAllTextsDto = BaseDto & {
+    filters?: {
+      category?: string;
+      searchQuery?: string;
+    };
   };
-};
 
-export type FindOneTextDto = BaseDto & { textId: string };
+  export type FindOneTextDto = BaseDto & { textId: string };
 
-export type CreateTextDto = BaseDto & {
-  data: Omit<Text, 'id' | 'createdAt' | 'updatedAt'>;
-};
+  export type CreateTextDto = BaseDto & {
+    data: Omit<Text, 'id' | 'createdAt' | 'updatedAt'>;
+  };
 
-export type UpdateTextDto = {
-  textId: string;
-  data: Omit<Text, 'id' | 'createdAt' | 'updatedAt'>;
-};
+  export type UpdateTextDto = {
+    textId: string;
+    data: Omit<Text, 'id' | 'createdAt' | 'updatedAt'>;
+  };
 
-export type DeleteTextDto = {
-  textId: string;
-};
+  export type DeleteTextDto = {
+    textId: string;
+  };
+}

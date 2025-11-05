@@ -1,10 +1,19 @@
 import { Module } from '@nestjs/common';
 
+import { ITextsService } from './contracts/text-service.contract';
+import { IValidateTextOwnershipService } from './contracts/validate-text-ownership-service.contract';
+import { TextsService } from './services/texts.service';
+import { ValidateTextOwnershipService } from './services/validate-text-ownership.service';
 import { TextsController } from './texts.controller';
-import { TextsService } from './texts.service';
 
 @Module({
   controllers: [TextsController],
-  providers: [TextsService],
+  providers: [
+    { provide: ITextsService, useClass: TextsService },
+    {
+      provide: IValidateTextOwnershipService,
+      useClass: ValidateTextOwnershipService,
+    },
+  ],
 })
 export class TextsModule {}

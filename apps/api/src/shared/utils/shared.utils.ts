@@ -1,1 +1,1 @@
-export const countWord = (value: string) => value.trim().split(/\s+/).length;
+export const countWords = (value: string) => value.trim().split(/\s+/).length;
