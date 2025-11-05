@@ -1,6 +1,8 @@
 import { Text } from '@modules/texts/entities/text.entity';
 import { BaseDto } from '@shared/types/utils.type';
 
+export const ITextsRepository = Symbol('ITextsRepository');
+
 export interface ITextsRepository {
   findAllByUserId(findAllDto: FindAllTextsDto): Promise<Text[]>;
 
