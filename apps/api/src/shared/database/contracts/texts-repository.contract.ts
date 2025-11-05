@@ -22,16 +22,17 @@ export type FindAllTextsDto = BaseDto & {
   };
 };
 
-export type FindOneTextDto = BaseDto;
+export type FindOneTextDto = BaseDto & { textId: string };
 
-export type CreateTextDto = BaseDto & { data: Omit<Text, 'id'> };
-
-export type UpdateTextDto = BaseDto & {
-  textId: string;
-  data: Omit<Text, 'id'>;
+export type CreateTextDto = BaseDto & {
+  data: Omit<Text, 'id' | 'createdAt' | 'updatedAt'>;
 };
 
-export type DeleteTextDto = BaseDto & {
+export type UpdateTextDto = {
   textId: string;
-  data: Omit<Text, 'id'>;
+  data: Omit<Text, 'id' | 'createdAt' | 'updatedAt'>;
+};
+
+export type DeleteTextDto = {
+  textId: string;
 };
