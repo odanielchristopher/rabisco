@@ -16,6 +16,8 @@ import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FilterChip
+import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -29,9 +31,13 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.rabisco.ui.theme.RabiscoTheme
@@ -62,7 +68,8 @@ fun WriteScreen(
             selectedTags = uiState.selectedTags,
             onTitleChange = { viewModel.updateTitle(it) },
             onContentChange = { viewModel.updateContent(it) },
-            onTagClick = { viewModel.toggleTag(it) }
+            onTagClick = { viewModel.toggleTag(it) },
+            onSave = { viewModel.saveText() }
         )
     }
 }
@@ -121,7 +128,8 @@ fun WriteContent (
     selectedTags: Set<String>,
     onTitleChange: (String) -> Unit,
     onContentChange: (String) -> Unit,
-    onTagClick: (String) -> Unit
+    onTagClick: (String) -> Unit,
+    onSave: () -> Unit
 ) {
     Column(
         modifier = modifier
@@ -143,7 +151,7 @@ fun WriteContent (
             colors = OutlinedTextFieldDefaults.colors(
                 focusedBorderColor = Color.White,
                 unfocusedBorderColor = Color.Black
-            )
+            ),
         )
 
         Spacer( modifier = Modifier.height(8.dp) )
@@ -166,7 +174,96 @@ fun WriteContent (
                 unfocusedBorderColor = Color.Black
             )
         )
+
+        Spacer(modifier = Modifier.height(24.dp))
+
+        CategorieSection(
+            selectedTags = selectedTags,
+            onTagClick = onTagClick
+        )
+
+        Spacer(modifier = Modifier.height(24.dp))
+
+        Button(
+            onClick = onSave,
+            modifier = Modifier
+                .fillMaxWidth(),
+            
+        ) {
+            Text("Salvar")
+        }
     }
+}
+
+@Composable
+private fun CategorieSection(
+    selectedTags: Set<String>,
+    onTagClick: (String) -> Unit
+) {
+    val tags = listOf(
+        "Pessoal", "Reflexões", "Sonhos", "Aventura", "Ficção"
+    )
+
+    Column {
+        Text (
+            text = "Categorias",
+            style = MaterialTheme.typography.titleMedium,
+            fontWeight = FontWeight.SemiBold,
+            modifier = Modifier.padding(bottom = 12.dp)
+        )
+
+        var currentRow by remember { mutableStateOf(listOf<String>()) }
+
+        Column(
+            verticalArrangement = Arrangement.spacedBy(4.dp)
+        ) {
+            tags.chunked(3).forEach { rowTags ->
+                Row (
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    rowTags.forEach { tag ->
+                        TagChip (
+                            text = tag,
+                            isSelected = selectedTags.contains(tag),
+                            onClick = { onTagClick(tag) },
+                            modifier = Modifier.weight(1f)
+                        )
+                    }
+
+                    repeat( 3 - rowTags.size ) {
+                        Spacer(modifier  = Modifier.weight(1f))
+                    }
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun TagChip(
+    text: String,
+    isSelected: Boolean,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    FilterChip(
+        selected = isSelected,
+        onClick = onClick,
+        label = {
+            Text (
+                text = text,
+                style = MaterialTheme.typography.bodySmall,
+                modifier = Modifier.fillMaxWidth(),
+                textAlign = androidx.compose.ui.text.style.TextAlign.Center
+            )
+        },
+        modifier = modifier,
+         colors = FilterChipDefaults.filterChipColors(
+             selectedContainerColor = MaterialTheme.colorScheme.primaryContainer,
+             selectedLabelColor = MaterialTheme.colorScheme.onPrimaryContainer
+         )
+    )
 }
 
 
