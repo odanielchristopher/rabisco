@@ -40,7 +40,10 @@ android {
 }
 
 dependencies {
+    implementation(libs.androidx.compose.ui.text.google.fonts)
+    val navVersion = "2.9.6"
 
+    implementation("androidx.navigation:navigation-compose:$navVersion")
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)
