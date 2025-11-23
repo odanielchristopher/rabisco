@@ -20,6 +20,8 @@ import java.text.SimpleDateFormat
 import java.util.Locale
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.ui.text.style.TextAlign
 
 @Composable
 fun MyTextsScreen(
@@ -29,7 +31,12 @@ fun MyTextsScreen(
     val uiState by viewModel.uiState.collectAsState()
 
     Scaffold(
-        topBar = { MyTextsTopBar() }
+        topBar = { MyTextsTopBar() },
+        floatingActionButton = {
+            FloatingActionButton(onClick = onNavigateToWrite) {
+                Icon(Icons.Default.Add, contentDescription = "Adicionar texto")
+            }
+        }
     ) { paddingValues ->
         Column(
             modifier = Modifier
@@ -46,10 +53,14 @@ fun MyTextsScreen(
                 onTabSelected = viewModel::onTabSelected
             )
 
-            TextsList(
-                texts = uiState.filteredTexts,
-                onDeleteClick = { /* TODO */ }
-            )
+            if (uiState.filteredTexts.isEmpty()) {
+                EmptyState()
+            } else {
+                TextsList(
+                    texts = uiState.filteredTexts,
+                    onDeleteClick = { /* TODO */ }
+                )
+            }
         }
     }
 }
@@ -95,6 +106,30 @@ fun CategoryTabs(selectedTab: String, onTabSelected: (String) -> Unit) {
                 text = { Text(category) }
             )
         }
+    }
+}
+
+@Composable
+fun EmptyState() {
+    Column(
+        modifier = Modifier.fillMaxSize(),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
+    ) {
+        Icon(
+            Icons.Default.Edit,
+            contentDescription = null,
+            modifier = Modifier.size(48.dp)
+        )
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        Text("Nenhum texto ainda", style = MaterialTheme.typography.titleMedium)
+        Text(
+            "Comece a escrever para ver seus textos aqui",
+            style = MaterialTheme.typography.bodyMedium,
+            textAlign = TextAlign.Center
+        )
     }
 }
 

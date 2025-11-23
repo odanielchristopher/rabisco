@@ -25,9 +25,23 @@ class MyTextsViewModel : ViewModel() {
 
     fun onSearchQueryChanged(query: String) {
         _uiState.update { it.copy(searchQuery = query) }
+        filterTexts()
     }
 
     fun onTabSelected(tab: String) {
         _uiState.update { it.copy(selectedTab = tab) }
+        filterTexts()
+    }
+
+    private fun filterTexts() {
+        val state = _uiState.value
+        val filtered = state.texts.filter { text ->
+            val matchesCategory = state.selectedTab == "Todos" || text.category == state.selectedTab
+            val matchesSearch = state.searchQuery.isBlank() ||
+                    text.title.contains(state.searchQuery, ignoreCase = true) ||
+                    text.content.contains(state.searchQuery, ignoreCase = true)
+            matchesCategory && matchesSearch
+        }
+        _uiState.update { it.copy(filteredTexts = filtered) }
     }
 }
