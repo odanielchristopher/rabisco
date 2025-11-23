@@ -8,3 +8,4 @@ data class MyTextsUiState(
     val selectedTab: String = "Todos",
     val searchQuery: String = ""
 )
+

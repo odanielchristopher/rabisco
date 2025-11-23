@@ -12,6 +12,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Edit
+import androidx.compose.ui.Alignment
+import com.example.rabisco.data.Text
+import java.text.SimpleDateFormat
+import java.util.Locale
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 
 @Composable
 fun MyTextsScreen(
@@ -38,7 +46,10 @@ fun MyTextsScreen(
                 onTabSelected = viewModel::onTabSelected
             )
 
-            Text("List coming here", modifier = Modifier.padding(16.dp))
+            TextsList(
+                texts = uiState.filteredTexts,
+                onDeleteClick = { /* TODO */ }
+            )
         }
     }
 }
@@ -83,6 +94,55 @@ fun CategoryTabs(selectedTab: String, onTabSelected: (String) -> Unit) {
                 onClick = { onTabSelected(category) },
                 text = { Text(category) }
             )
+        }
+    }
+}
+
+@Composable
+fun TextsList(texts: List<Text>, onDeleteClick: (Text) -> Unit) {
+    LazyColumn(modifier = Modifier.padding(16.dp)) {
+        items(texts) { text ->
+            TextCard(text, onDeleteClick)
+            Spacer(modifier = Modifier.height(16.dp))
+        }
+    }
+}
+
+@Composable
+fun TextCard(text: Text, onDeleteClick: (Text) -> Unit) {
+    Card(modifier = Modifier.fillMaxWidth()) {
+        Column(modifier = Modifier.padding(16.dp)) {
+            Text(text.title, style = MaterialTheme.typography.titleMedium)
+
+            Text(
+                text.content,
+                maxLines = 2,
+                style = MaterialTheme.typography.bodyMedium
+            )
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                val formattedDate = SimpleDateFormat(
+                    "dd/MM/yyyy",
+                    Locale.getDefault()
+                ).format(text.date)
+
+                Text(
+                    "$formattedDate • ${text.wordCount} palavras",
+                    style = MaterialTheme.typography.bodySmall
+                )
+
+                Spacer(modifier = Modifier.weight(1f))
+
+                IconButton(onClick = { /* TODO */ }) {
+                    Icon(Icons.Default.Edit, contentDescription = "Editar")
+                }
+
+                IconButton(onClick = { onDeleteClick(text) }) {
+                    Icon(Icons.Default.Delete, contentDescription = "Excluir")
+                }
+            }
         }
     }
 }
