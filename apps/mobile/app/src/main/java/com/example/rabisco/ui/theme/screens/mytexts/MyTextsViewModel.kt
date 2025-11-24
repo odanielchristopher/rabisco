@@ -7,6 +7,8 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import java.util.Date
+import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.launch
 
 class MyTextsViewModel : ViewModel() {
     private val _uiState = MutableStateFlow(MyTextsUiState())
@@ -43,5 +45,28 @@ class MyTextsViewModel : ViewModel() {
             matchesCategory && matchesSearch
         }
         _uiState.update { it.copy(filteredTexts = filtered) }
+    }
+
+    fun onDeleteConfirmation(text: Text) {
+        _uiState.update { it.copy(showDeleteConfirmation = true, textToDelete = text) }
+    }
+
+    fun onDismissDeleteConfirmation() {
+        _uiState.update { it.copy(showDeleteConfirmation = false, textToDelete = null) }
+    }
+    fun deleteText() {
+        viewModelScope.launch {
+            _uiState.value.textToDelete?.let { text ->
+                val updatedTexts = _uiState.value.texts.filter { it.id != text.id }
+                _uiState.update {
+                    it.copy(
+                        texts = updatedTexts,
+                        showDeleteConfirmation = false,
+                        textToDelete = null
+                    )
+                }
+                filterTexts()
+            }
+        }
     }
 }

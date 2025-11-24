@@ -2,26 +2,26 @@ package com.example.rabisco.ui.theme.screens.mytexts
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material.icons.filled.Edit
-import androidx.compose.ui.Alignment
 import com.example.rabisco.data.Text
 import java.text.SimpleDateFormat
 import java.util.Locale
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.ui.text.style.TextAlign
 
 @Composable
 fun MyTextsScreen(
@@ -58,9 +58,16 @@ fun MyTextsScreen(
             } else {
                 TextsList(
                     texts = uiState.filteredTexts,
-                    onDeleteClick = { /* TODO */ }
+                    onDeleteClick = viewModel::onDeleteConfirmation
                 )
             }
+        }
+
+        if (uiState.showDeleteConfirmation) {
+            DeleteConfirmationDialog(
+                onConfirm = viewModel::deleteText,
+                onDismiss = viewModel::onDismissDeleteConfirmation
+            )
         }
     }
 }
@@ -182,10 +189,37 @@ fun TextCard(text: Text, onDeleteClick: (Text) -> Unit) {
     }
 }
 
+@Composable
+fun DeleteConfirmationDialog(
+    onConfirm: () -> Unit,
+    onDismiss: () -> Unit
+) {
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = { Text("Excluir texto?") },
+        text = {
+            Text("Esta ação não pode ser desfeita. O texto será permanentemente excluído.")
+        },
+        confirmButton = {
+            Button(
+                onClick = onConfirm,
+                colors = ButtonDefaults.buttonColors(containerColor = Color.Red)
+            ) {
+                Text("Excluir")
+            }
+        },
+        dismissButton = {
+            Button(onClick = onDismiss) {
+                Text("Cancelar")
+            }
+        }
+    )
+}
+
 @Preview(showBackground = true)
 @Composable
 fun MyTextsScreenPreview() {
-    MaterialTheme {
+    MaterialTheme() {
         MyTextsScreen(onNavigateToWrite = {})
     }
 }
