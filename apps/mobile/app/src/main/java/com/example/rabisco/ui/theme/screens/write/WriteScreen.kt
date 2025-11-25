@@ -1,6 +1,7 @@
 package com.example.rabisco.ui.theme.screens.write
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -10,11 +11,14 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.FilterChipDefaults
@@ -36,7 +40,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -84,15 +90,17 @@ fun WriteTopBar(
     TopAppBar(
         title = {
             Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.Center,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(end = 8.dp),
+                horizontalArrangement = Arrangement.End,
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 Text (
-                    //talvez seja melhor substituir esse texto pelo nome da tale e colocar essa contagem de palavras em outro lugar
                     text = "$wordCount palavras",
                     style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+
                 )
             }
         },
@@ -102,16 +110,6 @@ fun WriteTopBar(
                     imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                     contentDescription = "Voltar"
                 )
-            }
-        },
-        actions = {
-            Button (
-                onClick = onSave,
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = MaterialTheme.colorScheme.primary
-                )
-            ) {
-                Text("Salvar")
             }
         },
         colors = TopAppBarDefaults.topAppBarColors(
@@ -149,8 +147,8 @@ fun WriteContent (
             },
             textStyle = MaterialTheme.typography.titleMedium,
             colors = OutlinedTextFieldDefaults.colors(
-                focusedBorderColor = Color.White,
-                unfocusedBorderColor = Color.Black
+                focusedBorderColor = Color.Black,
+                unfocusedBorderColor = Color.Gray
             ),
         )
 
@@ -170,8 +168,8 @@ fun WriteContent (
             },
             textStyle = MaterialTheme.typography.bodyLarge,
             colors = OutlinedTextFieldDefaults.colors(
-                focusedBorderColor = Color.White,
-                unfocusedBorderColor = Color.Black
+                focusedBorderColor = Color.Black,
+                unfocusedBorderColor = Color.Gray
             )
         )
 
@@ -188,7 +186,6 @@ fun WriteContent (
             onClick = onSave,
             modifier = Modifier
                 .fillMaxWidth(),
-            
         ) {
             Text("Salvar")
         }
@@ -201,38 +198,50 @@ private fun CategorieSection(
     onTagClick: (String) -> Unit
 ) {
     val tags = listOf(
-        "Pessoal", "Reflexões", "Sonhos", "Aventura", "Ficção"
+        "Pessoal", "Escola", "Família", "Amigos", "Sonhos", "Reflexões", "Gratidão", "Objetivos", "Criatividade", "Aventuras"
     )
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 8.dp),
+        elevation = CardDefaults.cardElevation(
+            defaultElevation = 2.dp
+        ),
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.surfaceContainerLowest
+        ),
+        shape = RoundedCornerShape(16.dp)
+    ) {
+        Column(modifier = Modifier.padding(16.dp)) {
+            Text (
+                text = "Categorias",
+                style = MaterialTheme.typography.titleMedium,
+                fontWeight = FontWeight.SemiBold,
+                modifier = Modifier.padding(bottom = 12.dp)
+            )
 
-    Column {
-        Text (
-            text = "Categorias",
-            style = MaterialTheme.typography.titleMedium,
-            fontWeight = FontWeight.SemiBold,
-            modifier = Modifier.padding(bottom = 12.dp)
-        )
+            var currentRow by remember { mutableStateOf(listOf<String>()) }
 
-        var currentRow by remember { mutableStateOf(listOf<String>()) }
+            Column(
+                verticalArrangement = Arrangement.spacedBy(4.dp)
+            ) {
+                tags.chunked(3).forEach { rowTags ->
+                    Row (
+                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        rowTags.forEach { tag ->
+                            TagChip (
+                                text = tag,
+                                isSelected = selectedTags.contains(tag),
+                                onClick = { onTagClick(tag) },
+                                modifier = Modifier.weight(1f)
+                            )
+                        }
 
-        Column(
-            verticalArrangement = Arrangement.spacedBy(4.dp)
-        ) {
-            tags.chunked(3).forEach { rowTags ->
-                Row (
-                    horizontalArrangement = Arrangement.spacedBy(8.dp),
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    rowTags.forEach { tag ->
-                        TagChip (
-                            text = tag,
-                            isSelected = selectedTags.contains(tag),
-                            onClick = { onTagClick(tag) },
-                            modifier = Modifier.weight(1f)
-                        )
-                    }
-
-                    repeat( 3 - rowTags.size ) {
-                        Spacer(modifier  = Modifier.weight(1f))
+                        repeat( 3 - rowTags.size ) {
+                            Spacer(modifier  = Modifier.weight(1f))
+                        }
                     }
                 }
             }
