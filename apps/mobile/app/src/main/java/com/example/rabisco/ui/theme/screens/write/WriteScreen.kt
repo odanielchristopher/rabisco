@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.rememberScrollState
@@ -158,8 +159,7 @@ fun WriteContent (
             value = content,
             onValueChange = onContentChange,
             modifier = Modifier
-                .fillMaxWidth()
-                .weight(1f),
+                .fillMaxWidth(),
             placeholder = {
                 Text (
                     text = "Sobre o que quer escrever?",
@@ -170,7 +170,9 @@ fun WriteContent (
             colors = OutlinedTextFieldDefaults.colors(
                 focusedBorderColor = Color.Black,
                 unfocusedBorderColor = Color.Gray
-            )
+            ),
+            minLines = 15,
+            maxLines = 20
         )
 
         Spacer(modifier = Modifier.height(24.dp))
