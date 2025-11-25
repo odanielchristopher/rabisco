@@ -7,6 +7,7 @@ import {
   Param,
   Delete,
   Inject,
+  Put,
 } from '@nestjs/common';
 
 import { ActiveUserId } from '@shared/decorators/active-user-id.decorator';
@@ -33,5 +34,19 @@ export class TagsController {
   @Get(':id')
   findOne(@Param('id') id: string, @ActiveUserId() userId: string) {
     return this.tagsService.getTagById(userId, id);
+  }
+
+  @Put(':id')
+  update(
+    @Param('id') id: string,
+    @Body() updateTagDto: Partial<CreateTagDto>,
+    @ActiveUserId() userId: string,
+  ) {
+    return this.tagsService.update(userId, id, updateTagDto);
+  }
+
+  @Delete(':id')
+  remove(@Param('id') id: string, @ActiveUserId() userId: string) {
+    return this.tagsService.remove(userId, id);
   }
 }
