@@ -6,26 +6,32 @@ import {
   Patch,
   Param,
   Delete,
+  Inject,
 } from '@nestjs/common';
-import { TagsService } from './tags.service';
+
+import { ActiveUserId } from '@shared/decorators/active-user-id.decorator';
+
+import { ITagsService } from './contracts/tags-service.contract';
 import { CreateTagDto } from './dto/create-tag.dto';
 
 @Controller('tags')
 export class TagsController {
-  constructor(private readonly tagsService: TagsService) {}
+  constructor(
+    @Inject(ITagsService) private readonly tagsService: ITagsService,
+  ) {}
 
   @Post()
-  create(@Body() createTagDto: CreateTagDto) {
-    return this.tagsService.create(createTagDto);
+  create(@Body() createTagDto: CreateTagDto, @ActiveUserId() userId: string) {
+    return this.tagsService.create(createTagDto, userId);
   }
 
   @Get()
-  findAll() {
-    return this.tagsService.findAll();
+  findAll(@ActiveUserId() userId: string) {
+    return this.tagsService.findAll(userId);
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.tagsService.findOne(+id);
+  findOne(@Param('id') id: string, @ActiveUserId() userId: string) {
+    return this.tagsService.getTagById(userId, id);
   }
 }

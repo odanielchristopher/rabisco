@@ -30,18 +30,19 @@ export class TagsRepository implements ITagsRepository {
 
   async findUniqueById(
     findUniqueByIdDto: FindUniqueTagByIdDto,
+    userId: string,
   ): Promise<Tag | null> {
     const { tagId } = findUniqueByIdDto;
 
     const findedTag = await this.prismaService.tag.findUnique({
-      where: { id: tagId },
+      where: { id: tagId, userId },
     });
 
     return findedTag;
   }
 
-  async create(createTagDto: CreateTagDto): Promise<Tag> {
-    const { data, userId } = createTagDto;
+  async create(createTagDto: CreateTagDto, userId: string): Promise<Tag> {
+    const { data } = createTagDto;
     const { name } = data;
 
     const newTag = await this.prismaService.tag.create({

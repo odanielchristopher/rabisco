@@ -6,8 +6,11 @@ export interface ITagsRepository {
   findAllByUserId(
     findAllTagsByUserIdDto: FindAllTagsByUserIdDto,
   ): Promise<Tag[]>;
-  findUniqueById(findUniqueByIdDto: FindUniqueTagByIdDto): Promise<Tag | null>;
-  create(createTagDto: CreateTagDto): Promise<Tag>;
+  findUniqueById(
+    findUniqueByIdDto: FindUniqueTagByIdDto,
+    userId: string,
+  ): Promise<Tag | null>;
+  create(createTagDto: CreateTagDto, userId: string): Promise<Tag>;
   update(updateTagDto: UpdateTagDto): Promise<Tag>;
   delete(deleteTagDto: DeleteTagDto): Promise<void>;
 }
@@ -22,7 +25,6 @@ export type FindUniqueTagByIdDto = {
 
 export type CreateTagDto = {
   data: Tag | Omit<Tag, 'id'>;
-  userId: string;
 };
 
 export type UpdateTagDto = {
