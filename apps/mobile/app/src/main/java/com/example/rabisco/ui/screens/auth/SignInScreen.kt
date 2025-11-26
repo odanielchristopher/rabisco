@@ -3,39 +3,68 @@ package com.example.rabisco.ui.screens.auth
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavHostController
+import com.example.rabisco.core.factories.AuthViewModelFactory
+import com.example.rabisco.data.remote.dto.request.SignInDto
+import com.example.rabisco.data.remote.repositories.AuthRepository
+import com.example.rabisco.navigation.Routes
+import com.example.rabisco.ui.components.AppButton
 import com.example.rabisco.ui.screens.auth.components.AuthInput
+import kotlinx.coroutines.launch
 
 @Composable
-fun SignInScreen() {
+fun SignInScreen(
+    navigator: NavHostController,
+    vm: AuthViewModel = androidx.lifecycle.viewmodel.compose.viewModel(
+        factory = AuthViewModelFactory (LocalContext.current)
+    )
+) {
+    val state by vm.uiState.collectAsState()
+
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
 
+    LaunchedEffect(state.success) {
+        if (state.success) {
+            navigator.navigate(Routes.Home.path) {
+                popUpTo(Routes.Auth.path) { inclusive = true }
+            }
+        }
+    }
+
     Column {
-        AuthInput("E-mail", email, { email = it }, placeholder = "Seu email")
-        AuthInput("Senha", password, { password = it }, placeholder = "Sua senha")
+        AuthInput("E-mail", email, { email = it })
+        AuthInput("Senha", password, { password = it })
 
-        Spacer(Modifier.height(16.dp))
+        Spacer(Modifier.height(12.dp))
 
-        Button(
-            onClick = {},
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(48.dp),
-            shape = RoundedCornerShape(12.dp)
-        ) {
-            Text("Entrar")
+        AppButton(
+            text = "Entrar",
+            onClick = { vm.signin(email, password) },
+            loading = state.loading,
+            modifier = Modifier.fillMaxWidth()
+        )
+
+        state.error?.let {
+            Text(it, color = Color.Red)
         }
     }
 }

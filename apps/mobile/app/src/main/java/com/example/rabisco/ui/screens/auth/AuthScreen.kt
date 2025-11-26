@@ -90,9 +90,9 @@ fun AuthScreen(
                     Spacer(Modifier.height(24.dp))
 
                     if (selectedIndex == 0)
-                        SignInScreen()
+                        SignInScreen(navigator = navigator)
                     else
-                        SignUpScreen()
+                        SignUpScreen(navigator = navigator)
                 }
             }
 
