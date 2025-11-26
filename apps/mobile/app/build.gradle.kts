@@ -43,6 +43,21 @@ dependencies {
     implementation(libs.androidx.compose.ui.text.google.fonts)
     val navVersion = "2.9.6"
 
+    // --- Retrofit + OkHttp ---
+    implementation(libs.retrofit)
+    implementation(libs.retrofit.gson)
+    implementation(libs.okhttp)
+    implementation(libs.okhttp.logging)
+    implementation(libs.gson)
+
+    // --- Coroutines ---
+    implementation(libs.coroutines.core)
+    implementation(libs.coroutines.android)
+
+    // --- DataStore ---
+    implementation(libs.datastore.preferences)
+
+
     implementation("androidx.navigation:navigation-compose:$navVersion")
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
