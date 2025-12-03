@@ -33,7 +33,7 @@ LINKS IMPORTANTES:
 - 🗓️ [Cronograma do Projeto](https://docs.google.com/spreadsheets/d/1gRc-4rEes7kZZTAD5n6JJiGdXjYi6v26oCrE-CHrN-w/edit?usp=sharing)
 - 🏗️ [Documento de Arquitetura](https://docs.google.com/document/d/11Sqtvh-qwQVuAPAatd1jIWEnTR5wRZBirsIsTFvr1NI/edit?usp=sharing)
 - 📋 [Documento de Requisitos (v2)](https://docs.google.com/document/d/1KwFD1fydyyIgwU6ikUb75GHI2Rj3ElOgeNL8VWFS8GI/edit?usp=sharing)
-- 📄 [Formulário de pesquisa] (https://docs.google.com/forms/d/16zZBaU52YbLIfD8dFgj_Mh0b6EU_Sie83pJNCXBGhxE/edit)
+- 📄 [Formulário de pesquisa](https://docs.google.com/forms/d/16zZBaU52YbLIfD8dFgj_Mh0b6EU_Sie83pJNCXBGhxE/edit)
 - 🎨 [Prototipação (Figma)](https://www.figma.com/design/8CwPPSFHeAW7faQ0hfW7eq/Rabisco-ou-Rascunho----Projeto-Integrado-III?t=ir0m0JqKifswCcAx-0)
 
 
