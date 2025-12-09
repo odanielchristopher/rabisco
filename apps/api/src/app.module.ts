@@ -1,4 +1,5 @@
 import { Module } from '@nestjs/common';
+import { ConfigModule } from '@nestjs/config';
 import { APP_GUARD } from '@nestjs/core';
 
 import { AuthGuard } from '@modules/auth/auth.guard';
@@ -7,7 +8,12 @@ import { UsersModule } from '@modules/users/users.module';
 import { DatabaseModule } from '@shared/database/database.module';
 
 @Module({
-  imports: [UsersModule, DatabaseModule, AuthModule],
+  imports: [
+    ConfigModule.forRoot({ isGlobal: true }),
+    UsersModule,
+    DatabaseModule,
+    AuthModule,
+  ],
   providers: [
     {
       provide: APP_GUARD,

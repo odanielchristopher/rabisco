@@ -10,6 +10,7 @@ import { compare, hash } from 'bcryptjs';
 import { IUsersRepository } from '@shared/database/contracts/users-repository.contract';
 
 import { IAuthService } from './contracts/auth-service.contract';
+import { AuthResponseDto } from './dto/auth-reponse.dto';
 import { SigninDto } from './dto/signin.dto';
 import { SignupDto } from './dto/signup.dto';
 
@@ -21,7 +22,7 @@ export class AuthService implements IAuthService {
     private readonly jwtService: JwtService,
   ) {}
 
-  async signin(signinDto: SigninDto) {
+  async signin(signinDto: SigninDto): Promise<AuthResponseDto> {
     const { email, password } = signinDto;
 
     const user = await this.userRespository.findUniqueByEmail({ email });
@@ -41,7 +42,7 @@ export class AuthService implements IAuthService {
     return { accessToken };
   }
 
-  async signup(signupDto: SignupDto) {
+  async signup(signupDto: SignupDto): Promise<AuthResponseDto> {
     const { name, email, password } = signupDto;
 
     const emailTaken = await this.userRespository.findUniqueByEmail({ email });
