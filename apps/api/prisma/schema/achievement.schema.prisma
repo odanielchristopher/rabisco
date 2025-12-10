@@ -1,6 +1,6 @@
 model Achievement {
   id          String          @id @default(uuid()) @db.Uuid
-  title       String
+  title       String          @unique
   description String
   type        AchievementType
   goal        Int

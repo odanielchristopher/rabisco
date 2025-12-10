@@ -12,6 +12,16 @@ export async function seedUser() {
       name: process.env.USER_NAME!,
       email: process.env.USER_EMAIL!,
       password: hashedPassword,
+      score: {
+        create: {
+          points: 0,
+        },
+      },
+      streak: {
+        create: {
+          daySequence: 0,
+        },
+      },
     },
   });
 
