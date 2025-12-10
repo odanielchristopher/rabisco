@@ -4,18 +4,16 @@ import { CreateTextDto } from '../dto/create-text.dto';
 import { UpdateTextDto } from '../dto/update-text.dto';
 import { Text } from '../entities/text.entity';
 
-export const ITextsService = Symbol('ITextsService');
+export abstract class ITextsService {
+  abstract findAll(input: ITextsService.FindAllInput): Promise<Text[]>;
 
-export interface ITextsService {
-  findAll(input: ITextsService.FindAllInput): Promise<Text[]>;
+  abstract findOne(input: ITextsService.FindOneInput): Promise<Text>;
 
-  findOne(input: ITextsService.FindOneInput): Promise<Text>;
+  abstract create(input: ITextsService.CreateInput): Promise<Text>;
 
-  create(input: ITextsService.CreateInput): Promise<Text>;
+  abstract update(input: ITextsService.UpdateInput): Promise<Text>;
 
-  update(input: ITextsService.UpdateInput): Promise<Text>;
-
-  delete(input: ITextsService.DelelteInput): Promise<void>;
+  abstract delete(input: ITextsService.DelelteInput): Promise<void>;
 }
 
 export namespace ITextsService {

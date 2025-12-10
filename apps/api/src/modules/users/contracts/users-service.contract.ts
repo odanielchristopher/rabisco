@@ -1,15 +1,13 @@
 import { UpdateUserDto } from '../dto/update-user.dto';
 import { User } from '../entities/user.entity';
 
-export const IUsersService = Symbol('IUsersService');
+export abstract class IUsersService {
+  abstract getUserById(userId: string): Promise<Partial<User> | null>;
 
-export interface IUsersService {
-  getUserById(userId: string): Promise<Partial<User> | null>;
-
-  update(
+  abstract update(
     userId: string,
     updateUserDto: UpdateUserDto,
   ): Promise<Partial<User> | null>;
 
-  remove(userId: string): Promise<void>;
+  abstract remove(userId: string): Promise<void>;
 }

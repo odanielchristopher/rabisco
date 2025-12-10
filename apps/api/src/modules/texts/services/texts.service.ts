@@ -1,19 +1,20 @@
-import { Inject, Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 
+import { CustomEventEmitter } from '@modules/events/contract/custom-event-emitter.contract';
 import { ITextsRepository } from '@shared/database/contracts/texts-repository.contract';
 import { countWords } from '@shared/utils/shared.utils';
 
 import { ITextsService } from '../contracts/text-service.contract';
 import { IValidateTextOwnershipService } from '../contracts/validate-text-ownership-service.contract';
 import { Text } from '../entities/text.entity';
+import { TextCreatedEvent } from '../events/text-created.event';
 
 @Injectable()
 export class TextsService implements ITextsService {
   constructor(
-    @Inject(ITextsRepository)
     private readonly textsRepository: ITextsRepository,
-    @Inject(IValidateTextOwnershipService)
     private readonly validateTextOwnershipService: IValidateTextOwnershipService,
+    private readonly eventEmitter: CustomEventEmitter,
   ) {}
 
   findAll({
@@ -37,16 +38,23 @@ export class TextsService implements ITextsService {
     return text;
   }
 
-  create(input: ITextsService.CreateInput): Promise<Text> {
+  async create(input: ITextsService.CreateInput): Promise<Text> {
     const { userId, createTextDto } = input;
     const { title, content, type } = createTextDto;
 
     const wordCount = countWords(content);
 
-    return this.textsRepository.create({
+    const text = await this.textsRepository.create({
       userId,
       data: { title, content, type, wordCount },
     });
+
+    this.eventEmitter.emit(
+      'text.created',
+      new TextCreatedEvent(userId, text.id),
+    );
+
+    return text;
   }
 
   async update({

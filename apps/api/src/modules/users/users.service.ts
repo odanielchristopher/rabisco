@@ -1,6 +1,5 @@
 import {
   ConflictException,
-  Inject,
   Injectable,
   NotFoundException,
   UnauthorizedException,
@@ -14,10 +13,7 @@ import { UpdateUserDto } from './dto/update-user.dto';
 
 @Injectable()
 export class UsersService implements IUsersService {
-  constructor(
-    @Inject(IUsersRepository)
-    private readonly usersRepository: IUsersRepository,
-  ) {}
+  constructor(private readonly usersRepository: IUsersRepository) {}
 
   async getUserById(userId: string) {
     const user = await this.usersRepository.findUniquetById({

@@ -1,22 +1,20 @@
 import { Text } from '@modules/texts/entities/text.entity';
 import { BaseDto } from '@shared/types/utils.type';
 
-export const ITextsRepository = Symbol('ITextsRepository');
-
-export interface ITextsRepository {
-  findAllByUserId(
+export abstract class ITextsRepository {
+  abstract findAllByUserId(
     findAllDto: ITextsRepository.FindAllTextsDto,
   ): Promise<Text[]>;
 
-  findOneById(
+  abstract findOneById(
     findOneDto: ITextsRepository.FindOneTextDto,
   ): Promise<Text | null>;
 
-  create(createTextDto: ITextsRepository.CreateTextDto): Promise<Text>;
+  abstract create(createTextDto: ITextsRepository.CreateTextDto): Promise<Text>;
 
-  update(updateTextDto: ITextsRepository.UpdateTextDto): Promise<Text>;
+  abstract update(updateTextDto: ITextsRepository.UpdateTextDto): Promise<Text>;
 
-  delete(deleteTextDto: ITextsRepository.DeleteTextDto): Promise<void>;
+  abstract delete(deleteTextDto: ITextsRepository.DeleteTextDto): Promise<void>;
 }
 
 export namespace ITextsRepository {
