@@ -1,10 +1,12 @@
 import { seedAchievements } from './achievements.seed';
 import { prisma } from './lib/prisma-client.lib';
+import { seedMissions } from './missions.seed';
 import { seedUser } from './user.seed';
 
 async function main() {
   await seedUser();
   await seedAchievements();
+  await seedMissions();
 }
 
 main()
