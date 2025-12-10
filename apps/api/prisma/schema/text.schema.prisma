@@ -1,0 +1,23 @@
+enum TextType {
+  DIARY
+  DAY_PROMPT
+  FREE
+
+  @@map("text_type")
+}
+
+model Text {
+  id        String   @id @default(uuid()) @db.Uuid
+  userId    String   @map("user_id") @db.Uuid
+  type      TextType @default(FREE)
+  title     String
+  content   String
+  wordCount Int      @default(0) @map("word_count")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  categories TextCategory[]
+  user       User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("texts")
+}
