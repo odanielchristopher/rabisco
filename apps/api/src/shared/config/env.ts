@@ -3,7 +3,7 @@ import {
   IsEmail,
   IsNotEmpty,
   IsString,
-  Min,
+  MinLength,
   NotEquals,
   ValidateNested,
   validateSync,
@@ -21,7 +21,7 @@ class User {
 
   @IsString()
   @IsNotEmpty()
-  @Min(6)
+  @MinLength(6)
   password: string;
 }
 
