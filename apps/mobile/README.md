@@ -10,7 +10,7 @@
   │   └── repositories/        # Implementação das interfaces do domínio
   │
   ├── domain/                  # Regras e modelos de negócio
-  │   ├── entities/            # Entidades (Texto, Usuario, Prompt, etc.)
+  │   ├── models/              # Entidades (Texto, Usuario, Prompt, etc.)
   │   ├── contracts/           # Contratos de todo o projeto
   │   └── usecases/            # Casos de uso (SalvarTexto, BuscarPrompts)
   │

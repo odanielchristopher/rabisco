@@ -41,10 +41,19 @@ export class UsersRepository implements IUsersRepository {
   }
 
   async create(createUserDto: CreateUserDto): Promise<User> {
-    const { data } = createUserDto;
+    const { data, relations } = createUserDto;
+
+    const categories = relations?.categories ?? [];
 
     const newUser = await this.prismaService.user.create({
-      data,
+      data: {
+        ...data,
+        categories: {
+          createMany: {
+            data: categories,
+          },
+        },
+      },
       select: {
         id: true,
         name: true,
