@@ -13,8 +13,8 @@ model Text {
   title     String
   content   String
   wordCount Int      @default(0) @map("word_count")
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt @map("updated_at")
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz()
+  updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz()
 
   categories TextCategory[]
   user       User           @relation(fields: [userId], references: [id], onDelete: Cascade)
