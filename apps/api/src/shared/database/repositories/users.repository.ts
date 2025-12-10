@@ -53,6 +53,16 @@ export class UsersRepository implements IUsersRepository {
             data: categories,
           },
         },
+        score: {
+          create: {
+            points: 0,
+          },
+        },
+        streak: {
+          create: {
+            daySequence: 0,
+          },
+        },
       },
       select: {
         id: true,
