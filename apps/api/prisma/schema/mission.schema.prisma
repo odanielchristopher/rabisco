@@ -1,8 +1,10 @@
 model DailyMission {
-  id            String   @id @default(uuid()) @db.Uuid
+  id            String           @id @default(uuid()) @db.Uuid
+  type          DailyMissionType
   description   String
-  points        Int      @db.Integer
-  availableDate DateTime @default(now()) @map("available_date") @db.Timestamptz()
+  goal          Int
+  points        Int              @db.Integer
+  availableDate DateTime         @default(now()) @map("available_date") @db.Timestamptz()
 
   users UserMission[]
 
@@ -13,6 +15,7 @@ model UserMission {
   userId         String    @map("user_id") @db.Uuid
   missionId      String    @map("mission_id") @db.Uuid
   completed      Boolean   @default(false)
+  progress       Int       @default(0)
   completionDate DateTime? @map("completion_date") @db.Timestamptz()
 
   user    User         @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
@@ -20,4 +23,12 @@ model UserMission {
 
   @@unique([userId, missionId])
   @@map("users_missions")
+}
+
+enum DailyMissionType {
+  WRITE_TEXT
+  WORD_QUANTITY
+  CUSTOM
+
+  @@map("daily_mission_type")
 }
