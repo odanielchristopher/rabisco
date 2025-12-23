@@ -1,5 +1,7 @@
 import { Module } from '@nestjs/common';
 
+import { MissionCompletedAchievementListener } from './listeners/achievement-mission.listener';
+import { StreakGoalAchievementListener } from './listeners/achievement-streak.listener';
 import { TextCreatedAchievementListener } from './listeners/achievement-text.listener';
 import { TextCreatedDailyMissionListener } from './listeners/missions-text.listener';
 import { TextCreatedScoreListener } from './listeners/score-text.listener';
@@ -18,6 +20,8 @@ import { StreakService } from './services/streak.service';
     ScoreService,
 
     // Listeners
+    MissionCompletedAchievementListener,
+    StreakGoalAchievementListener,
     TextCreatedAchievementListener,
     TextCreatedStreakListener,
     TextCreatedDailyMissionListener,

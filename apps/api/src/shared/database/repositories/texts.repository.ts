@@ -9,6 +9,10 @@ import { PrismaService } from '../prisma.service';
 export class TextsRepository implements ITextsRepository {
   constructor(private readonly prismaService: PrismaService) {}
 
+  count(countDto: ITextsRepository.WhereInput): Promise<number> {
+    return this.prismaService.text.count({ where: countDto });
+  }
+
   async findAllByUserId(
     findAllDto: ITextsRepository.FindAllTextsDto,
   ): Promise<Text[]> {

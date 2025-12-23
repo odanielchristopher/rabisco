@@ -1,3 +1,4 @@
+import { TextType } from '@modules/texts/entities/text-type.enum';
 import { Text } from '@modules/texts/entities/text.entity';
 import { BaseDto } from '@shared/types/utils.type';
 
@@ -15,6 +16,8 @@ export abstract class ITextsRepository {
   abstract update(updateTextDto: ITextsRepository.UpdateTextDto): Promise<Text>;
 
   abstract delete(deleteTextDto: ITextsRepository.DeleteTextDto): Promise<void>;
+
+  abstract count(countDto: ITextsRepository.WhereInput): Promise<number>;
 }
 
 export namespace ITextsRepository {
@@ -39,4 +42,6 @@ export namespace ITextsRepository {
   export type DeleteTextDto = {
     textId: string;
   };
+
+  export type WhereInput = { userId?: string; type?: TextType };
 }

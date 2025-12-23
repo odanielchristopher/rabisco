@@ -51,7 +51,7 @@ export class TextsService implements ITextsService {
 
     this.eventEmitter.emit(
       'text.created',
-      new TextCreatedEvent(userId, text.id),
+      new TextCreatedEvent(userId, text.id, wordCount),
     );
 
     return text;

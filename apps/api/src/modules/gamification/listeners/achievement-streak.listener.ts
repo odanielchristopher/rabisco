@@ -1,20 +1,20 @@
 import { Injectable } from '@nestjs/common';
 import { OnEvent } from '@nestjs/event-emitter';
 
-import { TextCreatedEvent } from '@modules/texts/events/text-created.event';
+import { StreakGoalPaylod } from '@modules/events/payloads/streak-goal.payload';
 import { BaseListener } from '@shared/contracts/base-listener.contract';
 
 import { AchievementsService } from '../services/achievements.service';
 
 @Injectable()
-export class TextCreatedAchievementListener extends BaseListener {
+export class StreakGoalAchievementListener extends BaseListener {
   constructor(private readonly achievements: AchievementsService) {
-    super(TextCreatedAchievementListener.name);
+    super(StreakGoalAchievementListener.name);
   }
 
-  @OnEvent('text.created')
-  async handle(event: TextCreatedEvent) {
-    await this.achievements.evaluateTextCreation(event.userId);
+  @OnEvent('streak.add')
+  async handle(event: StreakGoalPaylod) {
+    await this.achievements.evaluateStreak(event.userId, event.streak);
 
     this.logger.log(`User ${event.userId} has achievements avaluated.`);
   }

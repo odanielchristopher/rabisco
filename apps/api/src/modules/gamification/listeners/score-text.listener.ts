@@ -1,17 +1,22 @@
+import { Injectable } from '@nestjs/common';
 import { OnEvent } from '@nestjs/event-emitter';
 
 import { TextCreatedEvent } from '@modules/texts/events/text-created.event';
+import { pointsTo } from '@shared/constants/points.constants';
 import { BaseListener } from '@shared/contracts/base-listener.contract';
 
 import { ScoreService } from '../services/score.service';
 
+@Injectable()
 export class TextCreatedScoreListener extends BaseListener {
-  constructor(private readonly score: ScoreService) {
+  constructor(private readonly scoreService: ScoreService) {
     super(TextCreatedScoreListener.name);
   }
 
   @OnEvent('text.created')
-  handle(event: TextCreatedEvent) {
-    this.logger.log(event, '✅ evento chegou');
+  async handle(event: TextCreatedEvent) {
+    await this.scoreService.addPoints(event.userId, pointsTo.WRITE_TEXT());
+
+    this.logger.log(event, `User ${event.userId} has his points updated.`);
   }
 }

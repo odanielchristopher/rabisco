@@ -19,7 +19,7 @@ export abstract class IAchievementsRepository {
 }
 
 export namespace IAchievementsRepository {
-  type WhereInput = { type: AchievementType; userId: string };
+  type WhereInput = { type?: AchievementType; userId?: string };
 
   type SelectInput = { achievementId?: boolean };
 
