@@ -4,6 +4,7 @@ import { MissionCompletedAchievementListener } from './listeners/achievement-mis
 import { StreakGoalAchievementListener } from './listeners/achievement-streak.listener';
 import { TextCreatedAchievementListener } from './listeners/achievement-text.listener';
 import { TextCreatedDailyMissionListener } from './listeners/missions-text.listener';
+import { MissionCompletedScoreListener } from './listeners/score-mission.listener';
 import { TextCreatedScoreListener } from './listeners/score-text.listener';
 import { TextCreatedStreakListener } from './listeners/streak-text.listener';
 import { AchievementsService } from './services/achievements.service';
@@ -20,6 +21,7 @@ import { StreakService } from './services/streak.service';
     ScoreService,
 
     // Listeners
+    MissionCompletedScoreListener,
     MissionCompletedAchievementListener,
     StreakGoalAchievementListener,
     TextCreatedAchievementListener,

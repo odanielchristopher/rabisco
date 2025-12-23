@@ -1,6 +1,8 @@
 import { DailyMission, UserMission } from '@prisma/client';
 
-type UserMissionWithDailyMission = UserMission & { mission: DailyMission };
+export type UserMissionWithDailyMission = UserMission & {
+  mission: DailyMission;
+};
 
 export abstract class IMissionsRepository {
   abstract countUserMissions(

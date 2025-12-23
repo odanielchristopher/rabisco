@@ -1,11 +1,13 @@
 import { Injectable } from '@nestjs/common';
-import { UserMission } from '@prisma/client';
 
 import { CustomEventEmitter } from '@modules/events/contract/custom-event-emitter.contract';
 import { MissionCompletedPayload } from '@modules/events/payloads/mission-completed.payload';
 import { TextCreatedEvent } from '@modules/texts/events/text-created.event';
 import { MissionType } from '@shared/constants/missions.constants';
-import { IMissionsRepository } from '@shared/database/contracts/missions-repository.contract';
+import {
+  IMissionsRepository,
+  UserMissionWithDailyMission,
+} from '@shared/database/contracts/missions-repository.contract';
 
 @Injectable()
 export class MissionsService {
@@ -35,14 +37,17 @@ export class MissionsService {
     }
   }
 
-  private async progressMission(mission: UserMission, value: number) {
-    if (mission.completed) {
+  private async progressMission(
+    userMission: UserMissionWithDailyMission,
+    value: number,
+  ) {
+    if (userMission.completed) {
       return;
     }
 
     const updated = await this.missionsRepository.incrementProgress({
-      userId: mission.userId,
-      missionId: mission.missionId,
+      userId: userMission.userId,
+      missionId: userMission.missionId,
       value,
     });
 
@@ -52,7 +57,7 @@ export class MissionsService {
 
     this.eventEmitter.emit(
       'mission.completed',
-      new MissionCompletedPayload(mission.userId, mission.missionId),
+      new MissionCompletedPayload(userMission.userId, userMission.mission),
     );
   }
 }
