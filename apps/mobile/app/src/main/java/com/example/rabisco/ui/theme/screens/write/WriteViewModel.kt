@@ -3,6 +3,8 @@ package com.example.rabisco.ui.theme.screens.write
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.rabisco.domain.models.Text
+import com.example.rabisco.data.repositories.TextRepositoryImpl
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -14,6 +16,8 @@ import kotlin.text.contains
 //essa data class vai para o uiState (estudar isso)
 
 class WriteViewModel : ViewModel() {
+
+    private val repository = TextRepositoryImpl.getInstance()
     private val _uiState = MutableStateFlow(WriteUiState())
     val uiState: StateFlow<WriteUiState> = _uiState.asStateFlow()
 
@@ -42,7 +46,50 @@ class WriteViewModel : ViewModel() {
     }
 
     fun saveText() {
-        //como fazer?
+        viewModelScope.launch {
+            _uiState.update { it.copy(isLoading = true, errorMessage = null) }
+
+            try {
+                val currentState = _uiState.value
+
+                if(currentState.content.isBlank()) {
+                    _uiState.update {
+                        it.copy(
+                            isLoading = false,
+                            errorMessage = "O coneteúdo não pode estar vazio"
+                        )
+                    }
+                    return@launch
+                }
+                val text = Text(
+                    title = currentState.title.ifBlank { "Sem título" },
+                    content = currentState.content,
+                    tags = currentState.selectedTags.toList(),
+                    wordCount = currentState.wordCount,
+                )
+
+                val result = repository.saveText(text)
+
+                result.onSuccess { textId ->
+                    _uiState.value = WriteUiState()
+                    println("texto salvo id: $textId")
+                }.onFailure { exception ->
+                    _uiState.update {
+                        it.copy(
+                            isLoading = false,
+                            errorMessage = "erro ao salvar: ${exception.message}"
+                        )
+                    }
+                }
+            } catch (e: Exception) {
+                _uiState.update {
+                    it.copy(
+                        isLoading = false,
+                        errorMessage = "Erro inesperado: ${e.message}"
+                    )
+                }
+            }
+        }
     }
 
     private fun calculateWordCount(text: String): Int {
