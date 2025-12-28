@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -76,7 +77,9 @@ fun WriteScreen(
             onTitleChange = { viewModel.updateTitle(it) },
             onContentChange = { viewModel.updateContent(it) },
             onTagClick = { viewModel.toggleTag(it) },
-            onSave = { viewModel.saveText() }
+            onSave = { viewModel.saveText() },
+            isLoading = uiState.isLoading,
+            errorMessage = uiState.errorMessage
         )
     }
 }
@@ -128,7 +131,9 @@ fun WriteContent (
     onTitleChange: (String) -> Unit,
     onContentChange: (String) -> Unit,
     onTagClick: (String) -> Unit,
-    onSave: () -> Unit
+    onSave: () -> Unit,
+    isLoading: Boolean = false,
+    errorMessage: String? = null
 ) {
     Column(
         modifier = modifier
@@ -184,11 +189,28 @@ fun WriteContent (
 
         Spacer(modifier = Modifier.height(24.dp))
 
+        errorMessage?.let {error ->
+            Text(
+                text = error,
+                color = MaterialTheme.colorScheme.error,
+                style = MaterialTheme.typography.bodySmall,
+                modifier = Modifier.padding(bottom = 8.dp)
+            )
+        }
+
         Button(
             onClick = onSave,
-            modifier = Modifier
-                .fillMaxWidth(),
+            modifier = Modifier.fillMaxWidth(),
+            enabled = !isLoading
         ) {
+            if(isLoading) {
+                androidx.compose.material3.CircularProgressIndicator(
+                    modifier = androidx.compose.ui.Modifier.size(20.dp),
+                    color = MaterialTheme.colorScheme.onPrimary
+                )
+            } else {
+                Text("Salvar")
+            }
             Text("Salvar")
         }
     }
