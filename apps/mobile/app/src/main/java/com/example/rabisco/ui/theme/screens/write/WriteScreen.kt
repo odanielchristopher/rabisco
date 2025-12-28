@@ -211,7 +211,6 @@ fun WriteContent (
             } else {
                 Text("Salvar")
             }
-            Text("Salvar")
         }
     }
 }
