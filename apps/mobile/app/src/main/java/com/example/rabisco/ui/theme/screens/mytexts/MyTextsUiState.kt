@@ -1,6 +1,6 @@
 package com.example.rabisco.ui.theme.screens.mytexts
 
-import com.example.rabisco.data.Text
+import com.example.rabisco.domain.models.Text
 
 data class MyTextsUiState(
     val texts: List<Text> = emptyList(),
