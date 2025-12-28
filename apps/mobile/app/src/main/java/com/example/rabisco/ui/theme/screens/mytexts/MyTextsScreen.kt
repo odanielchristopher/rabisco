@@ -19,7 +19,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.example.rabisco.data.Text
+import com.example.rabisco.domain.models.Text
 import java.text.SimpleDateFormat
 import java.util.Locale
 
@@ -168,7 +168,14 @@ fun TextCard(text: Text, onDeleteClick: (Text) -> Unit) {
                 val formattedDate = SimpleDateFormat(
                     "dd/MM/yyyy",
                     Locale.getDefault()
-                ).format(text.date)
+                ).format(text)
+
+                Text(
+                    text = text.getPreview(),
+                    maxLines = 2,
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
 
                 Text(
                     "$formattedDate • ${text.wordCount} palavras",
