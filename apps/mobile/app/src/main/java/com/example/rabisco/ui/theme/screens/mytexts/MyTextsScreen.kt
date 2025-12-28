@@ -157,29 +157,36 @@ fun TextCard(text: Text, onDeleteClick: (Text) -> Unit) {
             Text(text.title, style = MaterialTheme.typography.titleMedium)
 
             Text(
-                text.content,
+                text.getPreview(),
                 maxLines = 2,
                 style = MaterialTheme.typography.bodyMedium
             )
 
             Spacer(modifier = Modifier.height(8.dp))
 
+            if(text.tags.isNotEmpty()) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    text.tags.take(3).forEach { tag ->
+                        AssistChip(
+                            onClick = { },
+                            label = {
+                                Text(
+                                    tag,
+                                    style = MaterialTheme.typography.labelSmall
+                                )
+                            }
+                        )
+                    }
+                }
+            }
+
             Row(verticalAlignment = Alignment.CenterVertically) {
-                val formattedDate = SimpleDateFormat(
-                    "dd/MM/yyyy",
-                    Locale.getDefault()
-                ).format(text)
-
                 Text(
-                    text = text.getPreview(),
-                    maxLines = 2,
-                    style = MaterialTheme.typography.bodyMedium,
+                    text = "${text.getFormattedDate()} • ${text.wordCount} palavras",
+                    style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
-
-                Text(
-                    "$formattedDate • ${text.wordCount} palavras",
-                    style = MaterialTheme.typography.bodySmall
                 )
 
                 Spacer(modifier = Modifier.weight(1f))
@@ -189,7 +196,7 @@ fun TextCard(text: Text, onDeleteClick: (Text) -> Unit) {
                 }
 
                 IconButton(onClick = { onDeleteClick(text) }) {
-                    Icon(Icons.Default.Delete, contentDescription = "Excluir")
+                    Icon(Icons.Default.Delete, contentDescription = "Excluir", tint = MaterialTheme.colorScheme.error)
                 }
             }
         }

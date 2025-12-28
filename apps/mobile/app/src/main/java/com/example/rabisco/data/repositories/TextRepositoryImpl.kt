@@ -19,7 +19,7 @@ class TextRepositoryImpl private constructor() : TextRepository {
             val existingIndex = currentTexts.indexOfFirst { it.id == text.id }
 
             if(existingIndex != -1) {
-                currentTexts[existingIndex] = text.copy(updateAt = Date())
+                currentTexts[existingIndex] = text.copy(updatedAt = Date())
             }else {
                 currentTexts.add(0, text)
             }

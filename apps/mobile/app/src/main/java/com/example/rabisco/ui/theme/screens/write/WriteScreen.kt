@@ -35,6 +35,7 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarColors
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -55,9 +56,16 @@ import com.example.rabisco.ui.theme.RabiscoTheme
 @Composable
 fun WriteScreen(
     onNavigateBack: () -> Unit = {},
+    onTextSaved: () -> Unit = {},
     viewModel: WriteViewModel = androidx.lifecycle.viewmodel.compose.viewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
+
+    LaunchedEffect(uiState.textSaved) {
+        if(uiState.textSaved) {
+            onTextSaved()
+        }
+    }
 
     Scaffold(
         topBar = {

@@ -71,8 +71,13 @@ class WriteViewModel : ViewModel() {
                 val result = repository.saveText(text)
 
                 result.onSuccess { textId ->
-                    _uiState.value = WriteUiState()
-                    println("texto salvo id: $textId")
+                    _uiState.update {
+                        it.copy(
+                            isLoading = false,
+                            textSaved = true
+                        )
+                    }
+                    println("Texto salvo")
                 }.onFailure { exception ->
                     _uiState.update {
                         it.copy(

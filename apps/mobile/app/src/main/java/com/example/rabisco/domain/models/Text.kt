@@ -11,7 +11,7 @@ data class Text(
     val content: String,
     val tags: List<String> = emptyList(),
     val createdAt: Date = Date(),
-    val updateAt: Date = Date(),
+    val updatedAt: Date = Date(),
     val wordCount: Int = 0
 ) {
     fun isEmpty(): Boolean = content.isBlank()

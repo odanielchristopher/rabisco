@@ -26,6 +26,9 @@ fun AppNavigation() {
             WriteScreen(
                 onNavigateBack = {
                     navController.popBackStack()
+                },
+                onTextSaved = {
+                    navController.popBackStack()
                 }
             )
         }

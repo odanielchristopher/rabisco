@@ -6,5 +6,6 @@ data class WriteUiState(
     val selectedTags: Set<String> = emptySet(),
     val wordCount: Int = 0,
     val isLoading: Boolean = false,
-    val errorMessage: String? = null
+    val errorMessage: String? = null,
+    val textSaved: Boolean = false
 )
