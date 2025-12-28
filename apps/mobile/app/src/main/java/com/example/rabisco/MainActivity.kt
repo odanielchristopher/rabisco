@@ -11,7 +11,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import com.example.rabisco.navigation.AppNavigation
 import com.example.rabisco.ui.theme.RabiscoTheme
+import com.example.rabisco.ui.theme.screens.mytexts.MyTextsScreen
 import com.example.rabisco.ui.theme.screens.write.WriteScreen
 
 class MainActivity : ComponentActivity() {
@@ -20,7 +22,7 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             RabiscoTheme {
-                WriteScreen()
+                AppNavigation()
             }
         }
     }
