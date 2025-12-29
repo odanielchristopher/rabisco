@@ -4,6 +4,7 @@ import { IAchievementsRepository } from './contracts/achievements-repository.con
 import { IMissionsRepository } from './contracts/missions-repository.contract';
 import { IScoreRepository } from './contracts/score-repository.contract';
 import { IStreakRepository } from './contracts/streak-repository.contract';
+import { ITagsRepository } from './contracts/tags-repository.contract';
 import { ITextsRepository } from './contracts/texts-repository.contract';
 import { IUsersRepository } from './contracts/users-repository.contract';
 import { PrismaService } from './prisma.service';
@@ -11,6 +12,7 @@ import { AchievementsRepository } from './repositories/achievements.repository';
 import { MissionsRepository } from './repositories/missions.repository';
 import { ScoreRepository } from './repositories/score.repository';
 import { StreakRepository } from './repositories/streak.repository';
+import { TagsRepository } from './repositories/tags.repository';
 import { TextsRepository } from './repositories/texts.repository';
 import { UsersRepository } from './repositories/users.repository';
 
@@ -42,6 +44,10 @@ import { UsersRepository } from './repositories/users.repository';
       provide: IScoreRepository,
       useClass: ScoreRepository,
     },
+    {
+      useClass: TagsRepository,
+      provide: ITagsRepository,
+    },
   ],
   exports: [
     {
@@ -67,6 +73,10 @@ import { UsersRepository } from './repositories/users.repository';
     {
       provide: IScoreRepository,
       useClass: ScoreRepository,
+    },
+    {
+      provide: ITagsRepository,
+      useClass: TagsRepository,
     },
   ],
 })

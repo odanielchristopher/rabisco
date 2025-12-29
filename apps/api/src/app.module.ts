@@ -6,6 +6,7 @@ import { AuthGuard } from '@modules/auth/auth.guard';
 import { AuthModule } from '@modules/auth/auth.module';
 import { EventsModule } from '@modules/events/events.module';
 import { GamificationModule } from '@modules/gamification/gamification.module';
+import { TagsModule } from '@modules/tags/tags.module';
 import { TextsModule } from '@modules/texts/texts.module';
 import { UsersModule } from '@modules/users/users.module';
 import { DatabaseModule } from '@shared/database/database.module';
@@ -19,6 +20,7 @@ import { DatabaseModule } from '@shared/database/database.module';
     AuthModule,
     TextsModule,
     GamificationModule,
+    TagsModule,
   ],
   providers: [
     {

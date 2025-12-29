@@ -16,6 +16,7 @@ model User {
   categories         Category[]
   dailyMissions      UserMission[]
   achievements       UserAchievement[]
+  tag                Tag[]
 
   @@map("users")
 }
