@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { endOfDay, startOfDay } from 'date-fns';
 
 import { IMissionsRepository } from '../contracts/missions-repository.contract';
 import { PrismaService } from '../prisma.service';
@@ -33,7 +34,12 @@ export class MissionsRepository implements IMissionsRepository {
     const { availableDate } = findDailyMisionsDto;
 
     return this.prismaService.dailyMission.findMany({
-      where: { availableDate },
+      where: {
+        availableDate: {
+          gte: availableDate ? startOfDay(availableDate) : undefined,
+          lt: availableDate ? endOfDay(availableDate) : undefined,
+        },
+      },
     });
   }
 

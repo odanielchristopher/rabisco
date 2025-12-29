@@ -11,11 +11,11 @@ export class AchievementsRepository implements IAchievementsRepository {
     return this.prismaService.achievement.count(input);
   }
 
-  findManyAchievements({
-    where,
-  }: IAchievementsRepository.FindManyAchievementsInput) {
+  findManyAchievements(
+    input: IAchievementsRepository.FindManyAchievementsInput = {},
+  ) {
     return this.prismaService.achievement.findMany({
-      where,
+      where: input.where,
     });
   }
 

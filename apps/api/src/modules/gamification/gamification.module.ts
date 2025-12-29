@@ -1,5 +1,7 @@
 import { Module } from '@nestjs/common';
 
+import { AchievementsController } from './controllers/achievements.controller';
+import { MissionsController } from './controllers/missions.controller';
 import { MissionCompletedAchievementListener } from './listeners/achievement-mission.listener';
 import { StreakGoalAchievementListener } from './listeners/achievement-streak.listener';
 import { TextCreatedAchievementListener } from './listeners/achievement-text.listener';
@@ -13,6 +15,7 @@ import { ScoreService } from './services/score.service';
 import { StreakService } from './services/streak.service';
 
 @Module({
+  controllers: [AchievementsController, MissionsController],
   providers: [
     // Services
     AchievementsService,

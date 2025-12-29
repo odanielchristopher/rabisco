@@ -43,7 +43,7 @@ export namespace IMissionsRepository {
   };
 
   export type FindDailyMissionsDto = {
-    availableDate: Date;
+    availableDate?: Date;
   };
 
   export type IncrementProgressDto = {
