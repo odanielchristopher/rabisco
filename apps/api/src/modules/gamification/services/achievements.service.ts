@@ -16,6 +16,57 @@ export class AchievementsService {
     private readonly missionsRepository: IMissionsRepository,
   ) {}
 
+  async listUserAchievements(userId: string) {
+    const [
+      achievements,
+      userAchievements,
+      textCount,
+      streak,
+      completedMissions,
+    ] = await Promise.all([
+      this.achievementsRepository.findManyAchievements(),
+      this.achievementsRepository.findManyUserAchievements({
+        where: { userId },
+      }),
+      this.textsRepository.count({ userId }),
+      this.streakRepository.findByUserId({ userId }),
+      this.missionsRepository.countUserMissions({
+        userId,
+        completed: true,
+      }),
+    ]);
+
+    const achievedMap = new Set(userAchievements.map((ua) => ua.achievementId));
+
+    return achievements.map((achievement) => {
+      let progress = 0;
+
+      switch (AchievementType[achievement.type]) {
+        case AchievementType.TEXT_QUANTITY:
+          progress = textCount;
+          break;
+
+        case AchievementType.DAY_SEQUENCE:
+          progress = streak?.daySequence ?? 0;
+          break;
+
+        case AchievementType.MISSION:
+          progress = completedMissions;
+          break;
+      }
+
+      return {
+        id: achievement.id,
+        code: achievement.code,
+        title: achievement.title,
+        description: achievement.description,
+        goal: achievement.goal,
+        progress,
+        achieved: achievedMap.has(achievement.id),
+      };
+    });
+  }
+
   async evaluateTextCreation(userId: string) {
     const totalTexts = await this.textsRepository.count({ userId });
 

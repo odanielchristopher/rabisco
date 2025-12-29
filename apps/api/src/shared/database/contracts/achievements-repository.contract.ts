@@ -1,4 +1,4 @@
-import { Achievement } from '@prisma/client';
+import { Achievement, UserAchievement } from '@prisma/client';
 
 import { AchievementType } from '@shared/constants/achievements.contants';
 
@@ -6,12 +6,12 @@ export abstract class IAchievementsRepository {
   abstract count(input: IAchievementsRepository.CountInput): Promise<number>;
 
   abstract findManyAchievements(
-    input: IAchievementsRepository.FindManyAchievementsInput,
+    input?: IAchievementsRepository.FindManyAchievementsInput,
   ): Promise<Achievement[]>;
 
   abstract findManyUserAchievements(
     input: IAchievementsRepository.FindManyUserAchievementsInput,
-  ): Promise<{ achievementId: string }[]>;
+  ): Promise<UserAchievement[]>;
 
   abstract createManyUserAchievements(
     input: IAchievementsRepository.CreateManyInput,
@@ -26,12 +26,12 @@ export namespace IAchievementsRepository {
   export type CountInput = { where: WhereInput };
 
   export type FindManyAchievementsInput = {
-    where: WhereInput;
+    where?: WhereInput;
   };
 
   export type FindManyUserAchievementsInput = {
     where: WhereInput;
-    select: SelectInput;
+    select?: SelectInput;
   };
 
   export type CreateManyInput = {

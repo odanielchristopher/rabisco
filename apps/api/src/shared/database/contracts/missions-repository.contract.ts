@@ -1,5 +1,7 @@
 import { DailyMission, UserMission } from '@prisma/client';
 
+import { MISSIONS } from '@shared/constants/missions.constants';
+
 export type UserMissionWithDailyMission = UserMission & {
   mission: DailyMission;
 };
@@ -9,6 +11,10 @@ export abstract class IMissionsRepository {
     countUserMissionsDto: IMissionsRepository.CountUserMissionsDto,
   ): Promise<number>;
 
+  abstract findDailyMissions(
+    findDailyMisionsDto: IMissionsRepository.FindDailyMissionsDto,
+  ): Promise<DailyMission[]>;
+
   abstract findUserMissions(
     findUserMissionsDto: IMissionsRepository.FindUserMissionsDto,
   ): Promise<UserMissionWithDailyMission[]>;
@@ -16,6 +22,14 @@ export abstract class IMissionsRepository {
   abstract incrementProgress(
     incrementProgressDto: IMissionsRepository.IncrementProgressDto,
   ): Promise<UserMissionWithDailyMission | null>;
+
+  abstract createManyDailyMissions(
+    createMissionsDto: IMissionsRepository.CreateDailyMissions,
+  ): Promise<void>;
+
+  abstract upsertUserMission(
+    upsertUserMissionDto: IMissionsRepository.UpsertUserMission,
+  ): Promise<void>;
 }
 
 export namespace IMissionsRepository {
@@ -28,9 +42,22 @@ export namespace IMissionsRepository {
     userId: string;
   };
 
+  export type FindDailyMissionsDto = {
+    availableDate: Date;
+  };
+
   export type IncrementProgressDto = {
     userId: string;
     missionId: string;
     value: number;
+  };
+
+  export type CreateDailyMissions = {
+    missions: typeof MISSIONS;
+  };
+
+  export type UpsertUserMission = {
+    userId: string;
+    missionId: string;
   };
 }

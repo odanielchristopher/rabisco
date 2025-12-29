@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import { Injectable } from '@nestjs/common';
 
 import { IMissionsRepository } from '../contracts/missions-repository.contract';
@@ -25,6 +24,42 @@ export class MissionsRepository implements IMissionsRepository {
         completionDate: true,
         mission: true,
       },
+    });
+  }
+
+  findDailyMissions(
+    findDailyMisionsDto: IMissionsRepository.FindDailyMissionsDto,
+  ) {
+    const { availableDate } = findDailyMisionsDto;
+
+    return this.prismaService.dailyMission.findMany({
+      where: { availableDate },
+    });
+  }
+
+  async upsertUserMission(
+    upsertUserMissionDto: IMissionsRepository.UpsertUserMission,
+  ) {
+    const { missionId, userId } = upsertUserMissionDto;
+
+    await this.prismaService.userMission.upsert({
+      where: { userId_missionId: { missionId, userId } },
+      create: {
+        userId,
+        missionId,
+      },
+      update: {},
+    });
+  }
+
+  async createManyDailyMissions(
+    createMissionsDto: IMissionsRepository.CreateDailyMissions,
+  ) {
+    const { missions } = createMissionsDto;
+
+    await this.prismaService.dailyMission.createMany({
+      data: missions,
+      skipDuplicates: true,
     });
   }
 
