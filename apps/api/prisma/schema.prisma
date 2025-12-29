@@ -17,6 +17,7 @@ model User {
 
   refreshTokens      RefreshToken[]
   forgotPasswordCode ForgotPasswordCode?
+  tags               Tag[]
 
   @@map("users")
 }
@@ -42,4 +43,15 @@ model ForgotPasswordCode {
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("forgot_password_codes")
+}
+
+model Tag {
+  id        String   @id @default(uuid()) @db.Uuid
+  userId    String   @map("user_id") @db.Uuid
+  name      String   @unique
+  createdAt DateTime @default(now()) @map("created_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("tags")
 }
