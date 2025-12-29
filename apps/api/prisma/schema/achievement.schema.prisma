@@ -1,0 +1,33 @@
+model Achievement {
+  id          String          @id @default(uuid()) @db.Uuid
+  code        String          @unique
+  title       String
+  description String
+  type        AchievementType
+  goal        Int
+
+  users UserAchievement[]
+
+  @@map("achievements")
+}
+
+enum AchievementType {
+  TEXT_QUANTITY
+  DAY_SEQUENCE
+  MISSION
+
+  @@map("achievement_type")
+}
+
+model UserAchievement {
+  userId        String    @map("user_id") @db.Uuid
+  achievementId String    @map("achievement_id") @db.Uuid
+  achievedAt    DateTime  @default(now()) @map("achieved_at") @db.Timestamptz()
+  goalDate      DateTime? @map("goal_date") @db.Timestamptz()
+
+  achievement Achievement @relation(fields: [achievementId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  user        User        @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  @@unique([userId, achievementId])
+  @@map("users_achievements")
+}

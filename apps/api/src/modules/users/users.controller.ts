@@ -5,7 +5,6 @@ import {
   Get,
   HttpCode,
   HttpStatus,
-  Inject,
   Put,
 } from '@nestjs/common';
 
@@ -16,9 +15,7 @@ import { UpdateUserDto } from './dto/update-user.dto';
 
 @Controller('users')
 export class UsersController {
-  constructor(
-    @Inject(IUsersService) private readonly usersService: IUsersService,
-  ) {}
+  constructor(private readonly usersService: IUsersService) {}
 
   @Get('/me')
   me(@ActiveUserId() userId: string) {
