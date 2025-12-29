@@ -1,4 +1,6 @@
+/* eslint-disable quotes */
 import {
+  BadRequestException,
   Body,
   Controller,
   Delete,
@@ -9,7 +11,9 @@ import {
   Param,
   Post,
   Put,
+  Query,
 } from '@nestjs/common';
+import { isUUID } from 'class-validator';
 
 import { ActiveUserId } from '@shared/decorators/active-user-id.decorator';
 
@@ -24,8 +28,21 @@ export class TextsController {
   ) {}
 
   @Get()
-  findAll(@ActiveUserId() userId: string) {
-    return this.textsService.findAll({ userId });
+  findAll(
+    @ActiveUserId() userId: string,
+    @Query('category')
+    category?: string,
+    @Query('search')
+    searchQuery?: string,
+  ) {
+    if (category && !isUUID(category)) {
+      throw new BadRequestException("'category' need is a uuid param");
+    }
+
+    return this.textsService.findAll({
+      userId,
+      filters: { category, searchQuery },
+    });
   }
 
   @Get(':textId')

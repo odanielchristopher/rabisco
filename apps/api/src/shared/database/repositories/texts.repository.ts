@@ -16,12 +16,17 @@ export class TextsRepository implements ITextsRepository {
   async findAllByUserId(
     findAllDto: ITextsRepository.FindAllTextsDto,
   ): Promise<Text[]> {
-    const { userId, filters } = findAllDto;
+    const { userId, filters = {} } = findAllDto;
+    const { category, searchQuery } = filters;
 
     const findedTexts = await this.prismaService.text.findMany({
       where: {
         userId,
-        categories: { some: { categoryId: filters?.category } },
+        categories: category ? { some: { categoryId: category } } : undefined,
+        title: {
+          contains: searchQuery,
+          mode: 'insensitive',
+        },
       },
       select: this.select(),
     });
