@@ -19,7 +19,6 @@ export class StreakService {
 
     // Primeiro streak
     if (!streak) {
-      console.log('Executou aqui 1', streak);
       const created = await this.streakRepository.create({
         userId,
         daySequence: 1,
@@ -34,7 +33,6 @@ export class StreakService {
 
     // Já contou hoje
     if (diffDays === 0) {
-      console.log('Executou aqui 2');
       return;
     }
 
@@ -46,8 +44,6 @@ export class StreakService {
         lastDate: today,
       });
 
-      console.log('Executou aqui 3');
-
       this.emitStreakEvent(userId, reseted.daySequence);
       return;
     }
@@ -57,13 +53,11 @@ export class StreakService {
       userId,
       lastDate: today,
     });
-    console.log('Executou aqui 4');
 
     this.emitStreakEvent(userId, updated.daySequence);
   }
 
   private emitStreakEvent(userId: string, daySequence: number) {
-    console.log('Emitiu o evento: "streak.add"');
     this.eventEmitter.emit(
       'streak.add',
       new StreakGoalPaylod(userId, daySequence),
