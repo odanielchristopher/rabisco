@@ -17,11 +17,6 @@ export async function seedUser() {
           points: 0,
         },
       },
-      streak: {
-        create: {
-          daySequence: 0,
-        },
-      },
     },
   });
 

@@ -16,6 +16,6 @@ export class TextCreatedDailyMissionListener extends BaseListener {
   async handle(event: TextCreatedEvent) {
     await this.missionsService.evaluateTextCreated(event);
 
-    this.logger.log(event, `User ${event.userId} has mission updated.`);
+    this.logger.log(`User ${event.userId} has mission updated.`);
   }
 }

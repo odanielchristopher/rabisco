@@ -17,7 +17,6 @@ export class TextCreatedStreakListener extends BaseListener {
     await this.streaksService.incrementDailyStreak(event.userId);
 
     this.logger.log(
-      event,
       `User ${event.userId} has his streak increment in one Day.`,
     );
   }

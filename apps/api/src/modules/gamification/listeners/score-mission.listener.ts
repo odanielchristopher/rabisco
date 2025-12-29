@@ -16,6 +16,6 @@ export class MissionCompletedScoreListener extends BaseListener {
   async handle(event: MissionCompletedPayload) {
     await this.scoreService.addPoints(event.userId, event.mission.points);
 
-    this.logger.log(event, `User ${event.userId} has his points incremented.`);
+    this.logger.log(`User ${event.userId} has his points incremented.`);
   }
 }

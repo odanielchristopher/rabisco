@@ -17,6 +17,6 @@ export class TextCreatedScoreListener extends BaseListener {
   async handle(event: TextCreatedEvent) {
     await this.scoreService.addPoints(event.userId, pointsTo.CREATE_TEXT());
 
-    this.logger.log(event, `User ${event.userId} has his points incremented.`);
+    this.logger.log(`User ${event.userId} has his points incremented.`);
   }
 }
