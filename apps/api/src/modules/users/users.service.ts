@@ -7,13 +7,17 @@ import {
 import { compare, hash } from 'bcryptjs';
 
 import { IUsersRepository } from 'src/shared/database/contracts/users-repository.contract';
+import { PrismaService } from 'src/shared/database/prisma.service';
 
 import { IUsersService } from './contracts/users-service.contract';
 import { UpdateUserDto } from './dto/update-user.dto';
 
 @Injectable()
 export class UsersService implements IUsersService {
-  constructor(private readonly usersRepository: IUsersRepository) {}
+  constructor(
+    private readonly usersRepository: IUsersRepository,
+    private readonly prismaService: PrismaService,
+  ) {}
 
   async getUserById(userId: string) {
     const user = await this.usersRepository.findUniquetById({
@@ -24,7 +28,49 @@ export class UsersService implements IUsersService {
       throw new NotFoundException('Usuário não encontrado.');
     }
 
-    return { email: user.email, name: user.name };
+    const now = new Date();
+    const sevenDaysAgo = new Date(now.getTime());
+    sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+
+    const [totalTexts, textsThisWeek, wordsAggregate, userScore, streak] =
+      await Promise.all([
+        this.prismaService.text.count({
+          where: { userId },
+        }),
+        this.prismaService.text.count({
+          where: {
+            userId,
+            createdAt: {
+              gte: sevenDaysAgo,
+              lte: now,
+            },
+          },
+        }),
+        this.prismaService.text.aggregate({
+          _sum: { wordCount: true },
+          where: { userId },
+        }),
+        this.prismaService.userScore.findUnique({
+          where: { userId },
+        }),
+        this.prismaService.streak.findUnique({
+          where: { userId },
+        }),
+      ]);
+
+    const totalWords = wordsAggregate._sum.wordCount ?? 0;
+    const totalDays = streak?.daySequence ?? 0;
+    const score = userScore?.points ?? 0;
+
+    return {
+      name: user.name,
+      email: user.email,
+      totalDays,
+      totalTexts,
+      textsThisWeek,
+      totalWords,
+      score,
+    };
   }
 
   async update(userId: string, updateUserDto: UpdateUserDto) {
