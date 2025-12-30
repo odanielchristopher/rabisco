@@ -44,15 +44,25 @@ export class UsersRepository implements IUsersRepository {
     const { data, relations } = createUserDto;
 
     const categories = relations?.categories ?? [];
+    const tags = relations?.tags ?? [];
 
     const newUser = await this.prismaService.user.create({
       data: {
         ...data,
-        categories: {
-          createMany: {
-            data: categories,
+        ...(categories.length && {
+          categories: {
+            createMany: {
+              data: categories,
+            },
           },
-        },
+        }),
+        ...(tags.length && {
+          tag: {
+            createMany: {
+              data: tags,
+            },
+          },
+        }),
         score: {
           create: {
             points: 0,

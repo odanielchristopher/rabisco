@@ -23,7 +23,8 @@ export type FindUniqueUserByEmailDto = {
 export type CreateUserDto = {
   data: User | Omit<User, 'id'>;
   relations?: {
-    categories: { name: string }[];
+    categories?: { name: string }[];
+    tags?: { name: string }[];
   };
 };
 
