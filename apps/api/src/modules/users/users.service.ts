@@ -32,31 +32,49 @@ export class UsersService implements IUsersService {
     const sevenDaysAgo = new Date(now.getTime());
     sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
 
-    const [totalTexts, textsThisWeek, wordsAggregate, userScore, streak] =
-      await Promise.all([
-        this.prismaService.text.count({
-          where: { userId },
-        }),
-        this.prismaService.text.count({
-          where: {
-            userId,
-            createdAt: {
-              gte: sevenDaysAgo,
-              lte: now,
-            },
+    const startOfToday = new Date(now.getTime());
+    startOfToday.setHours(0, 0, 0, 0);
+
+    const [
+      totalTexts,
+      textsThisWeek,
+      textsToday,
+      wordsAggregate,
+      userScore,
+      streak,
+    ] = await Promise.all([
+      this.prismaService.text.count({
+        where: { userId },
+      }),
+      this.prismaService.text.count({
+        where: {
+          userId,
+          createdAt: {
+            gte: sevenDaysAgo,
+            lte: now,
           },
-        }),
-        this.prismaService.text.aggregate({
-          _sum: { wordCount: true },
-          where: { userId },
-        }),
-        this.prismaService.userScore.findUnique({
-          where: { userId },
-        }),
-        this.prismaService.streak.findUnique({
-          where: { userId },
-        }),
-      ]);
+        },
+      }),
+      this.prismaService.text.count({
+        where: {
+          userId,
+          createdAt: {
+            gte: startOfToday,
+            lte: now,
+          },
+        },
+      }),
+      this.prismaService.text.aggregate({
+        _sum: { wordCount: true },
+        where: { userId },
+      }),
+      this.prismaService.userScore.findUnique({
+        where: { userId },
+      }),
+      this.prismaService.streak.findUnique({
+        where: { userId },
+      }),
+    ]);
 
     const totalWords = wordsAggregate._sum.wordCount ?? 0;
     const totalDays = streak?.daySequence ?? 0;
@@ -68,6 +86,7 @@ export class UsersService implements IUsersService {
       totalDays,
       totalTexts,
       textsThisWeek,
+      textsToday,
       totalWords,
       score,
     };
