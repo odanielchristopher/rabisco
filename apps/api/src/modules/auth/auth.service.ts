@@ -81,6 +81,18 @@ export class AuthService implements IAuthService {
         { name: 'aventuras' },
         { name: 'objetivos' },
       ],
+      tags: [
+        { name: 'Pessoal' },
+        { name: 'Escola' },
+        { name: 'Família' },
+        { name: 'Amigos' },
+        { name: 'Sonhos' },
+        { name: 'Reflexões' },
+        { name: 'Gratidão' },
+        { name: 'Objetivos' },
+        { name: 'Criatividade' },
+        { name: 'Aventuras' },
+      ],
     };
   }
 }
