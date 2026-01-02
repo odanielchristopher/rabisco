@@ -1,26 +1,23 @@
-package com.example.rabisco.ui.theme.screens.write
+package com.example.rabisco.ui.screens.write
 
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.FilterChipDefaults
@@ -32,23 +29,19 @@ import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarColors
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.rabisco.ui.theme.RabiscoTheme
 
 
@@ -57,7 +50,7 @@ import com.example.rabisco.ui.theme.RabiscoTheme
 fun WriteScreen(
     onNavigateBack: () -> Unit = {},
     onTextSaved: () -> Unit = {},
-    viewModel: WriteViewModel = androidx.lifecycle.viewmodel.compose.viewModel()
+    viewModel: WriteViewModel = viewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
@@ -212,8 +205,8 @@ fun WriteContent (
             enabled = !isLoading
         ) {
             if(isLoading) {
-                androidx.compose.material3.CircularProgressIndicator(
-                    modifier = androidx.compose.ui.Modifier.size(20.dp),
+                CircularProgressIndicator(
+                    modifier = Modifier.size(20.dp),
                     color = MaterialTheme.colorScheme.onPrimary
                 )
             } else {
@@ -251,7 +244,7 @@ private fun CategorieSection(
                 modifier = Modifier.padding(bottom = 12.dp)
             )
 
-            var currentRow by remember { mutableStateOf(listOf<String>()) }
+            //var currentRow by remember { mutableStateOf(listOf<String>()) }
 
             Column(
                 verticalArrangement = Arrangement.spacedBy(4.dp)
@@ -295,7 +288,7 @@ private fun TagChip(
                 text = text,
                 style = MaterialTheme.typography.bodySmall,
                 modifier = Modifier.fillMaxWidth(),
-                textAlign = androidx.compose.ui.text.style.TextAlign.Center
+                textAlign = TextAlign.Center
             )
         },
         modifier = modifier,

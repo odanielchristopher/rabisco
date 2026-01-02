@@ -4,17 +4,14 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+<<<<<<< HEAD
 import com.example.rabisco.navigation.AppNavigation
+=======
+import com.example.rabisco.navigation.AppNavHost
+>>>>>>> cf9cc2f247713a2742ed9a4ab8fc34874f50cb5b
 import com.example.rabisco.ui.theme.RabiscoTheme
-import com.example.rabisco.ui.theme.screens.mytexts.MyTextsScreen
-import com.example.rabisco.ui.theme.screens.write.WriteScreen
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -22,24 +19,24 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             RabiscoTheme {
+<<<<<<< HEAD
                 AppNavigation()
+=======
+                AppNavHost()
+>>>>>>> cf9cc2f247713a2742ed9a4ab8fc34874f50cb5b
             }
         }
     }
-}
-
-@Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
 }
 
 @Preview(showBackground = true)
 @Composable
 fun GreetingPreview() {
     RabiscoTheme {
+<<<<<<< HEAD
         Greeting("Daniel")
+=======
+        AppNavHost()
+>>>>>>> cf9cc2f247713a2742ed9a4ab8fc34874f50cb5b
     }
 }

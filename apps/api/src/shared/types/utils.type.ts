@@ -5,3 +5,7 @@ export type Request = RequestExpress & {
 };
 
 export type JwtPaylod = { sub: string };
+
+export type BaseDto = {
+  userId: string;
+};

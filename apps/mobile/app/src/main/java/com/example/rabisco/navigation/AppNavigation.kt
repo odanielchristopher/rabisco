@@ -5,7 +5,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.rabisco.ui.theme.screens.mytexts.MyTextsScreen
-import com.example.rabisco.ui.theme.screens.write.WriteScreen
+import com.example.rabisco.ui.screens.write.WriteScreen
 
 @Composable
 fun AppNavigation() {

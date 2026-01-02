@@ -1,0 +1,67 @@
+model User {
+  id         String   @id @default(uuid()) @db.Uuid
+  name       String
+  avatarPath String?  @map("avatar_path")
+  email      String   @unique
+  password   String
+  createdAt  DateTime @default(now()) @map("created_at") @db.Timestamptz()
+  updatedAt  DateTime @updatedAt @map("updated_at") @db.Timestamptz()
+
+  score  UserScore?
+  streak Streak?
+
+  forgotPasswordCode ForgotPasswordCode?
+  refreshTokens      RefreshToken[]
+  texts              Text[]
+  categories         Category[]
+  dailyMissions      UserMission[]
+  achievements       UserAchievement[]
+  tag                Tag[]
+
+  @@map("users")
+}
+
+model RefreshToken {
+  id        String   @id @default(uuid()) @db.Uuid
+  userId    String   @map("user_id") @db.Uuid
+  issuesAt  DateTime @default(now()) @map("issues_at") @db.Timestamptz()
+  expiresAt DateTime @map("expires_at") @db.Timestamptz()
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("refresh_tokens")
+}
+
+model ForgotPasswordCode {
+  id        String   @id @default(uuid()) @db.Uuid
+  userId    String   @unique @map("user_id") @db.Uuid
+  code      String
+  issuesAt  DateTime @default(now()) @map("issues_at")
+  expiresAt DateTime @map("expires_at") @db.Timestamptz()
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("forgot_password_codes")
+}
+
+model UserScore {
+  id        String   @id @default(uuid()) @db.Uuid
+  userId    String   @unique @map("user_id") @db.Uuid
+  points    Int      @default(0) @db.Integer
+  updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz()
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("users_scores")
+}
+
+model Streak {
+  id          String   @id @default(uuid()) @db.Uuid
+  userId      String   @unique @map("user_id") @db.Uuid
+  daySequence Int      @default(0) @map("day_sequence") @db.Integer
+  lastDate    DateTime @updatedAt @map("last_date") @db.Timestamptz()
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("streaks")
+}

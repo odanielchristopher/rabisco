@@ -1,8 +1,7 @@
-package com.example.rabisco.ui.theme.screens.write
+package com.example.rabisco.ui.screens.write
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.rabisco.domain.models.Text
 import com.example.rabisco.data.repositories.TextRepositoryImpl
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -10,7 +9,6 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import kotlin.text.contains
 
 
 //essa data class vai para o uiState (estudar isso)

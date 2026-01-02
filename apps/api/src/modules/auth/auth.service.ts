@@ -7,9 +7,13 @@ import {
 import { JwtService } from '@nestjs/jwt';
 import { compare, hash } from 'bcryptjs';
 
-import { IUsersRepository } from '@shared/database/contracts/users-repository.contract';
+import {
+  CreateUserDto,
+  IUsersRepository,
+} from '@shared/database/contracts/users-repository.contract';
 
 import { IAuthService } from './contracts/auth-service.contract';
+import { AuthResponseDto } from './dto/auth-reponse.dto';
 import { SigninDto } from './dto/signin.dto';
 import { SignupDto } from './dto/signup.dto';
 
@@ -21,7 +25,7 @@ export class AuthService implements IAuthService {
     private readonly jwtService: JwtService,
   ) {}
 
-  async signin(signinDto: SigninDto) {
+  async signin(signinDto: SigninDto): Promise<AuthResponseDto> {
     const { email, password } = signinDto;
 
     const user = await this.userRespository.findUniqueByEmail({ email });
@@ -41,7 +45,7 @@ export class AuthService implements IAuthService {
     return { accessToken };
   }
 
-  async signup(signupDto: SignupDto) {
+  async signup(signupDto: SignupDto): Promise<AuthResponseDto> {
     const { name, email, password } = signupDto;
 
     const emailTaken = await this.userRespository.findUniqueByEmail({ email });
@@ -54,6 +58,7 @@ export class AuthService implements IAuthService {
 
     const user = await this.userRespository.create({
       data: { name, email, password: hashedPassword },
+      relations: this.getUserDefaultRelations(),
     });
 
     const accessToken = await this.generateAccessToken(user.id);
@@ -63,5 +68,19 @@ export class AuthService implements IAuthService {
 
   private generateAccessToken(userId: string) {
     return this.jwtService.signAsync({ sub: userId });
+  }
+
+  private getUserDefaultRelations(): CreateUserDto['relations'] {
+    return {
+      categories: [
+        { name: 'pessoal' },
+        { name: 'escola' },
+        { name: 'família' },
+        { name: 'amigos' },
+        { name: 'reflexões' },
+        { name: 'aventuras' },
+        { name: 'objetivos' },
+      ],
+    };
   }
 }

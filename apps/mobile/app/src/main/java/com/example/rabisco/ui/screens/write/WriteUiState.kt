@@ -1,4 +1,4 @@
-package com.example.rabisco.ui.theme.screens.write
+package com.example.rabisco.ui.screens.write
 
 data class WriteUiState(
     val title: String = "",
