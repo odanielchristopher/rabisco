@@ -8,4 +8,5 @@ export class Text {
   wordCount: number;
   createdAt: Date;
   updatedAt: Date;
+  dailyPromptId?: string | null;
 }

@@ -52,7 +52,7 @@ export class TextsRepository implements ITextsRepository {
 
   async create(createDto: ITextsRepository.CreateTextDto): Promise<Text> {
     const { userId, data } = createDto;
-    const { type, title, content, wordCount } = data;
+    const { type, title, content, wordCount, dailyPromptId } = data;
 
     const created = await this.prismaService.text.create({
       data: {
@@ -61,6 +61,7 @@ export class TextsRepository implements ITextsRepository {
         title,
         content,
         wordCount,
+        dailyPromptId,
       },
       select: this.select(),
     });
@@ -70,7 +71,7 @@ export class TextsRepository implements ITextsRepository {
 
   async update(updateDto: ITextsRepository.UpdateTextDto): Promise<Text> {
     const { textId, data } = updateDto;
-    const { type, title, content, wordCount } = data;
+    const { type, title, content, wordCount, dailyPromptId } = data;
 
     const updated = await this.prismaService.text.update({
       where: { id: textId },
@@ -79,6 +80,7 @@ export class TextsRepository implements ITextsRepository {
         title,
         content,
         wordCount,
+        dailyPromptId,
       },
       select: this.select(),
     });
@@ -101,6 +103,7 @@ export class TextsRepository implements ITextsRepository {
       wordCount: true,
       createdAt: true,
       updatedAt: true,
+      dailyPromptId: true,
     };
   }
 }
