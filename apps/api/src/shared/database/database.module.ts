@@ -50,6 +50,7 @@ import { UsersRepository } from './repositories/users.repository';
     },
   ],
   exports: [
+    PrismaService,
     {
       provide: IUsersRepository,
       useClass: UsersRepository,
