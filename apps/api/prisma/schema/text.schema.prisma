@@ -19,6 +19,7 @@ model Text {
   dailyPromptId String? @map("daily_prompt_id") @db.Uuid
 
   categories  TextCategory[]
+  tags        TextTag[]
   user        User           @relation(fields: [userId], references: [id], onDelete: Cascade)
   dailyPrompt DailyPrompt?   @relation(fields: [dailyPromptId], references: [id])
 

@@ -40,13 +40,13 @@ export class TextsService implements ITextsService {
 
   async create(input: ITextsService.CreateInput): Promise<Text> {
     const { userId, createTextDto } = input;
-    const { title, content, type, dailyPromptId } = createTextDto;
+    const { title, content, type, dailyPromptId, tagIds } = createTextDto;
 
     const wordCount = countWords(content);
 
     const text = await this.textsRepository.create({
       userId,
-      data: { title, content, type, wordCount, dailyPromptId },
+      data: { title, content, type, wordCount, dailyPromptId, tagIds },
     });
 
     this.eventEmitter.emit(
@@ -64,13 +64,13 @@ export class TextsService implements ITextsService {
   }: ITextsService.UpdateInput): Promise<Text> {
     await this.validateTextOwnershipService.validate({ userId, textId });
 
-    const { type, title, content, dailyPromptId } = updateTextDto;
+    const { type, title, content, dailyPromptId, tagIds } = updateTextDto;
 
     const wordCount = countWords(content);
 
     return this.textsRepository.update({
       textId,
-      data: { title, content, type, wordCount, dailyPromptId },
+      data: { title, content, type, wordCount, dailyPromptId, tagIds },
     });
   }
 

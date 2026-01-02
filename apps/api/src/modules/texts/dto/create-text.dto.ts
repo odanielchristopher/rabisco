@@ -30,4 +30,9 @@ export class CreateTextDto {
   @IsArray()
   @IsUUID('4', { each: true })
   categoryIds?: string[];
+
+  @IsOptional()
+  @IsArray()
+  @IsUUID('4', { each: true })
+  tagIds?: string[];
 }
