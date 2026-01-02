@@ -1,4 +1,4 @@
-package com.example.rabisco.ui.theme.screens.write
+package com.example.rabisco.ui.screens.write
 
 data class WriteUiState(
     val title: String = "",
@@ -6,5 +6,6 @@ data class WriteUiState(
     val selectedTags: Set<String> = emptySet(),
     val wordCount: Int = 0,
     val isLoading: Boolean = false,
-    val errorMessage: String? = null
+    val errorMessage: String? = null,
+    val textSaved: Boolean = false
 )

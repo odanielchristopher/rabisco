@@ -1,28 +1,30 @@
 package com.example.rabisco.ui.theme.screens.mytexts
 
 import androidx.lifecycle.ViewModel
-import com.example.rabisco.data.Text
+import com.example.rabisco.domain.models.Text
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
-import java.util.Date
 import androidx.lifecycle.viewModelScope
+import com.example.rabisco.data.repositories.TextRepositoryImpl
 import kotlinx.coroutines.launch
 
 class MyTextsViewModel : ViewModel() {
+
+    //add o singleton aqui...
+    private val repository = TextRepositoryImpl.getInstance()
+
     private val _uiState = MutableStateFlow(MyTextsUiState())
     val uiState: StateFlow<MyTextsUiState> = _uiState.asStateFlow()
 
     init {
-        val mockTexts = listOf(
-            Text(1, "Teste", "fdsfasdfasf", Date(), 1, "Pessoal"),
-            Text(2, "Outro Teste", "mais um teste", Date(), 3, "Escola")
-        )
-        _uiState.value = _uiState.value.copy(
-            texts = mockTexts,
-            filteredTexts = mockTexts
-        )
+        viewModelScope.launch {
+            repository.textsFlow.collect { texts ->
+                _uiState.update { it.copy(texts = texts) }
+                filterTexts()
+            }
+        }
     }
 
     fun onSearchQueryChanged(query: String) {
@@ -38,7 +40,7 @@ class MyTextsViewModel : ViewModel() {
     private fun filterTexts() {
         val state = _uiState.value
         val filtered = state.texts.filter { text ->
-            val matchesCategory = state.selectedTab == "Todos" || text.category == state.selectedTab
+            val matchesCategory = state.selectedTab == "Todos" || text.tags.contains(state.selectedTab)
             val matchesSearch = state.searchQuery.isBlank() ||
                     text.title.contains(state.searchQuery, ignoreCase = true) ||
                     text.content.contains(state.searchQuery, ignoreCase = true)
@@ -57,10 +59,9 @@ class MyTextsViewModel : ViewModel() {
     fun deleteText() {
         viewModelScope.launch {
             _uiState.value.textToDelete?.let { text ->
-                val updatedTexts = _uiState.value.texts.filter { it.id != text.id }
+                repository.deleteText(text.id)
                 _uiState.update {
                     it.copy(
-                        texts = updatedTexts,
                         showDeleteConfirmation = false,
                         textToDelete = null
                     )
