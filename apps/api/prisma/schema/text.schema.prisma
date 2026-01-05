@@ -16,8 +16,24 @@ model Text {
   createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz()
   updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz()
 
-  categories TextCategory[]
-  user       User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  dailyPromptId String? @map("daily_prompt_id") @db.Uuid
+
+  categories  TextCategory[]
+  tags        TextTag[]
+  user        User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  dailyPrompt DailyPrompt?   @relation(fields: [dailyPromptId], references: [id])
 
   @@map("texts")
+}
+
+model DailyPrompt {
+  id        String   @id @default(uuid()) @db.Uuid
+  prompt    String
+  date      DateTime @unique @db.Date
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz()
+  updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz()
+
+  texts Text[]
+
+  @@map("daily_prompts")
 }

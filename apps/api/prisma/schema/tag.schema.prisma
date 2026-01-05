@@ -4,8 +4,20 @@ model Tag {
   name      String
   createdAt DateTime @default(now()) @map("created_at")
 
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  texts TextTag[]
 
   @@unique([userId, name])
   @@map("tags")
+}
+
+model TextTag {
+  tagId  String @map("tag_id") @db.Uuid
+  textId String @map("text_id") @db.Uuid
+
+  text Text @relation(fields: [textId], references: [id], onDelete: Cascade)
+  tag  Tag  @relation(fields: [tagId], references: [id], onDelete: Cascade)
+
+  @@unique([tagId, textId])
+  @@map("texts_tags")
 }

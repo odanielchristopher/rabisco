@@ -52,7 +52,7 @@ export class TextsRepository implements ITextsRepository {
 
   async create(createDto: ITextsRepository.CreateTextDto): Promise<Text> {
     const { userId, data } = createDto;
-    const { type, title, content, wordCount } = data;
+    const { type, title, content, wordCount, dailyPromptId, tagIds } = data;
 
     const created = await this.prismaService.text.create({
       data: {
@@ -61,16 +61,26 @@ export class TextsRepository implements ITextsRepository {
         title,
         content,
         wordCount,
+        dailyPromptId,
       },
       select: this.select(),
     });
+
+    const tagIdsArray: string[] = Array.isArray(tagIds) ? tagIds : [];
+
+    if (tagIdsArray.length) {
+      await this.textTagDelegate.createMany({
+        data: tagIdsArray.map((tagId) => ({ textId: created.id, tagId })),
+        skipDuplicates: true,
+      });
+    }
 
     return created as Text;
   }
 
   async update(updateDto: ITextsRepository.UpdateTextDto): Promise<Text> {
     const { textId, data } = updateDto;
-    const { type, title, content, wordCount } = data;
+    const { type, title, content, wordCount, dailyPromptId, tagIds } = data;
 
     const updated = await this.prismaService.text.update({
       where: { id: textId },
@@ -79,9 +89,23 @@ export class TextsRepository implements ITextsRepository {
         title,
         content,
         wordCount,
+        dailyPromptId,
       },
       select: this.select(),
     });
+
+    const tagIdsArray: string[] = Array.isArray(tagIds) ? tagIds : [];
+
+    if (tagIdsArray.length >= 0 && tagIds !== undefined) {
+      await this.textTagDelegate.deleteMany({ where: { textId } });
+
+      if (tagIdsArray.length) {
+        await this.textTagDelegate.createMany({
+          data: tagIdsArray.map((tagId) => ({ textId, tagId })),
+          skipDuplicates: true,
+        });
+      }
+    }
 
     return updated as Text;
   }
@@ -90,6 +114,20 @@ export class TextsRepository implements ITextsRepository {
     const { textId } = deleteDto;
 
     await this.prismaService.text.delete({ where: { id: textId } });
+  }
+
+  private get textTagDelegate() {
+    return (
+      this.prismaService as unknown as {
+        textTag: {
+          createMany: (args: {
+            data: { textId: string; tagId: string }[];
+            skipDuplicates?: boolean;
+          }) => Promise<unknown>;
+          deleteMany: (args: { where: { textId: string } }) => Promise<unknown>;
+        };
+      }
+    ).textTag;
   }
 
   private select() {
@@ -101,6 +139,7 @@ export class TextsRepository implements ITextsRepository {
       wordCount: true,
       createdAt: true,
       updatedAt: true,
+      dailyPromptId: true,
     };
   }
 }

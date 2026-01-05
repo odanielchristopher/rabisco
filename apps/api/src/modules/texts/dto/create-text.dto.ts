@@ -23,7 +23,16 @@ export class CreateTextDto {
   content: string;
 
   @IsOptional()
+  @IsUUID('4')
+  dailyPromptId?: string;
+
+  @IsOptional()
   @IsArray()
   @IsUUID('4', { each: true })
   categoryIds?: string[];
+
+  @IsOptional()
+  @IsArray()
+  @IsUUID('4', { each: true })
+  tagIds?: string[];
 }

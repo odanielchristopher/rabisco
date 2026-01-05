@@ -31,12 +31,16 @@ export namespace ITextsRepository {
   export type FindOneTextDto = BaseDto & { textId: string };
 
   export type CreateTextDto = BaseDto & {
-    data: Omit<Text, 'id' | 'createdAt' | 'updatedAt'>;
+    data: Omit<Text, 'id' | 'createdAt' | 'updatedAt'> & {
+      tagIds?: string[];
+    };
   };
 
   export type UpdateTextDto = {
     textId: string;
-    data: Omit<Text, 'id' | 'createdAt' | 'updatedAt'>;
+    data: Omit<Text, 'id' | 'createdAt' | 'updatedAt'> & {
+      tagIds?: string[];
+    };
   };
 
   export type DeleteTextDto = {
