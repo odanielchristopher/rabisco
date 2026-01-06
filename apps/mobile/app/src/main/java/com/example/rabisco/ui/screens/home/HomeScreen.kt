@@ -16,11 +16,7 @@ fun HomeScreen( ) {
         modifier = Modifier.fillMaxSize()
     ) { innerPadding ->
 
-        Card(modifier = Modifier.padding(innerPadding)) {
-            Card() {
-                Text("Clique para navegar")
-            }
-        }
+
     }
 }
 
