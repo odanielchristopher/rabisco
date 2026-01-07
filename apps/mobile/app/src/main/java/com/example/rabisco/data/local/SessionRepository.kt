@@ -1,6 +1,8 @@
     package com.example.rabisco.data.local
 
     import android.content.Context
+    import androidx.datastore.core.DataStore
+    import androidx.datastore.preferences.core.Preferences
     import androidx.datastore.preferences.core.booleanPreferencesKey
     import androidx.datastore.preferences.core.edit
     import androidx.datastore.preferences.core.stringPreferencesKey
@@ -9,44 +11,41 @@
     import kotlinx.coroutines.flow.first
     import kotlinx.coroutines.flow.map
 
+    private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "session")
     class SessionRepository(private val context: Context) {
-
         private val DARK_MODE = booleanPreferencesKey("dark_mode")
-
-        private val Context.sessionDataStore by preferencesDataStore("session")
-
         private val TOKEN = stringPreferencesKey("token")
 
 
         suspend fun saveToken(token: String) {
-            context.sessionDataStore.edit { prefs ->
+            context.dataStore.edit { prefs ->
                 prefs[TOKEN] = token
             }
         }
 
         suspend fun getToken(): String? {
-            return context.sessionDataStore.data.first()[TOKEN]
+            return context.dataStore.data.first()[TOKEN]
         }
 
         suspend fun clearSession() {
-            context.sessionDataStore.edit { prefs ->
+            context.dataStore.edit { prefs ->
                 prefs.clear()
             }
         }
 
         fun observeDarkMode(): Flow<Boolean> {
-            return context.sessionDataStore.data.map { prefs ->
+            return context.dataStore.data.map { prefs ->
                 prefs[DARK_MODE] ?: false
             }
         }
 
         suspend fun saveDarkMode(enabled: Boolean) {
-            context.sessionDataStore.edit { prefs ->
+            context.dataStore.edit { prefs ->
                 prefs[DARK_MODE] = enabled
             }
         }
 
         suspend fun getDarkMode(): Boolean {
-            return context.sessionDataStore.data.first()[DARK_MODE] ?: false
+            return context.dataStore.data.first()[DARK_MODE] ?: false
         }
     }

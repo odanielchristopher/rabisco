@@ -34,6 +34,9 @@ fun ProfileScreen(
     val uiState by viewModel.uiState.collectAsState()
     val context = LocalContext.current
 
+    val themeViewModel: com.example.rabisco.ui.theme.ThemeViewModel =
+        viewModel()
+
     // Estado temporario pra testar o toggle
     var isDarkMode by remember { mutableStateOf(false) }
 
@@ -67,6 +70,7 @@ fun ProfileScreen(
                 checked = uiState.isDarkMode,
                 onCheckedChange = { enabled ->
                     viewModel.toggleDarkMode(enabled)
+                    themeViewModel.toggleDarkMode(enabled)
                 }
             )
         }
