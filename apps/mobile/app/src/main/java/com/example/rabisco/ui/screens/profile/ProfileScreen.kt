@@ -6,25 +6,32 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.Logout
 import androidx.compose.material.icons.filled.LightMode
+import androidx.compose.material.icons.filled.ChevronRight
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-
+import androidx.lifecycle.viewmodel.compose.viewModel
 
 // Tela de perfil
 @Composable
-fun ProfileScreen() {
+fun ProfileScreen(
+    viewModel: ProfileViewModel = viewModel(
+        factory = ProfileViewModel.provideFactory(LocalContext.current)
+    )
+) {
+    val uiState by viewModel.uiState.collectAsState()
 
     // Estado temporario pra testar o toggle
     var isDarkMode by remember { mutableStateOf(false) }
-
-
 
     Column(
         modifier = Modifier
@@ -33,7 +40,10 @@ fun ProfileScreen() {
             .padding(16.dp)
     ) {
         // Card com info do usuario
-        UserInfoCard()
+        UserInfoCard(
+            name = uiState.userName,
+            email = uiState.userEmail
+        )
 
         Spacer(modifier = Modifier.height(24.dp))
 
@@ -47,11 +57,42 @@ fun ProfileScreen() {
                 onCheckedChange = { isDarkMode = it }
             )
         }
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        // Seção conta com logout
+        ProfileSection(title = "Conta") {
+            ClickableItem(
+                title = "Sair",
+                icon = Icons.AutoMirrored.Filled.Logout,
+                iconColor = MaterialTheme.colorScheme.error,
+                textColor = MaterialTheme.colorScheme.error,
+                onClick = viewModel::showLogoutDialog
+            )
+        }
+    }
+
+    // Card de confirmação de logout
+    if (uiState.showLogoutDialog) {
+        LogoutConfirmationDialog(
+            onConfirm = viewModel::logout,
+            onDismiss = viewModel::dismissLogoutDialog
+        )
+    }
+
+    // Loading
+    if (uiState.isLoading) {
+        Box(
+            modifier = Modifier.fillMaxSize(),
+            contentAlignment = Alignment.Center
+        ) {
+            CircularProgressIndicator()
+        }
     }
 }
 
 @Composable
-private fun UserInfoCard() {
+private fun UserInfoCard(name: String, email: String) {
     Card(
         modifier = Modifier.fillMaxSize(),
         shape = RoundedCornerShape(24.dp),
@@ -178,6 +219,81 @@ private fun ToggleItem(
         )
     }
 }
+
+@Composable
+private fun ClickableItem(
+    title: String,
+    icon: ImageVector,
+    iconColor: Color = MaterialTheme.colorScheme.onSurfaceVariant,
+    textColor: Color = MaterialTheme.colorScheme.onSurface,
+    onClick: () -> Unit
+) {
+    Surface(
+        onClick = onClick,
+        color = Color.Transparent,
+        shape = RoundedCornerShape(12.dp)
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(12.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Icon(
+                imageVector = icon,
+                contentDescription = null,
+                tint = iconColor,
+                modifier = Modifier.size(24.dp)
+            )
+
+            Spacer(modifier = Modifier.width(16.dp))
+
+            Text(
+                text = title,
+                style = MaterialTheme.typography.bodyLarge,
+                fontWeight = FontWeight.Medium,
+                color = textColor
+            )
+
+            Spacer(modifier = Modifier.weight(1f))
+
+            Icon(
+                imageVector = Icons.Default.ChevronRight,
+                contentDescription = null,
+                tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f),
+                modifier = Modifier.size(20.dp)
+            )
+        }
+    }
+}
+
+@Composable
+private fun LogoutConfirmationDialog(
+    onConfirm: () -> Unit,
+    onDismiss: () -> Unit
+) {
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = { Text("Sair da conta?") },
+        text = { Text("Você precisará logar novamente para acessar seus textos. Você tem certeza?") },
+        confirmButton = {
+            Button(
+                onClick = onConfirm,
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = MaterialTheme.colorScheme.error
+                )
+            ) {
+                Text("Sair")
+            }
+        },
+        dismissButton = {
+            TextButton(onClick = onDismiss) {
+                Text("Cancelar")
+            }
+        }
+    )
+}
+
 
 @Preview(showBackground = true)
 @Composable
