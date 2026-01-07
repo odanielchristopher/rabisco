@@ -9,5 +9,6 @@ data class ProfileUiState(
     val isLoading: Boolean = false,
     val errorMessage: String? = null,
     val showLogoutDialog: Boolean = false,
-    val isLoggedOut: Boolean = false
+    val isLoggedOut: Boolean = false,
+    val shouldRequestPermission: Boolean = false
 )

@@ -1,5 +1,6 @@
 package com.example.rabisco.ui.screens.profile
 
+import android.app.Activity
 import android.content.Intent
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
@@ -11,6 +12,7 @@ import androidx.compose.material.icons.automirrored.filled.Logout
 import androidx.compose.material.icons.filled.LightMode
 import androidx.compose.material.icons.filled.ChevronRight
 import androidx.compose.material.icons.filled.Share
+import androidx.compose.material.icons.filled.NotificationsNone
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -22,6 +24,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+
 
 // Tela de perfil
 @Composable
@@ -36,6 +39,18 @@ fun ProfileScreen(
 
     val themeViewModel: com.example.rabisco.ui.theme.ThemeViewModel =
         viewModel()
+
+    var showTimePicker by remember { mutableStateOf(false) }
+
+    val activity = context as? Activity
+
+    LaunchedEffect(uiState.shouldRequestPermission) {
+        if (uiState.shouldRequestPermission && activity != null) {
+            com.example.rabisco.data.notifications.NotificationHelper
+                .requestNotificationPermission(activity)
+            viewModel.resetPermissionRequest()
+        }
+    }
 
     // Estado temporario pra testar o toggle
     var isDarkMode by remember { mutableStateOf(false) }
@@ -73,6 +88,46 @@ fun ProfileScreen(
                     themeViewModel.toggleDarkMode(enabled)
                 }
             )
+        }
+
+        Spacer(modifier = Modifier.height(24.dp))
+
+        // Seção de notificações
+        ProfileSection(title = "Notificações") {
+            ToggleItem(
+                title = "Lembretes diários",
+                description = "Receba um lembrete para escrever",
+                icon = Icons.Default.NotificationsNone,
+                checked = uiState.isNotificationsEnabled,
+                onCheckedChange = viewModel::toggleNotifications
+            )
+            if (uiState.isNotificationsEnabled) {
+                Surface(
+                    onClick = { showTimePicker = true },
+                    color = Color.Transparent,
+                    shape = RoundedCornerShape(8.dp)
+                ) {
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(start = 56.dp, top = 8.dp, end = 16.dp, bottom = 8.dp),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(
+                            text = "Horário: ${uiState.notificationTime}",
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                        Icon(
+                            imageVector = Icons.Default.ChevronRight,
+                            contentDescription = "Alterar horário",
+                            tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f),
+                            modifier = Modifier.size(20.dp)
+                        )
+                    }
+                }
+            }
         }
 
         Spacer(modifier = Modifier.height(24.dp))
@@ -116,6 +171,17 @@ fun ProfileScreen(
         LogoutConfirmationDialog(
             onConfirm = viewModel::logout,
             onDismiss = viewModel::dismissLogoutDialog
+        )
+    }
+
+    if (showTimePicker) {
+        TimePickerDialog(
+            initialTime = uiState.notificationTime,
+            onDismiss = { showTimePicker = false },
+            onConfirm = { hour, minute ->
+                viewModel.updateNotificationTime(hour, minute)
+                showTimePicker = false
+            }
         )
     }
 
@@ -323,6 +389,43 @@ private fun LogoutConfirmationDialog(
                 )
             ) {
                 Text("Sair")
+            }
+        },
+        dismissButton = {
+            TextButton(onClick = onDismiss) {
+                Text("Cancelar")
+            }
+        }
+    )
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun TimePickerDialog(
+    initialTime: String,
+    onDismiss: () -> Unit,
+    onConfirm: (Int, Int) -> Unit
+) {
+    // ⚠️ ERRO: toInt() direto pode crashar!
+    val (hour, minute) = initialTime.split(":").map { it.toInt() }
+
+    val timePickerState = rememberTimePickerState(
+        initialHour = hour,
+        initialMinute = minute,
+        is24Hour = true
+    )
+
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = { Text("Selecionar horário") },
+        text = {
+            TimePicker(state = timePickerState)
+        },
+        confirmButton = {
+            Button(onClick = {
+                onConfirm(timePickerState.hour, timePickerState.minute)
+            }) {
+                Text("Confirmar")
             }
         },
         dismissButton = {

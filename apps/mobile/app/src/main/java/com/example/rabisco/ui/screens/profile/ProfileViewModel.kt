@@ -5,6 +5,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.example.rabisco.data.local.SessionRepository
+import com.example.rabisco.data.notifications.NotificationHelper
+import com.example.rabisco.data.notifications.NotificationScheduler
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -21,6 +23,7 @@ class ProfileViewModel(private val context: Context) : ViewModel() {
     init {
         loadUserData()
         loadDarkModePreference()
+        loadNotificationPreferences()
     }
 
     private fun loadUserData() {
@@ -63,6 +66,78 @@ class ProfileViewModel(private val context: Context) : ViewModel() {
                 // usar padrao (false)
             }
         }
+    }
+
+    private fun parseTime(time: String): Pair<Int, Int> {
+        val parts = time.split(":")
+        return Pair(parts[0].toInt(), parts[1].toInt())
+    }
+
+    fun toggleNotifications(enabled: Boolean) {
+        viewModelScope.launch {
+            _uiState.update { it.copy(isNotificationsEnabled = enabled) }
+
+            try {
+                sessionRepository.saveNotificationsEnabled(enabled)
+
+                if (enabled) {
+                    // Verificar permissao
+                    if (NotificationHelper.hasNotificationPermission(context)) {
+                        // Agendar notificacao
+                        val time = _uiState.value.notificationTime
+                        val (hour, minute) = parseTime(time)
+                        NotificationScheduler.scheduleNotification(context, hour, minute)
+                    } else {
+                        // Pedir permissao (vai ser tratado na tela)
+                        _uiState.update { it.copy(shouldRequestPermission = true) }
+                    }
+                } else {
+                    // Cancelar
+                    NotificationScheduler.cancelNotification(context)
+                }
+            } catch (e: Exception) {
+                _uiState.update { it.copy(errorMessage = "Erro: ${e.message}") }
+            }
+        }
+    }
+
+    fun updateNotificationTime(hour: Int, minute: Int) {
+        viewModelScope.launch {
+            val timeString = String.format("%02d:%02d", hour, minute)
+            _uiState.update { it.copy(notificationTime = timeString) }
+
+            try {
+                sessionRepository.saveNotificationTime(timeString)
+
+                // Se notificacoes estao ativas, reagendar
+                if (_uiState.value.isNotificationsEnabled) {
+                    NotificationScheduler.scheduleNotification(context, hour, minute)
+                }
+            } catch (e: Exception) {
+                _uiState.update { it.copy(errorMessage = "Erro: ${e.message}") }
+            }
+        }
+    }
+
+    private fun loadNotificationPreferences() {
+        viewModelScope.launch {
+            try {
+                val isEnabled = sessionRepository.getNotificationsEnabled()
+                val time = sessionRepository.getNotificationTime()
+                _uiState.update {
+                    it.copy(
+                        isNotificationsEnabled = isEnabled,
+                        notificationTime = time
+                    )
+                }
+            } catch (e: Exception) {
+                // usar padrao
+            }
+        }
+    }
+
+    fun resetPermissionRequest() {
+        _uiState.update { it.copy(shouldRequestPermission = false) }
     }
 
     // Mostrar dialog de logout
