@@ -5,18 +5,27 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.LightMode
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 
 
 // Tela de perfil
 @Composable
 fun ProfileScreen() {
+
+    // Estado temporario pra testar o toggle
+    var isDarkMode by remember { mutableStateOf(false) }
+
+
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -28,12 +37,19 @@ fun ProfileScreen() {
 
         Spacer(modifier = Modifier.height(24.dp))
 
-        // Seção de exemplo usando o ProfileSection
+        // Seção aparencia do darkmode
         ProfileSection(title = "Aparência") {
-            Text("Testeeeeeeeeeeeeeeeeeeee")
+            ToggleItem(
+                title = "Modo escuro",
+                description = "Reduz o cansaço visual",
+                icon = Icons.Default.LightMode,
+                checked = isDarkMode,
+                onCheckedChange = { isDarkMode = it }
+            )
         }
     }
 }
+
 @Composable
 private fun UserInfoCard() {
     Card(
@@ -112,6 +128,54 @@ private fun ProfileSection(
                 content()
             }
         }
+    }
+}
+
+// Item com switch
+@Composable
+private fun ToggleItem(
+    title: String,
+    description: String,
+    icon: ImageVector,
+    checked: Boolean,
+    onCheckedChange: (Boolean) -> Unit
+) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(8.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        // Icone de sol
+        Icon(
+            imageVector = icon,
+            contentDescription = null,
+            tint = MaterialTheme.colorScheme.onSurfaceVariant,
+            modifier = Modifier.size(24.dp)
+        )
+
+        Spacer(modifier = Modifier.width(16.dp))
+
+        // Textos
+        Column(modifier = Modifier.weight(1f)) {
+            Text(
+                text = title,
+                style = MaterialTheme.typography.bodyLarge,
+                fontWeight = FontWeight.SemiBold
+            )
+            Text(
+                text = description,
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+        }
+
+        // Switch
+        Switch(
+            checked = checked,
+            onCheckedChange = onCheckedChange,
+            modifier = Modifier.padding(end = 6.dp)
+        )
     }
 }
 
