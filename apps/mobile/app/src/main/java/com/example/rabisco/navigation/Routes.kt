@@ -13,5 +13,6 @@ sealed class Routes(val path: String) {
     data object MyTexts : Routes("mytexts")
     data object Stats : Routes("stats")
     data object Write : Routes("write")
+    data object Profile : Routes("profile")
     data object Settings : Routes("settings")
 }
