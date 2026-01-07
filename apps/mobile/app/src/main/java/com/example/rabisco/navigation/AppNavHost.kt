@@ -27,7 +27,13 @@ fun AppNavHost(
         }
 
         composable(Routes.Profile.path) {
-            ProfileScreen()
+            ProfileScreen(
+                onNavigateToAuth = {
+                    navController.navigate(Routes.Auth.path) {
+                        popUpTo(0) { inclusive = true }
+                    }
+                }
+            )
         }
     }
 }

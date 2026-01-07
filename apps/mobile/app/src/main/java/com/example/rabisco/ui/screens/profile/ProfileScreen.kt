@@ -24,6 +24,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 // Tela de perfil
 @Composable
 fun ProfileScreen(
+    onNavigateToAuth: () -> Unit = {},
     viewModel: ProfileViewModel = viewModel(
         factory = ProfileViewModel.provideFactory(LocalContext.current)
     )
@@ -32,6 +33,12 @@ fun ProfileScreen(
 
     // Estado temporario pra testar o toggle
     var isDarkMode by remember { mutableStateOf(false) }
+
+    LaunchedEffect(uiState.isLoggedOut) {
+        if (uiState.isLoggedOut) {
+            onNavigateToAuth()
+        }
+    }
 
     Column(
         modifier = Modifier
