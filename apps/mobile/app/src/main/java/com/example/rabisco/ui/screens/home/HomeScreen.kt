@@ -103,57 +103,67 @@ private fun HomeContent (
                 backgroundColor = Color(0xFFFFB300),
                 modifier = Modifier.weight(1f)
             )
+        }
 
-            Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(16.dp))
 
-            Row(
-                modifier = Modifier.fillMaxSize(),
-                horizontalArrangement = Arrangement.spacedBy(16.dp)
-            ) {
-                SmallStatCard(
-                    title = "Textos escritos",
-                    value = uiState.totalTexts.toString(),
-                    icon = Icons.Default.Description,
-                    modifier = Modifier.weight(1f)
-                )
-                SmallStatCard(
-                    title = "Esta semana",
-                    value = uiState.textsWeek.toString(),
-                    icon = Icons.Default.CalendarToday,
-                    modifier = Modifier.weight(1f)
-                )
-            }
+        Row(
+            modifier = Modifier.fillMaxSize(),
+            horizontalArrangement = Arrangement.spacedBy(16.dp)
+        ) {
+            SmallStatCard(
+                title = "Textos escritos",
+                value = uiState.totalTexts.toString(),
+                icon = Icons.Default.Description,
+                modifier = Modifier.weight(1f)
+            )
+            SmallStatCard(
+                title = "Esta semana",
+                value = uiState.textsWeek.toString(),
+                icon = Icons.Default.CalendarToday,
+                modifier = Modifier.weight(1f)
+            )
+        }
 
-            Spacer(modifier = Modifier.height(24.dp))
+        Spacer(modifier = Modifier.height(24.dp))
 
-            PromptCard(
-                promptText = uiState.promptOfDay,
-                onWriteClick = { onNavigateToWrite("prompt") }
+        PromptCard(
+            promptText = uiState.promptOfDay,
+            onWriteClick = { onNavigateToWrite("prompt") }
+        )
+
+        Spacer(modifier = Modifier.height(24.dp))
+
+        Text(
+            text = "Comece a escrever",
+            style = MaterialTheme.typography.titleMedium,
+            fontWeight = FontWeight.Bold
+        )
+
+        Spacer(modifier = Modifier.height(12.dp))
+
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(16.dp),
+        ) {
+
+            WriteOptionCard(
+                title = "Texto Livre",
+                description = "Qualquer tema",
+                icon = Icons.Default.Edit,
+                iconColor = Color(0xFF4A90E2),
+                modifier = Modifier.weight(1f),
+                onClick = { onNavigateToWrite("free") }
             )
 
-            Spacer(modifier = Modifier.height(24.dp))
-
-            Text(
-                text = "Comece a escrever",
-                style = MaterialTheme.typography.titleMedium,
-                fontWeight = FontWeight.Bold
+            WriteOptionCard(
+                title = "Diário",
+                description = "Seu dia",
+                icon = Icons.AutoMirrored.Filled.MenuBook,
+                iconColor = Color(0xFF66BB6A),
+                modifier = Modifier.weight(1f),
+                onClick = { onNavigateToWrite("diary") }
             )
-
-            Spacer(modifier = Modifier.height(12.dp))
-
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(16.dp),
-            ) {
-                WriteOptionCard(
-                    title = "Diário",
-                    description = "Seu dia",
-                    icon = Icons.AutoMirrored.Filled.MenuBook,
-                    iconColor = Color(0xFF66BB6A),
-                    modifier = Modifier.weight(1f),
-                    onClick = { onNavigateToWrite("diary") }
-                )
-            }
         }
     }
 }
