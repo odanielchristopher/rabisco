@@ -64,8 +64,10 @@ fun ProfileScreen(
                 title = "Modo escuro",
                 description = "Reduz o cansaço visual",
                 icon = Icons.Default.LightMode,
-                checked = isDarkMode,
-                onCheckedChange = { isDarkMode = it }
+                checked = uiState.isDarkMode,
+                onCheckedChange = { enabled ->
+                    viewModel.toggleDarkMode(enabled)
+                }
             )
         }
 
