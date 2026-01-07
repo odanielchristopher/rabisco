@@ -1,4 +1,4 @@
-package com.example.rabisco.ui.theme.screens.mytexts
+package com.example.rabisco.ui.screens.mytexts
 
 import androidx.lifecycle.ViewModel
 import com.example.rabisco.domain.models.Text
