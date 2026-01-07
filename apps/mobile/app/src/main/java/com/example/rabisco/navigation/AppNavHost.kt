@@ -8,6 +8,7 @@ import androidx.navigation.compose.rememberNavController
 import com.example.rabisco.ui.screens.auth.AuthScreen
 import com.example.rabisco.ui.screens.write.WriteScreen
 import com.example.rabisco.ui.screens.home.HomeScreen
+import com.example.rabisco.ui.screens.mytexts.MyTextsScreen
 
 @Composable
 fun AppNavHost(
@@ -22,7 +23,15 @@ fun AppNavHost(
         }
 
         composable(Routes.Home.path) {
-            WriteScreen()
+            MyTextsScreen(
+                onNavigateToWrite = { navController.navigate(Routes.Write.path) }
+            )
+        }
+
+        composable(Routes.Write.path) {
+            WriteScreen(
+                onNavigateBack = { navController.popBackStack() }
+            )
         }
     }
 }

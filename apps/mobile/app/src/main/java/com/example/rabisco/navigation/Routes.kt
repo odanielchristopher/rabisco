@@ -10,6 +10,7 @@ sealed class Routes(val path: String) {
 
     // Rotas protegidas (após login)
     data object Home : Routes("home")
+    data object MyTexts : Routes("mytexts")
     data object Stats : Routes("stats")
     data object Write : Routes("write")
     data object Settings : Routes("settings")

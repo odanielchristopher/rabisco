@@ -1,4 +1,4 @@
-package com.example.rabisco.ui.theme.screens.mytexts
+package com.example.rabisco.ui.screens.mytexts
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -20,8 +20,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.rabisco.domain.models.Text
-import java.text.SimpleDateFormat
-import java.util.Locale
 
 @Composable
 fun MyTextsScreen(
