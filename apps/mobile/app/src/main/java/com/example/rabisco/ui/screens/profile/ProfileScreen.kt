@@ -27,9 +27,13 @@ fun ProfileScreen() {
         UserInfoCard()
 
         Spacer(modifier = Modifier.height(24.dp))
+
+        // Seção de exemplo usando o ProfileSection
+        ProfileSection(title = "Aparência") {
+            Text("Testeeeeeeeeeeeeeeeeeeee")
+        }
     }
 }
-
 @Composable
 private fun UserInfoCard() {
     Card(
@@ -74,6 +78,38 @@ private fun UserInfoCard() {
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
+            }
+        }
+    }
+}
+
+@Composable
+private fun ProfileSection(
+    title: String,
+    content: @Composable ColumnScope.() -> Unit
+) {
+    Column {
+        // Titulo da secao
+        Text(
+            text = title,
+            style = MaterialTheme.typography.titleMedium,
+            fontWeight = FontWeight.Bold,
+            modifier = Modifier.padding(start = 8.dp, bottom = 8.dp)
+        )
+
+        // Card que contem o conteudo
+        Card(
+            modifier = Modifier.fillMaxWidth(),
+            shape = RoundedCornerShape(24.dp),
+            colors = CardDefaults.cardColors(
+                containerColor = MaterialTheme.colorScheme.surface
+            ),
+            elevation = CardDefaults.cardElevation(defaultElevation = 1.dp)
+        ) {
+            Column(
+                modifier = Modifier.padding(8.dp)
+            ) {
+                content()
             }
         }
     }
