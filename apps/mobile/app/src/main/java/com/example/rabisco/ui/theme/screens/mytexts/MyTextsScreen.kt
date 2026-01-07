@@ -19,7 +19,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.example.rabisco.data.Text
+import com.example.rabisco.domain.models.Text
 import java.text.SimpleDateFormat
 import java.util.Locale
 
@@ -157,22 +157,36 @@ fun TextCard(text: Text, onDeleteClick: (Text) -> Unit) {
             Text(text.title, style = MaterialTheme.typography.titleMedium)
 
             Text(
-                text.content,
+                text.getPreview(),
                 maxLines = 2,
                 style = MaterialTheme.typography.bodyMedium
             )
 
             Spacer(modifier = Modifier.height(8.dp))
 
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                val formattedDate = SimpleDateFormat(
-                    "dd/MM/yyyy",
-                    Locale.getDefault()
-                ).format(text.date)
+            if(text.tags.isNotEmpty()) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    text.tags.take(3).forEach { tag ->
+                        AssistChip(
+                            onClick = { },
+                            label = {
+                                Text(
+                                    tag,
+                                    style = MaterialTheme.typography.labelSmall
+                                )
+                            }
+                        )
+                    }
+                }
+            }
 
+            Row(verticalAlignment = Alignment.CenterVertically) {
                 Text(
-                    "$formattedDate • ${text.wordCount} palavras",
-                    style = MaterialTheme.typography.bodySmall
+                    text = "${text.getFormattedDate()} • ${text.wordCount} palavras",
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
 
                 Spacer(modifier = Modifier.weight(1f))
@@ -182,7 +196,7 @@ fun TextCard(text: Text, onDeleteClick: (Text) -> Unit) {
                 }
 
                 IconButton(onClick = { onDeleteClick(text) }) {
-                    Icon(Icons.Default.Delete, contentDescription = "Excluir")
+                    Icon(Icons.Default.Delete, contentDescription = "Excluir", tint = MaterialTheme.colorScheme.error)
                 }
             }
         }

@@ -6,6 +6,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.rabisco.ui.screens.auth.AuthScreen
+import com.example.rabisco.ui.screens.write.WriteScreen
 import com.example.rabisco.ui.screens.home.HomeScreen
 import com.example.rabisco.ui.screens.home.HomeUiState
 
