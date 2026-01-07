@@ -9,6 +9,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Logout
 import androidx.compose.material.icons.filled.LightMode
 import androidx.compose.material.icons.filled.ChevronRight
+import androidx.compose.material.icons.filled.Share
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -62,6 +63,19 @@ fun ProfileScreen(
                 icon = Icons.Default.LightMode,
                 checked = isDarkMode,
                 onCheckedChange = { isDarkMode = it }
+            )
+        }
+
+        Spacer(modifier = Modifier.height(24.dp))
+
+        // Seção de compartilhar
+        ProfileSection(title = "Compartilhar") {
+            ClickableItem(
+                title = "Compartilhar app com amigos",
+                icon = Icons.Default.Share,
+                onClick = {
+                    // Todo: Preciso realizar a ação de compartilhar
+                }
             )
         }
 
