@@ -1,5 +1,6 @@
 package com.example.rabisco.ui.screens.profile
 
+import android.content.Intent
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
@@ -31,6 +32,7 @@ fun ProfileScreen(
     )
 ) {
     val uiState by viewModel.uiState.collectAsState()
+    val context = LocalContext.current
 
     // Estado temporario pra testar o toggle
     var isDarkMode by remember { mutableStateOf(false) }
@@ -45,6 +47,7 @@ fun ProfileScreen(
         modifier = Modifier
             .fillMaxSize()
             .verticalScroll(rememberScrollState())
+            // Todo: Verificar se no celular tem pouco espaço na parte superior
             .padding(16.dp)
     ) {
         // Card com info do usuario
@@ -74,7 +77,16 @@ fun ProfileScreen(
                 title = "Compartilhar app com amigos",
                 icon = Icons.Default.Share,
                 onClick = {
-                    // Todo: Preciso realizar a ação de compartilhar
+                    val sendIntent = Intent().apply {
+                        action = Intent.ACTION_SEND
+                        putExtra(
+                            Intent.EXTRA_TEXT,
+                            "Teste sobre o envio do texto para outro aplicativo."
+                        )
+                        type = "text/plain"
+                    }
+                    val shareIntent = Intent.createChooser(sendIntent, null)
+                    context.startActivity(shareIntent)
                 }
             )
         }
