@@ -21,4 +21,10 @@
         suspend fun getToken(): String? {
             return context.sessionDataStore.data.first()[TOKEN]
         }
+
+        suspend fun clearSession() {
+            context.sessionDataStore.edit { prefs ->
+                prefs.clear()
+            }
+        }
     }
