@@ -18,7 +18,6 @@
         private val TOKEN = stringPreferencesKey("token")
 
 
-
         suspend fun saveToken(token: String) {
             context.sessionDataStore.edit { prefs ->
                 prefs[TOKEN] = token
@@ -40,9 +39,14 @@
                 prefs[DARK_MODE] ?: false
             }
         }
+
         suspend fun saveDarkMode(enabled: Boolean) {
             context.sessionDataStore.edit { prefs ->
                 prefs[DARK_MODE] = enabled
             }
+        }
+
+        suspend fun getDarkMode(): Boolean {
+            return context.sessionDataStore.data.first()[DARK_MODE] ?: false
         }
     }

@@ -20,6 +20,7 @@ class ProfileViewModel(private val context: Context) : ViewModel() {
 
     init {
         loadUserData()
+        loadDarkModePreference()
     }
 
     private fun loadUserData() {
@@ -36,6 +37,30 @@ class ProfileViewModel(private val context: Context) : ViewModel() {
                 _uiState.update {
                     it.copy(errorMessage = "Erro ao carregar dados")
                 }
+            }
+        }
+    }
+
+    fun toggleDarkMode(enabled: Boolean) {
+        viewModelScope.launch {
+            _uiState.update { it.copy(isDarkMode = enabled) }
+            try {
+                sessionRepository.saveDarkMode(enabled)
+            } catch (e: Exception) {
+                _uiState.update {
+                    it.copy(errorMessage = "Erro ao salvar: ${e.message}")
+                }
+            }
+        }
+    }
+
+    private fun loadDarkModePreference() {
+        viewModelScope.launch {
+            try {
+                val isDark = sessionRepository.getDarkMode()
+                _uiState.update { it.copy(isDarkMode = isDark) }
+            } catch (e: Exception) {
+                // usar padrao (false)
             }
         }
     }
