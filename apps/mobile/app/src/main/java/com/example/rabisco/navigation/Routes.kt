@@ -12,7 +12,17 @@ sealed class Routes(val path: String) {
     data object Home : Routes("home")
     data object MyTexts : Routes("mytexts")
     data object Stats : Routes("stats")
-    data object Write : Routes("write")
     data object Profile : Routes("profile")
     data object Settings : Routes("settings")
+
+    data object Write : Routes("write?type={type}&textId={textId}&mode={mode}") {
+        fun createRoute(
+            type: String = "free",
+            textId: String? = null,
+            mode: String = "create"
+        ): String {
+            return "write?type=$type&textId=${textId ?: ""}&mode=$mode"
+        }
+    }
+
 }
