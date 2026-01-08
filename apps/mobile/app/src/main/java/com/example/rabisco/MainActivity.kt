@@ -14,6 +14,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.rabisco.navigation.AppNavHost
+import com.example.rabisco.ui.screens.MainScreen
 import com.example.rabisco.ui.theme.RabiscoTheme
 import com.example.rabisco.ui.theme.ThemeViewModel
 
@@ -33,7 +34,7 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    AppNavHost()
+                    MainScreen()
                 }
             }
         }
@@ -44,6 +45,6 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun GreetingPreview() {
     RabiscoTheme {
-        AppNavHost()
+        MainScreen()
     }
 }

@@ -46,60 +46,54 @@ fun AuthScreen(
     var selectedIndex by remember { mutableIntStateOf(0) }
     val options = listOf("Entrar", "Cadastrar")
 
-    Scaffold(
-        modifier = Modifier.fillMaxSize()
-    ) { innerPadding ->
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(color = MaterialTheme.colorScheme.background)
+            .padding(horizontal = 24.dp)
+        ,
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally,
+    ) {
 
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(color = MaterialTheme.colorScheme.background)
-                .padding(innerPadding)
-                .padding(horizontal = 24.dp)
-                ,
-            verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally,
-        ) {
+        HeaderSection()
 
-            HeaderSection()
+        Spacer(Modifier.height(32.dp))
 
-            Spacer(Modifier.height(32.dp))
+        Spacer(Modifier.height(24.dp))
 
-            Spacer(Modifier.height(24.dp))
-
-            Container{
-                Column(
-                    Modifier.padding(20.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally,
+        Container{
+            Column(
+                Modifier.padding(20.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
+            ) {
+                SingleChoiceSegmentedButtonRow(
                 ) {
-                    SingleChoiceSegmentedButtonRow(
-                    ) {
-                        options.forEachIndexed { index, label ->
-                            SegmentedButton(
-                                selected = selectedIndex == index,
-                                onClick = { selectedIndex = index },
-                                shape = SegmentedButtonDefaults.itemShape(index, options.size),
-                                icon = {},
-                                label = { Text(label) },
-                                modifier = Modifier.border(0.dp, color = Color.Transparent),
-                                border = BorderStroke(0.dp, Color.Transparent)
-                            )
-                        }
+                    options.forEachIndexed { index, label ->
+                        SegmentedButton(
+                            selected = selectedIndex == index,
+                            onClick = { selectedIndex = index },
+                            shape = SegmentedButtonDefaults.itemShape(index, options.size),
+                            icon = {},
+                            label = { Text(label) },
+                            modifier = Modifier.border(0.dp, color = Color.Transparent),
+                            border = BorderStroke(0.dp, Color.Transparent)
+                        )
                     }
-
-                    Spacer(Modifier.height(24.dp))
-
-                    if (selectedIndex == 0)
-                        SignInScreen(navigator = navigator)
-                    else
-                        SignUpScreen(navigator = navigator)
                 }
+
+                Spacer(Modifier.height(24.dp))
+
+                if (selectedIndex == 0)
+                    SignInScreen(navigator = navigator)
+                else
+                    SignUpScreen(navigator = navigator)
             }
-
-            Spacer(Modifier.height(32.dp))
-
-            FooterSection()
         }
+
+        Spacer(Modifier.height(32.dp))
+
+        FooterSection()
     }
 }
 
