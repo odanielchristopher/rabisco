@@ -23,7 +23,7 @@ object RetrofitClient {
         val gson = GsonBuilder().setLenient().create()
 
         return Retrofit.Builder()
-            .baseUrl("http://192.168.0.6:3001/") // depois trocamos
+            .baseUrl("https://rabisco-b1tb.onrender.com/") // depois trocamos
             .client(client)
             .addConverterFactory(GsonConverterFactory.create(gson))
             .build()
