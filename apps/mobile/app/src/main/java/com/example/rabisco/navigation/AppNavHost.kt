@@ -1,6 +1,10 @@
 package com.example.rabisco.navigation
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.ui.platform.LocalContext
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -8,6 +12,8 @@ import androidx.navigation.compose.rememberNavController
 import com.example.rabisco.ui.screens.auth.AuthScreen
 import com.example.rabisco.ui.screens.write.WriteScreen
 import com.example.rabisco.ui.screens.home.HomeScreen
+import com.example.rabisco.ui.screens.home.HomeUiState
+import com.example.rabisco.ui.screens.home.HomeViewModel
 import com.example.rabisco.ui.screens.mytexts.MyTextsScreen
 import com.example.rabisco.ui.screens.profile.ProfileScreen  // ✅ IMPORT
 
@@ -17,15 +23,24 @@ fun AppNavHost(
 ) {
     NavHost(
         navController = navController,
-        startDestination = Routes.Profile.path
+        startDestination = Routes.Auth.path
     ) {
         composable(Routes.Auth.path) {
             AuthScreen(navigator = navController)
         }
 
         composable(Routes.Home.path) {
-            MyTextsScreen(
-                onNavigateToWrite = { navController.navigate(Routes.Write.path) }
+            val context = LocalContext.current
+            val homeViewModel: HomeViewModel = viewModel(
+                factory = HomeViewModel.provideFactory(context)
+            )
+            val uiState by homeViewModel.uiState.collectAsState()
+
+            HomeScreen(
+                uiState = uiState,
+                onNavigateToWrite = { type ->
+                    navController.navigate(Routes.Write.createRoute(type = type))
+                }
             )
         }
 
@@ -46,3 +61,4 @@ fun AppNavHost(
         }
     }
 }
+
