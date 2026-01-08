@@ -30,6 +30,7 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -48,25 +49,33 @@ fun HomeScreen(
     uiState: HomeUiState,
     onNavigateToWrite: (type: String) -> Unit = {}
 ) {
-    if (uiState.isLoading) {
-        Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
-            CircularProgressIndicator()
+    Scaffold() { paddingValues ->
+        if (uiState.isLoading) {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(paddingValues),
+                contentAlignment = Alignment.Center) {
+                CircularProgressIndicator()
+            }
+        } else {
+            HomeContent(
+                modifier = Modifier.padding(paddingValues),
+                uiState = uiState,
+                onNavigateToWrite = onNavigateToWrite
+            )
         }
-    } else {
-        HomeContent(
-            uiState = uiState,
-            onNavigateToWrite = onNavigateToWrite
-        )
     }
 }
 
 @Composable
 private fun HomeContent (
+    modifier: Modifier = Modifier,
     uiState: HomeUiState,
     onNavigateToWrite: (type: String) -> Unit
 ) {
     Column(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxSize()
             .verticalScroll(rememberScrollState())
             .padding(16.dp)
