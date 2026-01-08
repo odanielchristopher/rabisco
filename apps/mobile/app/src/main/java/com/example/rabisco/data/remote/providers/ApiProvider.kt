@@ -24,7 +24,7 @@ object ApiProvider {
             .build()
 
         return Retrofit.Builder()
-            .baseUrl("http://192.168.0.6:3001/")
+            .baseUrl("https://rabisco-b1tb.onrender.com/")
             .addConverterFactory(GsonConverterFactory.create())
             .client(client)
             .build()
@@ -41,7 +41,7 @@ object ApiProvider {
             .build()
 
         return Retrofit.Builder()
-            .baseUrl("http://192.168.0.6:3001/")
+            .baseUrl("https://rabisco-b1tb.onrender.com/")
             .addConverterFactory(GsonConverterFactory.create())
             .client(client)
             .build()
