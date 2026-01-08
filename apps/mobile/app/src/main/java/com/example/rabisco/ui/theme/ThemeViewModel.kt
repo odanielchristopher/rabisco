@@ -1,6 +1,7 @@
 package com.example.rabisco.ui.theme
 
 import android.app.Application
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.rabisco.data.local.SessionRepository
