@@ -75,7 +75,8 @@ private fun HomeContent (
             text = "Olá, Escritor!", //mudar para o nome do usuario depois (?)
             style = MaterialTheme.typography.headlineMedium,
             fontWeight = FontWeight.Bold,
-            color = MaterialTheme.colorScheme.onBackground
+            //color = MaterialTheme.colorScheme.onBackground
+            color = Color.Black
         )
         Text(
             text = "Pronto para escrever hoje?",
@@ -136,6 +137,7 @@ private fun HomeContent (
 
         Text(
             text = "Comece a escrever",
+            color = Color.Black,
             style = MaterialTheme.typography.titleMedium,
             fontWeight = FontWeight.Bold
         )
