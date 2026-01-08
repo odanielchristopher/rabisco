@@ -1,9 +1,25 @@
 name: rabisco
 services:
-  postgres:
+  db:
     image: postgres:latest
-    container_name: rabisco
+    container_name: rabisco-db
     env_file:
       - .env
     ports:
       - '5432:5432'
+
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: rabisco-api
+    restart: always
+    ports:
+      - '3001:3001'
+    env_file:
+      - .env
+    depends_on:
+      - db
+    volumes:
+      - .:/usr/src/app
+      - /usr/src/app/node_modules
