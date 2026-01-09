@@ -1,5 +1,6 @@
 package com.example.rabisco.ui.components
 
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.MenuBook
 import androidx.compose.material.icons.automirrored.outlined.MenuBook
@@ -15,6 +16,7 @@ import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
@@ -57,6 +59,8 @@ fun AppBottomBar(navController: NavController, currentRoute: String?, showElemen
             selected = currentRoute == Routes.Stats.path,
             onClick = { navigate(Routes.Stats)},
         )
+
+        Spacer(Modifier.weight(0.5f))
 
         NavigationBarItem(
             label = { Text("Histórico", fontSize = 10.sp) },
