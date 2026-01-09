@@ -46,8 +46,8 @@ fun AppAddButton(
                 .background(
                     brush = Brush.verticalGradient(
                         colors = listOf(
-                            Color(0xFF8EABFF),
-                            Color(0xFFA685FF)
+                            Color(0xFF51A2FF),
+                            Color(0xFFC27AFF)
                         )
                     ),
                     shape = CircleShape
