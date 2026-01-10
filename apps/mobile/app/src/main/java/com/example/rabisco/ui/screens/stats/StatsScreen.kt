@@ -1,7 +1,9 @@
 package com.example.rabisco.ui.screens.stats
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
@@ -25,7 +27,6 @@ fun StatsScreen() {
             .verticalScroll(rememberScrollState())
             .padding(16.dp)
     ) {
-        // header
         Row(
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier.padding(bottom = 8.dp)
@@ -33,7 +34,7 @@ fun StatsScreen() {
             Icon(
                 imageVector = Icons.Default.EmojiEvents,
                 contentDescription = null,
-                tint = MaterialTheme.colorScheme.onSurface,
+                tint = Color(0xFFE91E63),
                 modifier = Modifier.size(32.dp)
             )
             Spacer(modifier = Modifier.width(8.dp))
@@ -50,7 +51,6 @@ fun StatsScreen() {
             modifier = Modifier.padding(start = 40.dp, bottom = 24.dp)
         )
 
-        // cards de stats
         Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
@@ -58,14 +58,14 @@ fun StatsScreen() {
             ) {
                 StatCard(
                     icon = Icons.Default.Description,
-                    value = "0",
+                    value = "42",
                     label = "textos",
                     color = Color(0xFF9C27B0),
                     modifier = Modifier.weight(1f)
                 )
                 StatCard(
                     icon = Icons.Default.EmojiEvents,
-                    value = "0",
+                    value = "1250",
                     label = "XP total",
                     color = Color(0xFFFFC107),
                     modifier = Modifier.weight(1f)
@@ -77,7 +77,7 @@ fun StatsScreen() {
             ) {
                 StatCard(
                     icon = Icons.Default.Bolt,
-                    value = "+0",
+                    value = "+50",
                     label = "XP hoje",
                     color = Color(0xFF00C853),
                     modifier = Modifier.weight(1f),
@@ -86,7 +86,7 @@ fun StatsScreen() {
                 )
                 StatCard(
                     icon = Icons.Default.LocalFireDepartment,
-                    value = "0",
+                    value = "7",
                     label = "ofensiva",
                     color = Color(0xFFFF5722),
                     modifier = Modifier.weight(1f)
@@ -96,7 +96,6 @@ fun StatsScreen() {
 
         Spacer(modifier = Modifier.height(32.dp))
 
-        // placeholder pra conquistas
         Text(
             text = "Conquistas",
             style = MaterialTheme.typography.titleLarge,
@@ -104,6 +103,46 @@ fun StatsScreen() {
         )
 
         Spacer(modifier = Modifier.height(16.dp))
+
+        // conquistas mockadas
+        AchievementCard(
+            title = "Primeira Palavra",
+            description = "Escreva seu primeiro texto",
+            progressText = "1/1 textos",
+            rewardText = "Recompensa: +10 XP",
+            isCompleted = true
+        )
+
+        Spacer(modifier = Modifier.height(12.dp))
+
+        AchievementCard(
+            title = "100 Palavras",
+            description = "Escreva um texto com 100+ palavras",
+            progressText = "0/100 palavras",
+            rewardText = "Recompensa: +50 XP",
+            isCompleted = false
+        )
+
+        Spacer(modifier = Modifier.height(12.dp))
+
+        AchievementCard(
+            title = "Escritor Dedicado",
+            description = "Mantenha uma ofensiva de 7 dias",
+            progressText = "7/7 dias",
+            rewardText = "Recompensa: +100 XP",
+            isCompleted = true
+        )
+
+        Spacer(modifier = Modifier.height(24.dp))
+
+        // placeholder pra missoes
+        Text(
+            text = "Missões Diárias",
+            style = MaterialTheme.typography.titleMedium,
+            fontWeight = FontWeight.Bold
+        )
+
+        Spacer(modifier = Modifier.height(12.dp))
 
         Card(
             modifier = Modifier.fillMaxWidth(),
@@ -119,7 +158,7 @@ fun StatsScreen() {
                 contentAlignment = Alignment.Center
             ) {
                 Text(
-                    text = "Testeeeeeeeeeeeeeeeeeee",
+                    text = "📅 Missões em breve...",
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
@@ -141,7 +180,7 @@ fun StatCard(
     goalText: String = ""
 ) {
     Card(
-        modifier = modifier.height(135.dp),
+        modifier = modifier.height(110.dp),
         colors = CardDefaults.cardColors(containerColor = color),
         shape = RoundedCornerShape(20.dp)
     ) {
@@ -176,6 +215,107 @@ fun StatCard(
                         color = Color.White.copy(alpha = 0.8f)
                     )
                 }
+            }
+        }
+    }
+}
+
+@Composable
+fun AchievementCard(
+    title: String,
+    description: String,
+    progressText: String,
+    rewardText: String,
+    isCompleted: Boolean
+) {
+    Card(
+        modifier = Modifier.fillMaxWidth(),
+        colors = CardDefaults.cardColors(
+            containerColor = if (isCompleted) {
+                MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.3f)
+            } else {
+                MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f)
+            }
+        ),
+        elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
+        shape = RoundedCornerShape(16.dp)
+    ) {
+        Row(
+            modifier = Modifier.padding(16.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            // icone da conquista
+            Box(
+                modifier = Modifier
+                    .size(48.dp)
+                    .background(
+                        color = if (isCompleted) {
+                            Color(0xFF4CAF50).copy(alpha = 0.2f)
+                        } else {
+                            Color(0xFFFFC107).copy(alpha = 0.2f)
+                        },
+                        shape = CircleShape
+                    ),
+                contentAlignment = Alignment.Center
+            ) {
+                Icon(
+                    imageVector = if (isCompleted) {
+                        Icons.Default.CheckCircle
+                    } else {
+                        Icons.Default.WorkspacePremium
+                    },
+                    contentDescription = null,
+                    tint = if (isCompleted) {
+                        Color(0xFF4CAF50)
+                    } else {
+                        Color(0xFFFFC107)
+                    },
+                    modifier = Modifier.size(28.dp)
+                )
+            }
+
+            Spacer(modifier = Modifier.width(16.dp))
+
+            Column(modifier = Modifier.weight(1f)) {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Text(
+                        text = title,
+                        style = MaterialTheme.typography.titleMedium,
+                        fontWeight = FontWeight.Bold,
+                        color = if (isCompleted) {
+                            MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
+                        } else {
+                            MaterialTheme.colorScheme.onSurface
+                        }
+                    )
+                    if (isCompleted) {
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Text(
+                            text = "✓",
+                            style = MaterialTheme.typography.labelSmall,
+                            color = Color(0xFF4CAF50),
+                            fontWeight = FontWeight.Bold
+                        )
+                    }
+                }
+                Spacer(modifier = Modifier.height(4.dp))
+                Text(
+                    text = description,
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+                Spacer(modifier = Modifier.height(4.dp))
+                Text(
+                    text = progressText,
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+                Text(
+                    text = if (isCompleted) "Resgatado!" else rewardText,
+                    style = MaterialTheme.typography.bodySmall,
+                    color = Color(0xFF4CAF50),
+                    fontWeight = FontWeight.Bold
+                )
             }
         }
     }
