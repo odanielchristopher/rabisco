@@ -152,7 +152,7 @@ class ProfileViewModel(private val context: Context, private val sessionReposito
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true) }
             try {
-                sessionRepository.clearSession()
+                sessionRepository.clearToken()
                 _uiState.update {
                     it.copy(
                         isLoggedOut = true,

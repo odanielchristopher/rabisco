@@ -1,5 +1,6 @@
 package com.example.rabisco.core.di
 
+import com.example.rabisco.data.local.SessionViewModel
 import com.example.rabisco.ui.screens.auth.AuthViewModel
 import com.example.rabisco.ui.screens.home.HomeViewModel
 import com.example.rabisco.ui.screens.mytexts.MyTextsViewModel
@@ -17,4 +18,5 @@ val ViewModelModule = module {
     viewModel { ProfileViewModel(androidContext(), get()) }
     viewModel { MyTextsViewModel(get()) }
     viewModel { StatsViewModel(androidContext()) }
+    single { SessionViewModel(get()) }
 }

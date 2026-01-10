@@ -40,9 +40,7 @@ import com.example.rabisco.ui.theme.RabiscoTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AuthScreen(
-    navigator: NavHostController,
-) {
+fun AuthScreen() {
     var selectedIndex by remember { mutableIntStateOf(0) }
     val options = listOf("Entrar", "Cadastrar")
 
@@ -85,9 +83,9 @@ fun AuthScreen(
                 Spacer(Modifier.height(24.dp))
 
                 if (selectedIndex == 0)
-                    SignInScreen(navigator = navigator)
+                    SignInScreen()
                 else
-                    SignUpScreen(navigator = navigator)
+                    SignUpScreen()
             }
         }
 
@@ -102,8 +100,6 @@ fun AuthScreen(
 @Composable
 fun AuthPreview() {
     RabiscoTheme {
-        AuthScreen(
-            navigator = rememberNavController()
-        )
+        AuthScreen()
     }
 }
