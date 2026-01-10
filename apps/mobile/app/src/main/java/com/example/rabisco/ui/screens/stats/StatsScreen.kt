@@ -34,7 +34,7 @@ fun StatsScreen() {
             Icon(
                 imageVector = Icons.Default.EmojiEvents,
                 contentDescription = null,
-                tint = Color(0xFFE91E63),
+                tint = MaterialTheme.colorScheme.onSurface,
                 modifier = Modifier.size(32.dp)
             )
             Spacer(modifier = Modifier.width(8.dp))
@@ -158,7 +158,7 @@ fun StatsScreen() {
                 contentAlignment = Alignment.Center
             ) {
                 Text(
-                    text = "📅 Missões em breve...",
+                    text = "Testeeeeeeeeeeeeeeeeee",
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
@@ -180,7 +180,7 @@ fun StatCard(
     goalText: String = ""
 ) {
     Card(
-        modifier = modifier.height(110.dp),
+        modifier = modifier.height(135.dp),
         colors = CardDefaults.cardColors(containerColor = color),
         shape = RoundedCornerShape(20.dp)
     ) {
