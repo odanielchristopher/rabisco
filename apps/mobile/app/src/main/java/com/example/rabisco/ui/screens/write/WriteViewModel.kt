@@ -3,7 +3,6 @@ package com.example.rabisco.ui.screens.write
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.rabisco.domain.models.Text
-import com.example.rabisco.data.remote.repositories.TextRepositoryImpl
 import com.example.rabisco.domain.repositories.TextRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow

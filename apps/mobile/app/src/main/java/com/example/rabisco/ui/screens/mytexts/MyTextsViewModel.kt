@@ -1,6 +1,8 @@
 package com.example.rabisco.ui.screens.mytexts
 
+import android.content.Context
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 import com.example.rabisco.domain.models.Text
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -53,6 +55,7 @@ class MyTextsViewModel(private val textRepository: TextRepository) : ViewModel()
     fun onDismissDeleteConfirmation() {
         _uiState.update { it.copy(showDeleteConfirmation = false, textToDelete = null) }
     }
+
     fun deleteText() {
         viewModelScope.launch {
             _uiState.value.textToDelete?.let { text ->
