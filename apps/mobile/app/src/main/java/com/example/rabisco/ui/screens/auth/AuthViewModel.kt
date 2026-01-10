@@ -31,37 +31,92 @@ class AuthViewModel(context: Context) : ViewModel() {
         _uiState.value = _uiState.value.copy(success = value)
     }
 
+    /**
+     * CORRIGIDO: Agora trata Result<T> corretamente
+     * Valida campos antes de enviar
+     */
     fun signin(email: String, password: String) {
+        // Validação de campos vazios
+        if (email.isBlank() || password.isBlank()) {
+            setError("Preencha todos os campos")
+            return
+        }
+
         viewModelScope.launch {
             try {
                 setLoading(true)
                 setError(null)
 
+                // CORREÇÃO: Verifica o Result
                 authRepo.signin(SignInDto(email, password))
+                    .onSuccess { response ->
+                        println("✅ Login bem-sucedido! Token: ${response.accessToken.take(20)}...")
+                        setSuccess(true)
+                    }
+                    .onFailure { exception ->
+                        println("❌ Erro no login: ${exception.message}")
+                        setError(exception.message ?: "Erro ao fazer login")
+                        setSuccess(false)
+                    }
 
-                setSuccess(true)
             } catch (e: Exception) {
-                setError(e.message)
+                println("❌ Exceção no signin: ${e.message}")
+                setError(e.message ?: "Erro inesperado")
+                setSuccess(false)
             } finally {
                 setLoading(false)
             }
         }
     }
 
+    /**
+     * CORRIGIDO: Agora trata Result<T> corretamente
+     * Valida campos antes de enviar
+     */
     fun signup(name: String, email: String, password: String) {
+        // Validação de campos vazios
+        if (name.isBlank() || email.isBlank() || password.isBlank()) {
+            setError("Preencha todos os campos")
+            return
+        }
+
+        // Validação de senha mínima
+        if (password.length < 6) {
+            setError("A senha deve ter pelo menos 6 caracteres")
+            return
+        }
+
         viewModelScope.launch {
             try {
                 setLoading(true)
                 setError(null)
 
+                // CORREÇÃO: Verifica o Result
                 authRepo.signup(SignUpDto(name, email, password))
+                    .onSuccess { response ->
+                        println("✅ Cadastro bem-sucedido! Token: ${response.accessToken.take(20)}...")
+                        setSuccess(true)
+                    }
+                    .onFailure { exception ->
+                        println("❌ Erro no cadastro: ${exception.message}")
+                        setError(exception.message ?: "Erro ao fazer cadastro")
+                        setSuccess(false)
+                    }
 
-                setSuccess(true)
             } catch (e: Exception) {
-                setError(e.message)
+                println("❌ Exceção no signup: ${e.message}")
+                setError(e.message ?: "Erro inesperado")
+                setSuccess(false)
             } finally {
                 setLoading(false)
             }
         }
+    }
+
+    /**
+     * Reseta o estado de sucesso (para evitar navegação múltipla)
+     */
+    fun resetSuccess() {
+        setSuccess(false)
     }
 }
