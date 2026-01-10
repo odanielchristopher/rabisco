@@ -1,4 +1,4 @@
-package com.example.rabisco.ui.screens.home
+package com.example.rabisco.ui.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
