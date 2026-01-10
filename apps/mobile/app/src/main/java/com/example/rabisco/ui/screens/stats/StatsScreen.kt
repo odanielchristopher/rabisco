@@ -10,6 +10,8 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -17,155 +19,175 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.rabisco.ui.theme.RabiscoTheme
 
 @Composable
-fun StatsScreen() {
+fun StatsScreen(
+    viewModel: StatsViewModel = viewModel()
+) {
+    val uiState by viewModel.uiState.collectAsState()
+
+    if (uiState.isLoading) {
+        Box(
+            modifier = Modifier.fillMaxSize(),
+            contentAlignment = Alignment.Center
+        ) {
+            CircularProgressIndicator()
+        }
+    } else {
+        StatsContent(uiState = uiState)
+    }
+}
+
+@Composable
+private fun StatsContent(uiState: StatsUiState) {
     Column(
         modifier = Modifier
             .fillMaxSize()
             .verticalScroll(rememberScrollState())
             .padding(16.dp)
     ) {
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier.padding(bottom = 8.dp)
-        ) {
-            Icon(
-                imageVector = Icons.Default.EmojiEvents,
-                contentDescription = null,
-                tint = MaterialTheme.colorScheme.onSurface,
-                modifier = Modifier.size(32.dp)
-            )
-            Spacer(modifier = Modifier.width(8.dp))
-            Text(
-                text = "Seu Progresso",
-                style = MaterialTheme.typography.headlineMedium,
-                fontWeight = FontWeight.Bold
-            )
-        }
-        Text(
-            text = "Acompanhe suas conquistas",
-            style = MaterialTheme.typography.bodyMedium,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-            modifier = Modifier.padding(start = 40.dp, bottom = 24.dp)
-        )
-
-        Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(12.dp)
-            ) {
-                StatCard(
-                    icon = Icons.Default.Description,
-                    value = "42",
-                    label = "textos",
-                    color = Color(0xFF9C27B0),
-                    modifier = Modifier.weight(1f)
-                )
-                StatCard(
-                    icon = Icons.Default.EmojiEvents,
-                    value = "1250",
-                    label = "XP total",
-                    color = Color(0xFFFFC107),
-                    modifier = Modifier.weight(1f)
-                )
-            }
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(12.dp)
-            ) {
-                StatCard(
-                    icon = Icons.Default.Bolt,
-                    value = "+50",
-                    label = "XP hoje",
-                    color = Color(0xFF00C853),
-                    modifier = Modifier.weight(1f),
-                    showGoal = true,
-                    goalText = "Meta: 150 XP"
-                )
-                StatCard(
-                    icon = Icons.Default.LocalFireDepartment,
-                    value = "7",
-                    label = "ofensiva",
-                    color = Color(0xFFFF5722),
-                    modifier = Modifier.weight(1f)
-                )
-            }
-        }
-
-        Spacer(modifier = Modifier.height(32.dp))
-
-        Text(
-            text = "Conquistas",
-            style = MaterialTheme.typography.titleLarge,
-            fontWeight = FontWeight.Bold
-        )
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        // conquistas mockadas
-        AchievementCard(
-            title = "Primeira Palavra",
-            description = "Escreva seu primeiro texto",
-            progressText = "1/1 textos",
-            rewardText = "Recompensa: +10 XP",
-            isCompleted = true
-        )
-
-        Spacer(modifier = Modifier.height(12.dp))
-
-        AchievementCard(
-            title = "100 Palavras",
-            description = "Escreva um texto com 100+ palavras",
-            progressText = "0/100 palavras",
-            rewardText = "Recompensa: +50 XP",
-            isCompleted = false
-        )
-
-        Spacer(modifier = Modifier.height(12.dp))
-
-        AchievementCard(
-            title = "Escritor Dedicado",
-            description = "Mantenha uma ofensiva de 7 dias",
-            progressText = "7/7 dias",
-            rewardText = "Recompensa: +100 XP",
-            isCompleted = true
-        )
+        StatsHeader()
 
         Spacer(modifier = Modifier.height(24.dp))
 
-        // placeholder pra missoes
-        Text(
-            text = "Missões Diárias",
-            style = MaterialTheme.typography.titleMedium,
-            fontWeight = FontWeight.Bold
+        StatsCardsSection(
+            textsWritten = uiState.textsWritten,
+            totalXp = uiState.totalXp,
+            xpToday = uiState.xpToday,
+            xpGoal = uiState.xpGoal,
+            streak = uiState.streak
         )
 
-        Spacer(modifier = Modifier.height(12.dp))
+        Spacer(modifier = Modifier.height(32.dp))
 
-        Card(
-            modifier = Modifier.fillMaxWidth(),
-            colors = CardDefaults.cardColors(
-                containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f)
-            ),
-            shape = RoundedCornerShape(16.dp)
-        ) {
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(32.dp),
-                contentAlignment = Alignment.Center
-            ) {
-                Text(
-                    text = "Testeeeeeeeeeeeeeeeeee",
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
+        StatsSection(title = "Conquistas") {
+            uiState.achievements.forEach { achievement ->
+                AchievementCard(
+                    title = achievement.title,
+                    description = achievement.description,
+                    progressText = achievement.progressText,
+                    rewardText = achievement.rewardText,
+                    isCompleted = achievement.isCompleted
                 )
+                Spacer(modifier = Modifier.height(12.dp))
+            }
+        }
+
+        Spacer(modifier = Modifier.height(24.dp))
+
+        StatsSection(title = "Missões Diárias") {
+            uiState.dailyMissions.forEach { mission ->
+                MissionCard(
+                    title = mission.title,
+                    description = mission.description,
+                    progressText = mission.progressText,
+                    rewardText = mission.rewardText,
+                    isCompleted = mission.isCompleted
+                )
+                Spacer(modifier = Modifier.height(12.dp))
             }
         }
 
         Spacer(modifier = Modifier.height(80.dp))
+    }
+}
+
+// componentes reutilizaveis
+
+@Composable
+private fun StatsHeader() {
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = Modifier.padding(bottom = 8.dp)
+    ) {
+        Icon(
+            imageVector = Icons.Default.EmojiEvents,
+            contentDescription = null,
+            tint = MaterialTheme.colorScheme.onSurface,
+            modifier = Modifier.size(32.dp)
+        )
+        Spacer(modifier = Modifier.width(8.dp))
+        Text(
+            text = "Seu Progresso",
+            style = MaterialTheme.typography.headlineMedium,
+            fontWeight = FontWeight.Bold
+        )
+    }
+    Text(
+        text = "Acompanhe suas conquistas",
+        style = MaterialTheme.typography.bodyMedium,
+        color = MaterialTheme.colorScheme.onSurfaceVariant,
+        modifier = Modifier.padding(start = 40.dp)
+    )
+}
+
+@Composable
+private fun StatsCardsSection(
+    textsWritten: Int,
+    totalXp: Int,
+    xpToday: Int,
+    xpGoal: Int,
+    streak: Int
+) {
+    Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(12.dp)
+        ) {
+            StatCard(
+                icon = Icons.Default.Description,
+                value = "$textsWritten",
+                label = "textos",
+                color = Color(0xFF9C27B0),
+                modifier = Modifier.weight(1f)
+            )
+            StatCard(
+                icon = Icons.Default.EmojiEvents,
+                value = "$totalXp",
+                label = "XP total",
+                color = Color(0xFFFFC107),
+                modifier = Modifier.weight(1f)
+            )
+        }
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(12.dp)
+        ) {
+            StatCard(
+                icon = Icons.Default.Bolt,
+                value = "+$xpToday",
+                label = "XP hoje",
+                color = Color(0xFF00C853),
+                modifier = Modifier.weight(1f),
+                showGoal = true,
+                goalText = "Meta: $xpGoal XP"
+            )
+            StatCard(
+                icon = Icons.Default.LocalFireDepartment,
+                value = "$streak",
+                label = "ofensiva",
+                color = Color(0xFFFF5722),
+                modifier = Modifier.weight(1f)
+            )
+        }
+    }
+}
+
+@Composable
+private fun StatsSection(
+    title: String,
+    content: @Composable () -> Unit
+) {
+    Column {
+        Text(
+            text = title,
+            style = MaterialTheme.typography.titleLarge,
+            fontWeight = FontWeight.Bold
+        )
+        Spacer(modifier = Modifier.height(16.dp))
+        content()
     }
 }
 
@@ -244,80 +266,215 @@ fun AchievementCard(
             modifier = Modifier.padding(16.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            // icone da conquista
-            Box(
-                modifier = Modifier
-                    .size(48.dp)
-                    .background(
-                        color = if (isCompleted) {
-                            Color(0xFF4CAF50).copy(alpha = 0.2f)
-                        } else {
-                            Color(0xFFFFC107).copy(alpha = 0.2f)
-                        },
-                        shape = CircleShape
-                    ),
-                contentAlignment = Alignment.Center
-            ) {
-                Icon(
-                    imageVector = if (isCompleted) {
-                        Icons.Default.CheckCircle
-                    } else {
-                        Icons.Default.WorkspacePremium
-                    },
-                    contentDescription = null,
-                    tint = if (isCompleted) {
-                        Color(0xFF4CAF50)
-                    } else {
-                        Color(0xFFFFC107)
-                    },
-                    modifier = Modifier.size(28.dp)
-                )
-            }
+            AchievementIcon(isCompleted = isCompleted)
 
             Spacer(modifier = Modifier.width(16.dp))
 
-            Column(modifier = Modifier.weight(1f)) {
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    Text(
-                        text = title,
-                        style = MaterialTheme.typography.titleMedium,
-                        fontWeight = FontWeight.Bold,
-                        color = if (isCompleted) {
-                            MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
-                        } else {
-                            MaterialTheme.colorScheme.onSurface
-                        }
-                    )
-                    if (isCompleted) {
-                        Spacer(modifier = Modifier.width(8.dp))
-                        Text(
-                            text = "✓",
-                            style = MaterialTheme.typography.labelSmall,
-                            color = Color(0xFF4CAF50),
-                            fontWeight = FontWeight.Bold
-                        )
-                    }
+            AchievementContent(
+                title = title,
+                description = description,
+                progressText = progressText,
+                rewardText = rewardText,
+                isCompleted = isCompleted,
+                modifier = Modifier.weight(1f)
+            )
+        }
+    }
+}
+
+@Composable
+private fun AchievementIcon(isCompleted: Boolean) {
+    Box(
+        modifier = Modifier
+            .size(48.dp)
+            .background(
+                color = if (isCompleted) {
+                    Color(0xFF4CAF50).copy(alpha = 0.2f)
+                } else {
+                    Color(0xFFFFC107).copy(alpha = 0.2f)
+                },
+                shape = CircleShape
+            ),
+        contentAlignment = Alignment.Center
+    ) {
+        Icon(
+            imageVector = if (isCompleted) {
+                Icons.Default.CheckCircle
+            } else {
+                Icons.Default.WorkspacePremium
+            },
+            contentDescription = null,
+            tint = if (isCompleted) {
+                Color(0xFF4CAF50)
+            } else {
+                Color(0xFFFFC107)
+            },
+            modifier = Modifier.size(28.dp)
+        )
+    }
+}
+
+@Composable
+private fun AchievementContent(
+    title: String,
+    description: String,
+    progressText: String,
+    rewardText: String,
+    isCompleted: Boolean,
+    modifier: Modifier = Modifier
+) {
+    Column(modifier = modifier) {
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Text(
+                text = title,
+                style = MaterialTheme.typography.titleMedium,
+                fontWeight = FontWeight.Bold,
+                color = if (isCompleted) {
+                    MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
+                } else {
+                    MaterialTheme.colorScheme.onSurface
                 }
-                Spacer(modifier = Modifier.height(4.dp))
+            )
+            if (isCompleted) {
+                Spacer(modifier = Modifier.width(8.dp))
                 Text(
-                    text = description,
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
-                Spacer(modifier = Modifier.height(4.dp))
-                Text(
-                    text = progressText,
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
-                Text(
-                    text = if (isCompleted) "Resgatado!" else rewardText,
-                    style = MaterialTheme.typography.bodySmall,
+                    text = "✓",
+                    style = MaterialTheme.typography.labelSmall,
                     color = Color(0xFF4CAF50),
                     fontWeight = FontWeight.Bold
                 )
             }
         }
+        Spacer(modifier = Modifier.height(4.dp))
+        Text(
+            text = description,
+            style = MaterialTheme.typography.bodySmall,
+            color = MaterialTheme.colorScheme.onSurfaceVariant
+        )
+        Spacer(modifier = Modifier.height(4.dp))
+        Text(
+            text = progressText,
+            style = MaterialTheme.typography.bodySmall,
+            color = MaterialTheme.colorScheme.onSurfaceVariant
+        )
+        Text(
+            text = if (isCompleted) "Resgatado!" else rewardText,
+            style = MaterialTheme.typography.bodySmall,
+            color = Color(0xFF4CAF50),
+            fontWeight = FontWeight.Bold
+        )
+    }
+}
+
+@Composable
+fun MissionCard(
+    title: String,
+    description: String,
+    progressText: String,
+    rewardText: String,
+    isCompleted: Boolean
+) {
+    Card(
+        modifier = Modifier.fillMaxWidth(),
+        colors = CardDefaults.cardColors(
+            containerColor = if (isCompleted) {
+                MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.3f)
+            } else {
+                MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f)
+            }
+        ),
+        elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
+        shape = RoundedCornerShape(16.dp)
+    ) {
+        Row(
+            modifier = Modifier.padding(16.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            MissionIcon(isCompleted = isCompleted)
+
+            Spacer(modifier = Modifier.width(16.dp))
+
+            MissionContent(
+                title = title,
+                description = description,
+                rewardText = rewardText,
+                isCompleted = isCompleted,
+                modifier = Modifier.weight(1f)
+            )
+        }
+    }
+}
+
+@Composable
+private fun MissionIcon(isCompleted: Boolean) {
+    Box(
+        modifier = Modifier
+            .size(48.dp)
+            .background(
+                color = if (isCompleted) {
+                    Color(0xFF4CAF50).copy(alpha = 0.2f)
+                } else {
+                    Color(0xFF2196F3).copy(alpha = 0.2f)
+                },
+                shape = CircleShape
+            ),
+        contentAlignment = Alignment.Center
+    ) {
+        Icon(
+            imageVector = Icons.Default.CheckCircle,
+            contentDescription = null,
+            tint = if (isCompleted) {
+                Color(0xFF4CAF50)
+            } else {
+                Color(0xFF2196F3)
+            },
+            modifier = Modifier.size(28.dp)
+        )
+    }
+}
+
+@Composable
+private fun MissionContent(
+    title: String,
+    description: String,
+    rewardText: String,
+    isCompleted: Boolean,
+    modifier: Modifier = Modifier
+) {
+    Column(modifier = modifier) {
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Text(
+                text = title,
+                style = MaterialTheme.typography.titleMedium,
+                fontWeight = FontWeight.Bold,
+                color = if (isCompleted) {
+                    MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
+                } else {
+                    MaterialTheme.colorScheme.onSurface
+                }
+            )
+            if (isCompleted) {
+                Spacer(modifier = Modifier.width(8.dp))
+                Text(
+                    text = "✓",
+                    style = MaterialTheme.typography.titleMedium,
+                    color = Color(0xFF4CAF50),
+                    fontWeight = FontWeight.Bold
+                )
+            }
+        }
+        Text(
+            text = description,
+            style = MaterialTheme.typography.bodySmall,
+            color = MaterialTheme.colorScheme.onSurfaceVariant
+        )
+        Spacer(modifier = Modifier.height(4.dp))
+        Text(
+            text = if (isCompleted) "Resgatada!" else rewardText,
+            style = MaterialTheme.typography.bodySmall,
+            color = Color(0xFF4CAF50),
+            fontWeight = FontWeight.Bold
+        )
     }
 }
 
@@ -329,7 +486,47 @@ fun StatsPreview() {
             modifier = Modifier.fillMaxSize(),
             color = MaterialTheme.colorScheme.background
         ) {
-            StatsScreen()
+            StatsContent(
+                uiState = StatsUiState(
+                    textsWritten = 42,
+                    totalXp = 1250,
+                    xpToday = 50,
+                    xpGoal = 150,
+                    streak = 7,
+                    achievements = listOf(
+                        Achievement(
+                            title = "Primeira Palavra",
+                            description = "Escreva seu primeiro texto",
+                            progress = 1f,
+                            progressText = "1/1 textos",
+                            rewardText = "Recompensa: +10 XP",
+                            iconName = "target",
+                            isCompleted = true
+                        ),
+                        Achievement(
+                            title = "100 Palavras",
+                            description = "Escreva um texto com 100+ palavras",
+                            progress = 0f,
+                            progressText = "0/100 palavras",
+                            rewardText = "Recompensa: +50 XP",
+                            iconName = "description",
+                            isCompleted = false
+                        )
+                    ),
+                    dailyMissions = listOf(
+                        DailyMission(
+                            title = "Escreva seu primeiro texto",
+                            description = "Comece o dia escrevendo!",
+                            progress = 1f,
+                            progressText = "1/1 texto",
+                            rewardText = "+50 XP",
+                            iconName = "edit",
+                            renovaEm = "13h",
+                            isCompleted = true
+                        )
+                    )
+                )
+            )
         }
     }
 }
@@ -342,7 +539,15 @@ fun StatsDarkPreview() {
             modifier = Modifier.fillMaxSize(),
             color = MaterialTheme.colorScheme.background
         ) {
-            StatsScreen()
+            StatsContent(
+                uiState = StatsUiState(
+                    textsWritten = 42,
+                    totalXp = 1250,
+                    xpToday = 50,
+                    xpGoal = 150,
+                    streak = 7
+                )
+            )
         }
     }
 }
