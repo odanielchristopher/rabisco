@@ -1,4 +1,4 @@
-package com.example.rabisco.data.repositories
+package com.example.rabisco.data.remote.repositories
 
 import com.example.rabisco.domain.models.Text
 import com.example.rabisco.domain.repositories.TextRepository
@@ -8,19 +8,23 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import java.util.Date
 
-class TextRepositoryImpl private constructor() : TextRepository {
+class TextRepositoryImpl : TextRepository {
+    // StateFlow para observar mudanças nos textos
     private val _textsFlow = MutableStateFlow<List<Text>>(emptyList())
-    val textsFlow: StateFlow<List<Text>> = _textsFlow.asStateFlow()
+
+    override val textsFlow: StateFlow<List<Text>> = _textsFlow.asStateFlow()
 
     override suspend fun saveText(text: Text): Result<String> {
         return try {
-            delay(500)
+            delay(500) // Simula operação de rede/database
             val currentTexts = _textsFlow.value.toMutableList()
             val existingIndex = currentTexts.indexOfFirst { it.id == text.id }
 
-            if(existingIndex != -1) {
+            if (existingIndex != -1) {
+                // Atualiza texto existente
                 currentTexts[existingIndex] = text.copy(updatedAt = Date())
-            }else {
+            } else {
+                // Adiciona novo texto no início
                 currentTexts.add(0, text)
             }
 
@@ -73,16 +77,4 @@ class TextRepositoryImpl private constructor() : TextRepository {
             Result.failure(e)
         }
     }
-
-    companion object {
-        @Volatile
-        private var instance: TextRepositoryImpl? = null
-
-        fun getInstance(): TextRepositoryImpl {
-            return instance ?: synchronized(this) {
-                instance ?: TextRepositoryImpl().also { instance = it }
-            }
-        }
-    }
-
 }

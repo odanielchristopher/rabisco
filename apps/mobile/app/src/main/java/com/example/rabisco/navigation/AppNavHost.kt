@@ -11,6 +11,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.example.rabisco.data.local.SessionRepository
 import com.example.rabisco.ui.screens.auth.AuthScreen
 import com.example.rabisco.ui.screens.write.WriteScreen
 import com.example.rabisco.ui.screens.home.HomeScreen
@@ -18,10 +19,14 @@ import com.example.rabisco.ui.screens.home.HomeUiState
 import com.example.rabisco.ui.screens.home.HomeViewModel
 import com.example.rabisco.ui.screens.mytexts.MyTextsScreen
 import com.example.rabisco.ui.screens.profile.ProfileScreen  // ✅ IMPORT
+import org.koin.androidx.compose.koinViewModel
+import org.koin.compose.getKoin
+import org.koin.compose.koinInject
 
 @Composable
 fun AppNavHost(
-    navController: NavHostController = rememberNavController()
+    navController: NavHostController = rememberNavController(),
+    sessionRepository: SessionRepository = koinInject()
 ) {
     NavHost(
         navController = navController,
@@ -32,10 +37,7 @@ fun AppNavHost(
         }
 
         composable(Routes.Home.path) {
-            val context = LocalContext.current
-            val homeViewModel: HomeViewModel = viewModel(
-                factory = HomeViewModel.provideFactory(context)
-            )
+            val homeViewModel: HomeViewModel = koinViewModel()
             val uiState by homeViewModel.uiState.collectAsState()
 
             HomeScreen(

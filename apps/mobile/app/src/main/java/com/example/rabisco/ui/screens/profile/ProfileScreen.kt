@@ -24,15 +24,14 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import org.koin.androidx.compose.koinViewModel
 
 
 // Tela de perfil
 @Composable
 fun ProfileScreen(
     onNavigateToAuth: () -> Unit = {},
-    viewModel: ProfileViewModel = viewModel(
-        factory = ProfileViewModel.provideFactory(LocalContext.current)
-    )
+    viewModel: ProfileViewModel = koinViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
     val context = LocalContext.current

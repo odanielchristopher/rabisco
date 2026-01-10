@@ -4,9 +4,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -14,28 +11,20 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
-import com.example.rabisco.core.factories.AuthViewModelFactory
-import com.example.rabisco.data.remote.dto.request.SignInDto
-import com.example.rabisco.data.remote.dto.request.SignUpDto
-import com.example.rabisco.data.remote.repositories.AuthRepository
 import com.example.rabisco.navigation.Routes
 import com.example.rabisco.ui.components.AppButton
 import com.example.rabisco.ui.screens.auth.components.AuthInput
-import kotlinx.coroutines.launch
+import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 fun SignUpScreen(
     navigator: NavHostController,
-    vm: AuthViewModel = androidx.lifecycle.viewmodel.compose.viewModel(
-        factory = AuthViewModelFactory (LocalContext.current)
-    )
+    vm: AuthViewModel = koinViewModel()
 ) {
     val state by vm.uiState.collectAsState()
 

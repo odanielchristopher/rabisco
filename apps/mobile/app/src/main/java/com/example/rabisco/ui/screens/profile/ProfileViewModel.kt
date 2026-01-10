@@ -13,10 +13,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
-class ProfileViewModel(private val context: Context) : ViewModel() {
-
-    private val sessionRepository = SessionRepository(context)
-
+class ProfileViewModel(private val context: Context, private val sessionRepository: SessionRepository) : ViewModel() {
     private val _uiState = MutableStateFlow(ProfileUiState())
     val uiState: StateFlow<ProfileUiState> = _uiState.asStateFlow()
 
@@ -172,15 +169,5 @@ class ProfileViewModel(private val context: Context) : ViewModel() {
                 }
             }
         }
-    }
-
-    companion object {
-        fun provideFactory(context: Context): ViewModelProvider.Factory =
-            object : ViewModelProvider.Factory {
-                @Suppress("UNCHECKED_CAST")
-                override fun <T : ViewModel> create(modelClass: Class<T>): T {
-                    return ProfileViewModel(context) as T
-                }
-            }
     }
 }
