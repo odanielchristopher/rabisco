@@ -7,10 +7,19 @@ import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import java.util.concurrent.TimeUnit
 
 object ApiProvider {
 
-    // Retrofit autenticado (usa token)
+    // URL base da API
+    private const val BASE_URL = "https://rabisco-b1tb.onrender.com/"
+
+    // Timeout em segundos
+    private const val TIMEOUT_SECONDS = 30L
+
+    /**
+     * Retrofit autenticado (usa token Bearer)
+     */
     fun provideAuthenticated(context: Context): Retrofit {
         val sessionRepo = SessionRepository(context)
 
@@ -21,16 +30,21 @@ object ApiProvider {
         val client = OkHttpClient.Builder()
             .addInterceptor(AuthInterceptor { sessionRepo.getToken() })
             .addInterceptor(logging)
+            .connectTimeout(TIMEOUT_SECONDS, TimeUnit.SECONDS)
+            .readTimeout(TIMEOUT_SECONDS, TimeUnit.SECONDS)
+            .writeTimeout(TIMEOUT_SECONDS, TimeUnit.SECONDS)
             .build()
 
         return Retrofit.Builder()
-            .baseUrl("https://rabisco-b1tb.onrender.com/")
+            .baseUrl(BASE_URL)
             .addConverterFactory(GsonConverterFactory.create())
             .client(client)
             .build()
     }
 
-    // Retrofit que NÃO envia token (login & signup)
+    /**
+     * Retrofit NÃO autenticado (sem token)
+     */
     fun provideUnauthenticated(): Retrofit {
         val logging = HttpLoggingInterceptor().apply {
             level = HttpLoggingInterceptor.Level.BODY
@@ -38,10 +52,13 @@ object ApiProvider {
 
         val client = OkHttpClient.Builder()
             .addInterceptor(logging)
+            .connectTimeout(TIMEOUT_SECONDS, TimeUnit.SECONDS)
+            .readTimeout(TIMEOUT_SECONDS, TimeUnit.SECONDS)
+            .writeTimeout(TIMEOUT_SECONDS, TimeUnit.SECONDS)
             .build()
 
         return Retrofit.Builder()
-            .baseUrl("https://rabisco-b1tb.onrender.com/")
+            .baseUrl(BASE_URL)
             .addConverterFactory(GsonConverterFactory.create())
             .client(client)
             .build()
