@@ -1,7 +1,6 @@
 package com.example.rabisco.data.remote.repositories
 
 import com.example.rabisco.data.local.SessionRepository
-import com.example.rabisco.data.remote.RetrofitClient
 import com.example.rabisco.data.remote.dto.request.SignInDto
 import com.example.rabisco.data.remote.dto.request.SignUpDto
 import com.example.rabisco.data.remote.dto.response.AuthResponse
