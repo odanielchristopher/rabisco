@@ -17,7 +17,10 @@ import com.example.rabisco.ui.screens.home.HomeScreen
 import com.example.rabisco.ui.screens.home.HomeUiState
 import com.example.rabisco.ui.screens.home.HomeViewModel
 import com.example.rabisco.ui.screens.mytexts.MyTextsScreen
+import com.example.rabisco.ui.screens.mytexts.MyTextsViewModel
 import com.example.rabisco.ui.screens.profile.ProfileScreen  // ✅ IMPORT
+import com.example.rabisco.ui.screens.stats.StatsScreen
+import com.example.rabisco.ui.screens.stats.StatsViewModel
 
 @Composable
 fun AppNavHost(
@@ -53,15 +56,24 @@ fun AppNavHost(
         }
 
         composable(Routes.MyTexts.path) {
-            Column {
-                Text("This page need implemented")
-            }
+            val context = LocalContext.current
+            MyTextsScreen(
+                onNavigateToWrite = {
+                    navController.navigate(Routes.Write.createRoute(type = "free"))
+                },
+                viewModel = viewModel(
+                    factory = MyTextsViewModel.provideFactory(context)
+                )
+            )
         }
 
         composable(Routes.Stats.path) {
-            Column {
-                Text("This page need implemented")
-            }
+            val context = LocalContext.current
+            StatsScreen(
+                viewModel = viewModel(
+                    factory = StatsViewModel.provideFactory(context)
+                )
+            )
         }
 
         composable(Routes.Profile.path) {

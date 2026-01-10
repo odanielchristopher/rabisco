@@ -1,6 +1,8 @@
 package com.example.rabisco.ui.screens.mytexts
 
+import android.content.Context
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 import com.example.rabisco.domain.models.Text
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -10,7 +12,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.rabisco.data.repositories.TextRepositoryImpl
 import kotlinx.coroutines.launch
 
-class MyTextsViewModel : ViewModel() {
+class MyTextsViewModel(private val context: Context) : ViewModel() {
 
     //add o singleton aqui...
     private val repository = TextRepositoryImpl.getInstance()
@@ -56,6 +58,7 @@ class MyTextsViewModel : ViewModel() {
     fun onDismissDeleteConfirmation() {
         _uiState.update { it.copy(showDeleteConfirmation = false, textToDelete = null) }
     }
+
     fun deleteText() {
         viewModelScope.launch {
             _uiState.value.textToDelete?.let { text ->
@@ -67,6 +70,17 @@ class MyTextsViewModel : ViewModel() {
                     )
                 }
                 filterTexts()
+            }
+        }
+    }
+
+    companion object {
+        fun provideFactory(context: Context): ViewModelProvider.Factory {
+            return object : ViewModelProvider.Factory {
+                @Suppress("UNCHECKED_CAST")
+                override fun <T : ViewModel> create(modelClass: Class<T>): T {
+                    return MyTextsViewModel(context) as T
+                }
             }
         }
     }
