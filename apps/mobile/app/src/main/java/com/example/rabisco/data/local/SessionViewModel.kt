@@ -36,12 +36,14 @@ class SessionViewModel(
     fun login(accessToken: String) {
         viewModelScope.launch {
             sessionRepository.saveToken(accessToken)
+            _isLoggedIn.value = true
         }
     }
 
     fun logout() {
         viewModelScope.launch {
             sessionRepository.clearToken()
+            _isLoggedIn.value = false
         }
     }
 }

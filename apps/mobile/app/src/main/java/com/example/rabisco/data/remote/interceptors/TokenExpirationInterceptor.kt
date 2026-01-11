@@ -17,6 +17,7 @@ class TokenExpirationInterceptor(
         if (response.code == 401) {
             // Limpa o token para forçar logout
             runBlocking {
+                if (sessionRepository.getToken() != null)
                 sessionRepository.clearToken()
             }
         }

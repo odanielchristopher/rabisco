@@ -42,7 +42,7 @@ class AuthViewModel(
         _uiState.value = _uiState.value.copy(toast = null)
     }
 
-    private fun setAccessToken(accessToken: String) {
+    private fun setAccessToken(accessToken: String?) {
         _uiState.value = _uiState.value.copy(accessToken = accessToken)
     }
 
@@ -51,14 +51,15 @@ class AuthViewModel(
             try {
                 setLoading(true)
                 setError(null)
+                setSuccess(false)
+                setAccessToken(null)
 
                 authRepository.signin(SignInDto(email, password)).onSuccess {
-                    body -> setAccessToken(body.accessToken)
+                    setAccessToken(it.accessToken)
+                    setSuccess(true)
                 }.onFailure { error ->
                     handleError(error)
                 }
-
-                setSuccess(true)
             } catch (e: Exception) {
                 handleError(e)
             } finally {
@@ -72,14 +73,16 @@ class AuthViewModel(
             try {
                 setLoading(true)
                 setError(null)
+                setSuccess(false)
+                setAccessToken(null)
 
                 authRepository.signup(SignUpDto(name, email, password)).onSuccess {
-                    body -> setAccessToken(body.accessToken)
+                    setAccessToken(it.accessToken)
+                    setSuccess(true)
                 }.onFailure { error ->
                     handleError(error)
                 }
 
-                setSuccess(true)
             } catch (e: Exception) {
                 handleError(e)
             } finally {
