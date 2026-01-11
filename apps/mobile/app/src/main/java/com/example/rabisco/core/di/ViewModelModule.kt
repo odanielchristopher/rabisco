@@ -14,7 +14,7 @@ import org.koin.dsl.module
 val ViewModelModule = module {
     viewModel { AuthViewModel(get(), get()) }
     viewModel { WriteViewModel(get()) }
-    viewModel { HomeViewModel() }
+    viewModel { HomeViewModel(get(), get()) }
     viewModel { ProfileViewModel(androidContext(), get(), get()) }
     viewModel { MyTextsViewModel(get()) }
     viewModel { StatsViewModel(androidContext()) }

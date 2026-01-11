@@ -37,6 +37,9 @@ val DataModule = module {
     single {
         get<Retrofit>(named("authenticated")).create(TextsService::class.java)
     }
+    single {
+        get<Retrofit>(named("authenticated")).create(PromptsService::class.java)
+    }
 
 
     // ---- Repositories ----

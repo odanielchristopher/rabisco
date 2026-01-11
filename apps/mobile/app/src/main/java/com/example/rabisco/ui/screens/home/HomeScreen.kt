@@ -57,7 +57,7 @@ fun HomeScreen(
         if (uiState.isLoading) {
             Box(
                 modifier = Modifier
-                    .fillMaxWidth()
+                    .fillMaxSize()
                     .padding(paddingValues),
                 contentAlignment = Alignment.Center) {
                 CircularProgressIndicator()
@@ -149,7 +149,7 @@ private fun HomeContent (
 
         Text(
             text = "Comece a escrever",
-            color = Color.Black,
+            color = MaterialTheme.colorScheme.onBackground,
             style = MaterialTheme.typography.titleMedium,
             fontWeight = FontWeight.Bold
         )

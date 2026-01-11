@@ -1,5 +1,6 @@
 package com.example.rabisco
 
+import android.app.StatusBarManager
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -13,7 +14,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.example.rabisco.navigation.AppNavHost
 import com.example.rabisco.ui.screens.MainScreen
 import com.example.rabisco.ui.theme.RabiscoTheme
 import com.example.rabisco.ui.theme.ThemeViewModel

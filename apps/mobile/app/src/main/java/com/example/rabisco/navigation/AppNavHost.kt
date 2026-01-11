@@ -34,12 +34,20 @@ fun AppNavHost(
             }
         }
 
-        true, false -> {
+        true -> {
             NavHost(
                 navController = navController,
-                startDestination = if (isLoggedIn!!) Routes.App.path else Routes.Auth.path
+                startDestination = Routes.App.path
             ) {
                 appGraph(navController)
+            }
+        }
+
+        false -> {
+            NavHost(
+                navController = navController,
+                startDestination = Routes.Auth.path
+            ) {
                 authGraph()
             }
         }
