@@ -34,58 +34,48 @@ fun MyTextsScreen(
         viewModel.refresh()
     }
 
-    Scaffold(
-        topBar = { MyTextsTopBar() },
-        floatingActionButton = {
-            FloatingActionButton(onClick = onNavigateToWrite) {
-                Icon(Icons.Default.Add, contentDescription = "Adicionar texto")
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+    ) {
+        SearchBar(
+            query = uiState.searchQuery,
+            onQueryChanged = viewModel::onSearchQueryChanged
+        )
+
+        CategoryTabs(
+            selectedTab = uiState.selectedTab,
+            onTabSelected = viewModel::onTabSelected
+        )
+
+        if (uiState.isLoading) {
+            Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center
+            ) {
+                CircularProgressIndicator()
             }
-        }
-    ) { paddingValues ->
-        Column(
-            modifier = Modifier
-                .padding(paddingValues)
-                .fillMaxSize()
-        ) {
-            SearchBar(
-                query = uiState.searchQuery,
-                onQueryChanged = viewModel::onSearchQueryChanged
+        } else if (uiState.errorMessage != null) {
+            ErrorState(
+                message = uiState.errorMessage!!,
+                onRetry = { viewModel.refresh() }
             )
-
-            CategoryTabs(
-                selectedTab = uiState.selectedTab,
-                onTabSelected = viewModel::onTabSelected
-            )
-
-            if (uiState.isLoading) {
-                Box(
-                    modifier = Modifier.fillMaxSize(),
-                    contentAlignment = Alignment.Center
-                ) {
-                    CircularProgressIndicator()
-                }
-            } else if (uiState.errorMessage != null) {
-                ErrorState(
-                    message = uiState.errorMessage!!,
-                    onRetry = { viewModel.refresh() }
-                )
-            } else if (uiState.filteredTexts.isEmpty()) {
-                EmptyState()
-            } else {
-                TextsList(
-                    texts = uiState.filteredTexts,
-                    onDeleteClick = viewModel::onDeleteConfirmation,
-                    onEditClick = onNavigateToEdit
-                )
-            }
-        }
-
-        if (uiState.showDeleteConfirmation) {
-            DeleteConfirmationDialog(
-                onConfirm = viewModel::deleteText,
-                onDismiss = viewModel::onDismissDeleteConfirmation
+        } else if (uiState.filteredTexts.isEmpty()) {
+            EmptyState()
+        } else {
+            TextsList(
+                texts = uiState.filteredTexts,
+                onDeleteClick = viewModel::onDeleteConfirmation,
+                onEditClick = onNavigateToEdit
             )
         }
+    }
+
+    if (uiState.showDeleteConfirmation) {
+        DeleteConfirmationDialog(
+            onConfirm = viewModel::deleteText,
+            onDismiss = viewModel::onDismissDeleteConfirmation
+        )
     }
 }
 
