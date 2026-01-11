@@ -3,8 +3,8 @@ package com.example.rabisco.ui.screens.auth
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.rabisco.data.local.SessionRepository
-import com.example.rabisco.data.remote.dto.request.SignInDto
-import com.example.rabisco.data.remote.dto.request.SignUpDto
+import com.example.rabisco.data.remote.dto.auth.request.SignInDto
+import com.example.rabisco.data.remote.dto.auth.request.SignUpDto
 import com.example.rabisco.domain.repositories.AuthRepository
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.flow.MutableStateFlow
