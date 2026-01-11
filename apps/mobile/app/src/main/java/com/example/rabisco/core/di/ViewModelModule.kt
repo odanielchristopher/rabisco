@@ -17,6 +17,6 @@ val ViewModelModule = module {
     viewModel { HomeViewModel(get(), get()) }
     viewModel { ProfileViewModel(androidContext(), get(), get()) }
     viewModel { MyTextsViewModel(get()) }
-    viewModel { StatsViewModel(androidContext()) }
+    viewModel { StatsViewModel(get(), get(), get()) }
     single { SessionViewModel(get()) }
 }

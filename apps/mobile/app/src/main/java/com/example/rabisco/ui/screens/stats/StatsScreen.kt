@@ -17,6 +17,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.rabisco.ui.theme.RabiscoTheme
@@ -28,22 +29,67 @@ fun StatsScreen(
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
-    if (uiState.isLoading) {
-        Box(
-            modifier = Modifier.fillMaxSize(),
-            contentAlignment = Alignment.Center
-        ) {
-            CircularProgressIndicator()
+    Scaffold { paddingValues ->
+        when {
+            uiState.isLoading -> {
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(paddingValues),
+                    contentAlignment = Alignment.Center
+                ) {
+                    CircularProgressIndicator()
+                }
+            }
+
+            uiState.errorMessage != null -> {
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(paddingValues),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Column(
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        modifier = Modifier.padding(16.dp)
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Error,
+                            contentDescription = null,
+                            modifier = Modifier.size(48.dp),
+                            tint = MaterialTheme.colorScheme.error
+                        )
+                        Spacer(modifier = Modifier.height(16.dp))
+                        Text(
+                            text = uiState.errorMessage ?: "Erro desconhecido",
+                            color = MaterialTheme.colorScheme.error,
+                            textAlign = TextAlign.Center
+                        )
+                        Spacer(modifier = Modifier.height(16.dp))
+                        Button(onClick = { viewModel.refreshStats() }) {
+                            Text("Tentar Novamente")
+                        }
+                    }
+                }
+            }
+
+            else -> {
+                StatsContent(
+                    uiState = uiState,
+                    modifier = Modifier.padding(paddingValues)
+                )
+            }
         }
-    } else {
-        StatsContent(uiState = uiState)
     }
 }
 
 @Composable
-private fun StatsContent(uiState: StatsUiState) {
+private fun StatsContent(
+    uiState: StatsUiState,
+    modifier: Modifier = Modifier
+) {
     Column(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxSize()
             .verticalScroll(rememberScrollState())
             .padding(16.dp)
@@ -52,6 +98,7 @@ private fun StatsContent(uiState: StatsUiState) {
 
         Spacer(modifier = Modifier.height(24.dp))
 
+        // ✅ Dados reais do backend
         StatsCardsSection(
             textsWritten = uiState.textsWritten,
             totalXp = uiState.totalXp,
@@ -62,31 +109,37 @@ private fun StatsContent(uiState: StatsUiState) {
 
         Spacer(modifier = Modifier.height(32.dp))
 
-        StatsSection(title = "Conquistas") {
-            uiState.achievements.forEach { achievement ->
-                AchievementCard(
-                    title = achievement.title,
-                    description = achievement.description,
-                    progressText = achievement.progressText,
-                    rewardText = achievement.rewardText,
-                    isCompleted = achievement.isCompleted
-                )
-                Spacer(modifier = Modifier.height(12.dp))
+        // ✅ Conquistas reais
+        if (uiState.achievements.isNotEmpty()) {
+            StatsSection(title = "Conquistas") {
+                uiState.achievements.forEach { achievement ->
+                    println(achievement.toString())
+                    AchievementCard(
+                        title = achievement.title,
+                        description = achievement.description,
+                        progressText = achievement.progressText,
+                        rewardText = achievement.rewardText,
+                        isCompleted = achievement.isCompleted
+                    )
+                    Spacer(modifier = Modifier.height(12.dp))
+                }
             }
+            Spacer(modifier = Modifier.height(24.dp))
         }
 
-        Spacer(modifier = Modifier.height(24.dp))
-
-        StatsSection(title = "Missões Diárias") {
-            uiState.dailyMissions.forEach { mission ->
-                MissionCard(
-                    title = mission.title,
-                    description = mission.description,
-                    progressText = mission.progressText,
-                    rewardText = mission.rewardText,
-                    isCompleted = mission.isCompleted
-                )
-                Spacer(modifier = Modifier.height(12.dp))
+        // ✅ Missões diárias reais
+        if (uiState.dailyMissions.isNotEmpty()) {
+            StatsSection(title = "Missões Diárias") {
+                uiState.dailyMissions.forEach { mission ->
+                    MissionCard(
+                        title = mission.title,
+                        description = mission.description,
+                        progressText = mission.progressText,
+                        rewardText = mission.rewardText,
+                        isCompleted = mission.isCompleted
+                    )
+                    Spacer(modifier = Modifier.height(12.dp))
+                }
             }
         }
 
@@ -494,7 +547,7 @@ fun StatsPreview() {
                     xpGoal = 150,
                     streak = 7,
                     achievements = listOf(
-                        Achievement(
+                        UiAchievement(
                             title = "Primeira Palavra",
                             description = "Escreva seu primeiro texto",
                             progress = 1f,
@@ -503,7 +556,7 @@ fun StatsPreview() {
                             iconName = "target",
                             isCompleted = true
                         ),
-                        Achievement(
+                        UiAchievement(
                             title = "100 Palavras",
                             description = "Escreva um texto com 100+ palavras",
                             progress = 0f,
@@ -514,7 +567,7 @@ fun StatsPreview() {
                         )
                     ),
                     dailyMissions = listOf(
-                        DailyMission(
+                        UiDailyMission(
                             title = "Escreva seu primeiro texto",
                             description = "Comece o dia escrevendo!",
                             progress = 1f,

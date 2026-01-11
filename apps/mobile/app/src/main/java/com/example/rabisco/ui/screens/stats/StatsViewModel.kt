@@ -1,8 +1,10 @@
 package com.example.rabisco.ui.screens.stats
 
-import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.rabisco.domain.repositories.AchievementsRepository
+import com.example.rabisco.domain.repositories.DailyMissionsRepository
+import com.example.rabisco.domain.repositories.UserRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -15,13 +17,13 @@ data class StatsUiState(
     val xpToday: Int = 0,
     val xpGoal: Int = 150,
     val streak: Int = 0,
-    val achievements: List<Achievement> = emptyList(),
-    val dailyMissions: List<DailyMission> = emptyList(),
+    val achievements: List<UiAchievement> = emptyList(),
+    val dailyMissions: List<UiDailyMission> = emptyList(),
     val isLoading: Boolean = false,
     val errorMessage: String? = null
 )
 
-data class Achievement(
+data class UiAchievement(
     val title: String,
     val description: String,
     val progress: Float,
@@ -31,7 +33,7 @@ data class Achievement(
     val isCompleted: Boolean = false
 )
 
-data class DailyMission(
+data class UiDailyMission(
     val title: String,
     val description: String,
     val progress: Float,
@@ -42,7 +44,12 @@ data class DailyMission(
     val isCompleted: Boolean = false
 )
 
-class StatsViewModel(private val context: Context) : ViewModel() {
+class StatsViewModel(
+    private val userRepository: UserRepository,
+    private val achievementsRepository: AchievementsRepository,
+    private val dailyMissionsRepository: DailyMissionsRepository
+) : ViewModel() {
+
     private val _uiState = MutableStateFlow(StatsUiState())
     val uiState: StateFlow<StatsUiState> = _uiState.asStateFlow()
 
@@ -52,94 +59,57 @@ class StatsViewModel(private val context: Context) : ViewModel() {
 
     private fun loadStats() {
         viewModelScope.launch {
-            _uiState.update { it.copy(isLoading = true) }
+            _uiState.update { it.copy(isLoading = true, errorMessage = null) }
 
-            // dados mockados pra testar
-            val achievements = listOf(
-                Achievement(
-                    title = "Primeira Palavra",
-                    description = "Escreva seu primeiro texto",
-                    progress = 1f,
-                    progressText = "1/1 textos",
-                    rewardText = "Recompensa: +10 XP",
-                    iconName = "target",
-                    isCompleted = true
-                ),
-                Achievement(
-                    title = "100 Palavras",
-                    description = "Escreva um texto com 100+ palavras",
-                    progress = 0f,
-                    progressText = "0/100 palavras",
-                    rewardText = "Recompensa: +50 XP",
-                    iconName = "description",
-                    isCompleted = false
-                ),
-                Achievement(
-                    title = "Escritor Dedicado",
-                    description = "Mantenha uma ofensiva de 7 dias",
-                    progress = 1f,
-                    progressText = "7/7 dias",
-                    rewardText = "Recompensa: +100 XP",
-                    iconName = "fire",
-                    isCompleted = true
-                ),
-                Achievement(
-                    title = "Maratonista",
-                    description = "Escreva 10 textos em um mês",
-                    progress = 0.4f,
-                    progressText = "4/10 textos",
-                    rewardText = "Recompensa: +200 XP",
-                    iconName = "trophy",
-                    isCompleted = false
-                )
-            )
+            try {
+                val userResult = userRepository.getMe()
+                val achievementsResult = achievementsRepository.getAllAchievements()
+                val missionsResult = dailyMissionsRepository.getAllDailyMissions()
 
-            val missions = listOf(
-                DailyMission(
-                    title = "Escreva seu primeiro texto",
-                    description = "Comece o dia escrevendo!",
-                    progress = 1f,
-                    progressText = "1/1 texto",
-                    rewardText = "+50 XP",
-                    iconName = "edit",
-                    renovaEm = "13h",
-                    isCompleted = true
-                ),
-                DailyMission(
-                    title = "Complete o prompt do dia",
-                    description = "Responda ao desafio criativo de hoje",
-                    progress = 0f,
-                    progressText = "0/1 prompt",
-                    rewardText = "+80 XP",
-                    iconName = "auto_awesome",
-                    renovaEm = "13h",
-                    isCompleted = false
-                ),
-                DailyMission(
-                    title = "Escreva 200 palavras",
-                    description = "Alcance a meta de palavras hoje",
-                    progress = 0f,
-                    progressText = "0/200 palavras",
-                    rewardText = "+100 XP",
-                    iconName = "book",
-                    renovaEm = "13h",
-                    isCompleted = false
-                )
-            )
+                userResult.onSuccess { userData ->
+                    val achievements = achievementsResult.getOrNull()?.map { it.toUiModel() } ?: emptyList()
+                    val missions = missionsResult.getOrNull()?.map { it.toUiModel() } ?: emptyList()
 
-            _uiState.update {
-                it.copy(
-                    textsWritten = 42,
-                    totalXp = 1250,
-                    xpToday = 50,
-                    xpGoal = 150,
-                    streak = 7,
-                    achievements = achievements,
-                    dailyMissions = missions,
-                    isLoading = false
-                )
+                    val xpToday = calculateXpToday(userData.textsToday)
+
+                    _uiState.update {
+                        it.copy(
+                            textsWritten = userData.totalTexts,
+                            totalXp = userData.score,
+                            xpToday = xpToday,
+                            xpGoal = 150, // Meta fixa
+                            streak = userData.totalDays,
+                            achievements = achievements,
+                            dailyMissions = missions,
+                            isLoading = false
+                        )
+                    }
+                }
+
+                userResult.onFailure { error ->
+                    _uiState.update {
+                        it.copy(
+                            errorMessage = "Erro ao carregar estatísticas: ${error.message}",
+                            isLoading = false
+                        )
+                    }
+                }
+
+            } catch (e: Exception) {
+                _uiState.update {
+                    it.copy(
+                        errorMessage = "Erro ao carregar dados: ${e.message}",
+                        isLoading = false
+                    )
+                }
             }
         }
+    }
+
+    private fun calculateXpToday(textsToday: Int): Int {
+        // XP = textos hoje * 50 (50 XP por texto)
+        // Você pode ajustar essa fórmula conforme suas regras de XP
+        return textsToday * 50
     }
 
     fun refreshStats() {
