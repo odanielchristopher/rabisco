@@ -2,6 +2,7 @@ package com.example.rabisco.ui.screens.auth
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -21,6 +22,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.rabisco.data.local.SessionViewModel
 import com.example.rabisco.ui.components.Container
+import com.example.rabisco.ui.components.ToastMessage
 import com.example.rabisco.ui.screens.auth.components.AuthTabSelector
 import com.example.rabisco.ui.screens.auth.components.FooterSection
 import com.example.rabisco.ui.screens.auth.components.HeaderSection
@@ -45,14 +47,22 @@ fun AuthScreen(
         }
     }
 
-    AuthScreenContent(
-        selectedTab = selectedTab,
-        onTabSelected = { selectedTab = it },
-        isLoading = authUiState.loading,
-        errorMessage = authUiState.error,
-        onSignIn = authViewModel::signin,
-        onSignUp = authViewModel::signup
-    )
+    Box(modifier = Modifier.fillMaxSize()) {
+        // Conteúdo principal
+        AuthScreenContent(
+            selectedTab = selectedTab,
+            onTabSelected = { selectedTab = it },
+            isLoading = authUiState.loading,
+            onSignIn = authViewModel::signin,
+            onSignUp = authViewModel::signup
+        )
+
+        // Toast de erro (aparece por cima)
+        ToastMessage(
+            toastData = authUiState.toast,
+            onDismiss = authViewModel::dismissToast
+        )
+    }
 }
 
 
@@ -61,7 +71,6 @@ private fun AuthScreenContent(
     selectedTab: Int,
     onTabSelected: (Int) -> Unit,
     isLoading: Boolean,
-    errorMessage: String?,
     onSignIn: (email: String, password: String) -> Unit,
     onSignUp: (name: String, email: String, password: String) -> Unit
 ) {
@@ -96,12 +105,10 @@ private fun AuthScreenContent(
                 when (selectedTab) {
                     0 -> SignInForm(
                         isLoading = isLoading,
-                        errorMessage = errorMessage,
                         onSignIn = onSignIn
                     )
                     1 -> SignUpForm(
                         isLoading = isLoading,
-                        errorMessage = errorMessage,
                         onSignUp = onSignUp
                     )
                 }
@@ -123,7 +130,6 @@ private fun AuthScreenPreview() {
             selectedTab = 0,
             onTabSelected = {},
             isLoading = false,
-            errorMessage = null,
             onSignIn = { _, _ -> },
             onSignUp = { _, _, _ -> }
         )

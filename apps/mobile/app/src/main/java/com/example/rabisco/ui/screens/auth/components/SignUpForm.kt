@@ -21,7 +21,6 @@ import com.example.rabisco.ui.screens.auth.validation.AuthValidation
 @Composable
 fun SignUpForm(
     isLoading: Boolean,
-    errorMessage: String?,
     onSignUp: (name: String, email: String, password: String) -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -108,15 +107,5 @@ fun SignUpForm(
             loading = isLoading,
             modifier = Modifier.fillMaxWidth()
         )
-
-        // API Error Message
-        errorMessage?.let { error ->
-            Spacer(modifier = Modifier.height(8.dp))
-            Text(
-                text = error,
-                color = MaterialTheme.colorScheme.error,
-                style = MaterialTheme.typography.bodySmall
-            )
-        }
     }
 }

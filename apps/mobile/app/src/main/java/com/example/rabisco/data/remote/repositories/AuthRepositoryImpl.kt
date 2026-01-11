@@ -4,6 +4,7 @@ import com.example.rabisco.data.remote.dto.auth.request.SignInDto
 import com.example.rabisco.data.remote.dto.auth.request.SignUpDto
 import com.example.rabisco.data.remote.dto.auth.response.AuthResponse
 import com.example.rabisco.data.remote.services.AuthService
+import com.example.rabisco.data.remote.utils.retrofitError
 import com.example.rabisco.domain.repositories.AuthRepository
 
 class AuthRepositoryImpl(
@@ -15,7 +16,7 @@ class AuthRepositoryImpl(
             if (response.isSuccessful && response.body() != null) {
                 Result.success(response.body()!!)
             } else {
-                Result.failure(Exception("Erro ao autenticar usuário: ${response.code()}"))
+                Result.failure(retrofitError(response))
             }
         } catch (e: Exception) {
             Result.failure(e)
@@ -28,7 +29,7 @@ class AuthRepositoryImpl(
             if (response.isSuccessful && response.body() != null) {
                 Result.success(response.body()!!)
             } else {
-                Result.failure(Exception("Erro ao criar usuário: ${response.code()}"))
+                Result.failure(retrofitError(response))
             }
         } catch (e: Exception) {
             Result.failure(e)
