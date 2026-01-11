@@ -29,56 +29,51 @@ fun StatsScreen(
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
-    Scaffold { paddingValues ->
-        when {
-            uiState.isLoading -> {
-                Box(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(paddingValues),
-                    contentAlignment = Alignment.Center
-                ) {
-                    CircularProgressIndicator()
-                }
+    when {
+        uiState.isLoading -> {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize(),
+                contentAlignment = Alignment.Center
+            ) {
+                CircularProgressIndicator()
             }
+        }
 
-            uiState.errorMessage != null -> {
-                Box(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(paddingValues),
-                    contentAlignment = Alignment.Center
+        uiState.errorMessage != null -> {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize(),
+                contentAlignment = Alignment.Center
+            ) {
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    modifier = Modifier.padding(16.dp)
                 ) {
-                    Column(
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        modifier = Modifier.padding(16.dp)
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.Error,
-                            contentDescription = null,
-                            modifier = Modifier.size(48.dp),
-                            tint = MaterialTheme.colorScheme.error
-                        )
-                        Spacer(modifier = Modifier.height(16.dp))
-                        Text(
-                            text = uiState.errorMessage ?: "Erro desconhecido",
-                            color = MaterialTheme.colorScheme.error,
-                            textAlign = TextAlign.Center
-                        )
-                        Spacer(modifier = Modifier.height(16.dp))
-                        Button(onClick = { viewModel.refreshStats() }) {
-                            Text("Tentar Novamente")
-                        }
+                    Icon(
+                        imageVector = Icons.Default.Error,
+                        contentDescription = null,
+                        modifier = Modifier.size(48.dp),
+                        tint = MaterialTheme.colorScheme.error
+                    )
+                    Spacer(modifier = Modifier.height(16.dp))
+                    Text(
+                        text = uiState.errorMessage ?: "Erro desconhecido",
+                        color = MaterialTheme.colorScheme.error,
+                        textAlign = TextAlign.Center
+                    )
+                    Spacer(modifier = Modifier.height(16.dp))
+                    Button(onClick = { viewModel.refreshStats() }) {
+                        Text("Tentar Novamente")
                     }
                 }
             }
+        }
 
-            else -> {
-                StatsContent(
-                    uiState = uiState,
-                    modifier = Modifier.padding(paddingValues)
-                )
-            }
+        else -> {
+            StatsContent(
+                uiState = uiState,
+            )
         }
     }
 }
@@ -98,7 +93,6 @@ private fun StatsContent(
 
         Spacer(modifier = Modifier.height(24.dp))
 
-        // ✅ Dados reais do backend
         StatsCardsSection(
             textsWritten = uiState.textsWritten,
             totalXp = uiState.totalXp,
@@ -109,7 +103,22 @@ private fun StatsContent(
 
         Spacer(modifier = Modifier.height(32.dp))
 
-        // ✅ Conquistas reais
+        if (uiState.dailyMissions.isNotEmpty()) {
+            StatsSection(title = "Missões Diárias") {
+                uiState.dailyMissions.forEach { mission ->
+                    MissionCard(
+                        title = mission.title,
+                        description = mission.description,
+                        progressText = mission.progressText,
+                        rewardText = mission.rewardText,
+                        isCompleted = mission.isCompleted
+                    )
+                    Spacer(modifier = Modifier.height(12.dp))
+                }
+            }
+            Spacer(modifier = Modifier.height(24.dp))
+        }
+
         if (uiState.achievements.isNotEmpty()) {
             StatsSection(title = "Conquistas") {
                 uiState.achievements.forEach { achievement ->
@@ -124,26 +133,7 @@ private fun StatsContent(
                     Spacer(modifier = Modifier.height(12.dp))
                 }
             }
-            Spacer(modifier = Modifier.height(24.dp))
         }
-
-        // ✅ Missões diárias reais
-        if (uiState.dailyMissions.isNotEmpty()) {
-            StatsSection(title = "Missões Diárias") {
-                uiState.dailyMissions.forEach { mission ->
-                    MissionCard(
-                        title = mission.title,
-                        description = mission.description,
-                        progressText = mission.progressText,
-                        rewardText = mission.rewardText,
-                        isCompleted = mission.isCompleted
-                    )
-                    Spacer(modifier = Modifier.height(12.dp))
-                }
-            }
-        }
-
-        Spacer(modifier = Modifier.height(80.dp))
     }
 }
 

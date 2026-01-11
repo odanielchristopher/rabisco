@@ -29,45 +29,35 @@ fun MyTextsScreen(
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
-    Scaffold(
-        topBar = { MyTextsTopBar() },
-        floatingActionButton = {
-            FloatingActionButton(onClick = onNavigateToWrite) {
-                Icon(Icons.Default.Add, contentDescription = "Adicionar texto")
-            }
-        }
-    ) { paddingValues ->
-        Column(
-            modifier = Modifier
-                .padding(paddingValues)
-                .fillMaxSize()
-        ) {
-            SearchBar(
-                query = uiState.searchQuery,
-                onQueryChanged = viewModel::onSearchQueryChanged
-            )
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+    ) {
+        SearchBar(
+            query = uiState.searchQuery,
+            onQueryChanged = viewModel::onSearchQueryChanged
+        )
 
-            CategoryTabs(
-                selectedTab = uiState.selectedTab,
-                onTabSelected = viewModel::onTabSelected
-            )
+        CategoryTabs(
+            selectedTab = uiState.selectedTab,
+            onTabSelected = viewModel::onTabSelected
+        )
 
-            if (uiState.filteredTexts.isEmpty()) {
-                EmptyState()
-            } else {
-                TextsList(
-                    texts = uiState.filteredTexts,
-                    onDeleteClick = viewModel::onDeleteConfirmation
-                )
-            }
-        }
-
-        if (uiState.showDeleteConfirmation) {
-            DeleteConfirmationDialog(
-                onConfirm = viewModel::deleteText,
-                onDismiss = viewModel::onDismissDeleteConfirmation
+        if (uiState.filteredTexts.isEmpty()) {
+            EmptyState()
+        } else {
+            TextsList(
+                texts = uiState.filteredTexts,
+                onDeleteClick = viewModel::onDeleteConfirmation
             )
         }
+    }
+
+    if (uiState.showDeleteConfirmation) {
+        DeleteConfirmationDialog(
+            onConfirm = viewModel::deleteText,
+            onDismiss = viewModel::onDismissDeleteConfirmation
+        )
     }
 }
 
