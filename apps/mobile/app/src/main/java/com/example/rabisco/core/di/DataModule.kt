@@ -1,16 +1,9 @@
 package com.example.rabisco.core.di
 
 import com.example.rabisco.data.local.SessionRepository
-import com.example.rabisco.data.remote.services.AuthService
-import com.example.rabisco.data.remote.repositories.AuthRepositoryImpl
-import com.example.rabisco.data.remote.repositories.TextRepositoryImpl
-import com.example.rabisco.data.remote.services.AchievementsService
-import com.example.rabisco.data.remote.services.DailyMissionsService
-import com.example.rabisco.data.remote.services.TagsService
-import com.example.rabisco.data.remote.services.TextsService
-import com.example.rabisco.data.remote.services.UserService
-import com.example.rabisco.domain.repositories.AuthRepository
-import com.example.rabisco.domain.repositories.TextRepository
+import com.example.rabisco.data.remote.repositories.*
+import com.example.rabisco.data.remote.services.*
+import com.example.rabisco.domain.repositories.*
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.qualifier.named
 import org.koin.dsl.module
@@ -48,6 +41,13 @@ val DataModule = module {
 
     // ---- Repositories ----
     single<AuthRepository> { AuthRepositoryImpl(get(), get())}
-    single<TextRepository> { TextRepositoryImpl() }
+
+    single<TextRepository> { TextRepositoryImpl() } // LOCAL (PARA TESTES)
+    single<TextsRepository>{ TextsRepositoryImpl(get()) } // REMOTO (CONECTADO COM A API)
+
+    single<PromptsRepository> { PromptsRepositoryImpl(get()) }
+    single<TagsRepository> { TagsRepositoryImpl(get()) }
+    single<AchievementsRepository> { AchievementsRepositoryImpl(get()) }
+    single<DailyMissionsRepository> { DailyMissionsRepositoryImpl(get()) }
 
 }
