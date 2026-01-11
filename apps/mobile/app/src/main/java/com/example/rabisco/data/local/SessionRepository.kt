@@ -35,9 +35,9 @@
             }
         }
 
-        suspend fun clearSession() {
-            context.dataStore.edit { prefs ->
-                prefs.clear()
+        fun observeToken(): Flow<String?> {
+            return context.dataStore.data.map { prefs ->
+                prefs[TOKEN]
             }
         }
 
