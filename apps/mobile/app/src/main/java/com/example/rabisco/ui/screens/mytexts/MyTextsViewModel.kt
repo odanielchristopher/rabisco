@@ -9,19 +9,40 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import androidx.lifecycle.viewModelScope
-import com.example.rabisco.domain.repositories.TextRepository
+import com.example.rabisco.domain.repositories.TextsRepository
 import kotlinx.coroutines.launch
 
-class MyTextsViewModel(private val textRepository: TextRepository) : ViewModel() {
+class MyTextsViewModel(private val textsRepository: TextsRepository) : ViewModel() {
 
     private val _uiState = MutableStateFlow(MyTextsUiState())
     val uiState: StateFlow<MyTextsUiState> = _uiState.asStateFlow()
 
     init {
+        loadTexts()
+    }
+
+    private fun loadTexts() {
         viewModelScope.launch {
-            textRepository.textsFlow.collect { texts ->
-                _uiState.update { it.copy(texts = texts) }
+            _uiState.update { it.copy(isLoading = true) }
+
+            textsRepository.getAllTexts(
+                category = null,
+                search = null
+            ).onSuccess { texts ->
+                _uiState.update {
+                    it.copy(
+                        texts = texts,
+                        isLoading = false
+                    )
+                }
                 filterTexts()
+            }.onFailure { exception ->
+                _uiState.update {
+                    it.copy(
+                        isLoading = false,
+                        errorMessage = "erro no carregamento ${exception.message}"
+                    )
+                }
             }
         }
     }
@@ -59,15 +80,32 @@ class MyTextsViewModel(private val textRepository: TextRepository) : ViewModel()
     fun deleteText() {
         viewModelScope.launch {
             _uiState.value.textToDelete?.let { text ->
-                textRepository.deleteText(text.id)
-                _uiState.update {
-                    it.copy(
-                        showDeleteConfirmation = false,
-                        textToDelete = null
-                    )
-                }
-                filterTexts()
+                textsRepository.deleteText(text.id)
+                    .onSuccess {
+                        loadTexts()
+                        _uiState.update {
+                            it.copy(
+                                showDeleteConfirmation = false,
+                                textToDelete = null,
+                                isLoading = false
+                            )
+                        }
+                    }
+                    .onFailure { exception ->
+                        _uiState.update {
+                            it.copy(
+                                isLoading = false,
+                                errorMessage = "erro ao deletar: ${exception.message}",
+                                showDeleteConfirmation = false,
+                                textToDelete = null
+                            )
+                        }
+                    }
             }
         }
+    }
+
+    fun refresh() {
+        loadTexts()
     }
 }
