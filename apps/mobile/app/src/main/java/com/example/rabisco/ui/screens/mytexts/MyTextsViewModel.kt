@@ -60,7 +60,8 @@ class MyTextsViewModel(private val textsRepository: TextsRepository) : ViewModel
     private fun filterTexts() {
         val state = _uiState.value
         val filtered = state.texts.filter { text ->
-            val matchesCategory = state.selectedTab == "Todos" || text.tags.contains(state.selectedTab)
+            val matchesCategory = state.selectedTab == "Todos" ||
+                    (!text.tags.isNullOrEmpty() && text.tags.contains(state.selectedTab))
             val matchesSearch = state.searchQuery.isBlank() ||
                     text.title.contains(state.searchQuery, ignoreCase = true) ||
                     text.content.contains(state.searchQuery, ignoreCase = true)

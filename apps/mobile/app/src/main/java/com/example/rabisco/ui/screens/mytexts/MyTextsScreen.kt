@@ -35,12 +35,7 @@ fun MyTextsScreen(
     }
 
     Scaffold(
-        topBar = { MyTextsTopBar() },
-        floatingActionButton = {
-            FloatingActionButton(onClick = onNavigateToWrite) {
-                Icon(Icons.Default.Add, contentDescription = "Adicionar texto")
-            }
-        }
+        topBar = { MyTextsTopBar() }
     ) { paddingValues ->
         Column(
             modifier = Modifier
