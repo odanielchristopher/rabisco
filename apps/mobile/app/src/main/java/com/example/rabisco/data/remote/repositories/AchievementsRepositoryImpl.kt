@@ -1,9 +1,8 @@
 package com.example.rabisco.data.remote.repositories
 
 import com.example.rabisco.data.remote.services.AchievementsService
+import com.example.rabisco.domain.models.Achievement
 import com.example.rabisco.domain.repositories.AchievementsRepository
-import com.example.rabisco.ui.screens.stats.Achievement
-import org.koin.compose.getKoin
 
 class AchievementsRepositoryImpl(
     private val achievementsService: AchievementsService

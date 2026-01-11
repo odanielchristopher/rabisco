@@ -1,8 +1,8 @@
 package com.example.rabisco.data.remote.repositories
 
 import com.example.rabisco.data.remote.services.DailyMissionsService
+import com.example.rabisco.domain.models.DailyMission
 import com.example.rabisco.domain.repositories.DailyMissionsRepository
-import com.example.rabisco.ui.screens.stats.DailyMission
 
 class DailyMissionsRepositoryImpl(
     private val dailyMissionsService: DailyMissionsService
