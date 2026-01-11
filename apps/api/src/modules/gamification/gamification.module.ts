@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 
 import { AchievementsController } from './controllers/achievements.controller';
 import { MissionsController } from './controllers/missions.controller';
+import { DailyMissionsCron } from './cronjobs/daily-missions.cron';
 import { MissionCompletedAchievementListener } from './listeners/achievement-mission.listener';
 import { StreakGoalAchievementListener } from './listeners/achievement-streak.listener';
 import { TextCreatedAchievementListener } from './listeners/achievement-text.listener';
@@ -31,6 +32,9 @@ import { StreakService } from './services/streak.service';
     TextCreatedStreakListener,
     TextCreatedDailyMissionListener,
     TextCreatedScoreListener,
+
+    // Cronjob
+    DailyMissionsCron,
   ],
 })
 export class GamificationModule {}

@@ -53,11 +53,13 @@ export namespace IMissionsRepository {
   };
 
   export type CreateDailyMissions = {
-    missions: typeof MISSIONS;
+    missions: DailyMission[];
   };
 
   export type UpsertUserMission = {
     userId: string;
     missionId: string;
   };
+
+  type DailyMission = (typeof MISSIONS)[number] & { availableDate: Date };
 }
