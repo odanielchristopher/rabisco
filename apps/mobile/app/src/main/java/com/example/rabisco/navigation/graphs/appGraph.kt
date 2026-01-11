@@ -23,11 +23,7 @@ fun NavGraphBuilder.appGraph(
         route = Routes.App.path
     ) {
         composable(Routes.Home.path) {
-            val homeViewModel: HomeViewModel = koinViewModel()
-            val uiState by homeViewModel.uiState.collectAsState()
-
             HomeScreen(
-                uiState = uiState,
                 onNavigateToWrite = { type ->
                     navController.navigate(Routes.Write.createRoute(type = type))
                 }

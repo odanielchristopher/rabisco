@@ -33,6 +33,8 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -42,13 +44,15 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.rabisco.ui.theme.RabiscoTheme
+import org.koin.androidx.compose.koinViewModel
 
 
 @Composable
 fun HomeScreen(
-    uiState: HomeUiState,
-    onNavigateToWrite: (type: String) -> Unit = {}
+    onNavigateToWrite: (type: String) -> Unit = {},
+    viewModel: HomeViewModel = koinViewModel()
 ) {
+    val uiState by viewModel.uiState.collectAsState()
     Scaffold() { paddingValues ->
         if (uiState.isLoading) {
             Box(
@@ -384,8 +388,6 @@ private fun WriteOptionCard(
 @Composable
 fun HomePreview() {
     RabiscoTheme {
-        HomeScreen(
-            uiState = HomeUiState()
-        )
+        HomeScreen()
     }
 }
