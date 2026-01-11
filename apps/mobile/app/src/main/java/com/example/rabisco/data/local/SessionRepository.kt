@@ -29,6 +29,12 @@
             return context.dataStore.data.first()[TOKEN]
         }
 
+        suspend fun clearToken() {
+            context.dataStore.edit { preferences ->
+                preferences.remove(TOKEN)
+            }
+        }
+
         suspend fun clearSession() {
             context.dataStore.edit { prefs ->
                 prefs.clear()

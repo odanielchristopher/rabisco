@@ -9,20 +9,17 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import androidx.lifecycle.viewModelScope
-import com.example.rabisco.data.repositories.TextRepositoryImpl
+import com.example.rabisco.domain.repositories.TextRepository
 import kotlinx.coroutines.launch
 
-class MyTextsViewModel(private val context: Context) : ViewModel() {
-
-    //add o singleton aqui...
-    private val repository = TextRepositoryImpl.getInstance()
+class MyTextsViewModel(private val textRepository: TextRepository) : ViewModel() {
 
     private val _uiState = MutableStateFlow(MyTextsUiState())
     val uiState: StateFlow<MyTextsUiState> = _uiState.asStateFlow()
 
     init {
         viewModelScope.launch {
-            repository.textsFlow.collect { texts ->
+            textRepository.textsFlow.collect { texts ->
                 _uiState.update { it.copy(texts = texts) }
                 filterTexts()
             }
@@ -62,7 +59,7 @@ class MyTextsViewModel(private val context: Context) : ViewModel() {
     fun deleteText() {
         viewModelScope.launch {
             _uiState.value.textToDelete?.let { text ->
-                repository.deleteText(text.id)
+                textRepository.deleteText(text.id)
                 _uiState.update {
                     it.copy(
                         showDeleteConfirmation = false,
@@ -70,17 +67,6 @@ class MyTextsViewModel(private val context: Context) : ViewModel() {
                     )
                 }
                 filterTexts()
-            }
-        }
-    }
-
-    companion object {
-        fun provideFactory(context: Context): ViewModelProvider.Factory {
-            return object : ViewModelProvider.Factory {
-                @Suppress("UNCHECKED_CAST")
-                override fun <T : ViewModel> create(modelClass: Class<T>): T {
-                    return MyTextsViewModel(context) as T
-                }
             }
         }
     }

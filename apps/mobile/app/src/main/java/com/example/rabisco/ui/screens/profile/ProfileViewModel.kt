@@ -7,15 +7,18 @@ import androidx.lifecycle.viewModelScope
 import com.example.rabisco.data.local.SessionRepository
 import com.example.rabisco.data.notifications.NotificationHelper
 import com.example.rabisco.data.notifications.NotificationScheduler
+import com.example.rabisco.domain.repositories.UserRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
-class ProfileViewModel(private val context: Context) : ViewModel() {
-
-    private val sessionRepository = SessionRepository(context)
+class ProfileViewModel(
+    private val context: Context,
+    private val sessionRepository: SessionRepository,
+    private val userRepository: UserRepository
+) : ViewModel() {
 
     private val _uiState = MutableStateFlow(ProfileUiState())
     val uiState: StateFlow<ProfileUiState> = _uiState.asStateFlow()
@@ -28,17 +31,39 @@ class ProfileViewModel(private val context: Context) : ViewModel() {
 
     private fun loadUserData() {
         viewModelScope.launch {
+            _uiState.update { it.copy(isLoading = true) }
+
             try {
-                // TODO: Puxar do back
+                // ✅ Busca dados reais do backend
+                userRepository.getMe()
+                    .onSuccess { userResponse ->
+                        _uiState.update {
+                            it.copy(
+                                userName = userResponse.name,
+                                userEmail = userResponse.email,
+                                isLoading = false
+                            )
+                        }
+                    }
+                    .onFailure { error ->
+                        _uiState.update {
+                            it.copy(
+                                errorMessage = "Erro ao carregar dados: ${error.message}",
+                                isLoading = false,
+                                // Fallback para dados padrão
+                                userName = "Usuário",
+                                userEmail = "usuario@email.com"
+                            )
+                        }
+                    }
+            } catch (e: Exception) {
                 _uiState.update {
                     it.copy(
+                        errorMessage = "Erro ao carregar dados: ${e.message}",
+                        isLoading = false,
                         userName = "Usuário",
                         userEmail = "usuario@email.com"
                     )
-                }
-            } catch (e: Exception) {
-                _uiState.update {
-                    it.copy(errorMessage = "Erro ao carregar dados")
                 }
             }
         }
@@ -63,7 +88,7 @@ class ProfileViewModel(private val context: Context) : ViewModel() {
                 val isDark = sessionRepository.getDarkMode()
                 _uiState.update { it.copy(isDarkMode = isDark) }
             } catch (e: Exception) {
-                // usar padrao (false)
+                // usar padrão (false)
             }
         }
     }
@@ -81,14 +106,14 @@ class ProfileViewModel(private val context: Context) : ViewModel() {
                 sessionRepository.saveNotificationsEnabled(enabled)
 
                 if (enabled) {
-                    // Verificar permissao
+                    // Verificar permissão
                     if (NotificationHelper.hasNotificationPermission(context)) {
-                        // Agendar notificacao
+                        // Agendar notificação
                         val time = _uiState.value.notificationTime
                         val (hour, minute) = parseTime(time)
                         NotificationScheduler.scheduleNotification(context, hour, minute)
                     } else {
-                        // Pedir permissao (vai ser tratado na tela)
+                        // Pedir permissão (vai ser tratado na tela)
                         _uiState.update { it.copy(shouldRequestPermission = true) }
                     }
                 } else {
@@ -109,7 +134,7 @@ class ProfileViewModel(private val context: Context) : ViewModel() {
             try {
                 sessionRepository.saveNotificationTime(timeString)
 
-                // Se notificacoes estao ativas, reagendar
+                // Se notificações estão ativas, reagendar
                 if (_uiState.value.isNotificationsEnabled) {
                     NotificationScheduler.scheduleNotification(context, hour, minute)
                 }
@@ -131,7 +156,7 @@ class ProfileViewModel(private val context: Context) : ViewModel() {
                     )
                 }
             } catch (e: Exception) {
-                // usar padrao
+                // usar padrão
             }
         }
     }
@@ -155,7 +180,7 @@ class ProfileViewModel(private val context: Context) : ViewModel() {
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true) }
             try {
-                sessionRepository.clearSession()
+                sessionRepository.clearToken()
                 _uiState.update {
                     it.copy(
                         isLoggedOut = true,
@@ -172,15 +197,5 @@ class ProfileViewModel(private val context: Context) : ViewModel() {
                 }
             }
         }
-    }
-
-    companion object {
-        fun provideFactory(context: Context): ViewModelProvider.Factory =
-            object : ViewModelProvider.Factory {
-                @Suppress("UNCHECKED_CAST")
-                override fun <T : ViewModel> create(modelClass: Class<T>): T {
-                    return ProfileViewModel(context) as T
-                }
-            }
     }
 }

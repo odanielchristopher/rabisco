@@ -4,7 +4,7 @@ model DailyMission {
   description   String
   goal          Int
   points        Int              @db.Integer
-  availableDate DateTime         @default(now()) @map("available_date") @db.Timestamptz()
+  availableDate DateTime         @map("available_date") @db.Timestamptz()
 
   users UserMission[]
 

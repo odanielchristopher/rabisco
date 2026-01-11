@@ -24,15 +24,16 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.rabisco.data.local.SessionViewModel
+import org.koin.androidx.compose.koinViewModel
+import org.koin.compose.getKoin
 
 
 // Tela de perfil
 @Composable
 fun ProfileScreen(
-    onNavigateToAuth: () -> Unit = {},
-    viewModel: ProfileViewModel = viewModel(
-        factory = ProfileViewModel.provideFactory(LocalContext.current)
-    )
+    viewModel: ProfileViewModel = koinViewModel(),
+    sessionViewModel: SessionViewModel = getKoin().get()
 ) {
     val uiState by viewModel.uiState.collectAsState()
     val context = LocalContext.current
@@ -52,14 +53,12 @@ fun ProfileScreen(
         }
     }
 
-    // Estado temporario pra testar o toggle
-    var isDarkMode by remember { mutableStateOf(false) }
-
     LaunchedEffect(uiState.isLoggedOut) {
         if (uiState.isLoggedOut) {
-            onNavigateToAuth()
+            sessionViewModel.logout()
         }
     }
+
 
     Column(
         modifier = Modifier
@@ -218,7 +217,7 @@ private fun UserInfoCard(name: String, email: String) {
             ) {
                 Box(contentAlignment = Alignment.Center) {
                     Text(
-                        text = "U",
+                        text = name.firstOrNull()?.uppercase() ?: "U",
                         style = MaterialTheme.typography.headlineMedium,
                         color = MaterialTheme.colorScheme.primary,
                         fontWeight = FontWeight.Bold
@@ -231,12 +230,12 @@ private fun UserInfoCard(name: String, email: String) {
             // Nome e email
             Column {
                 Text(
-                    text = "Usuário",
+                    text = name.ifEmpty { "Usuário" },
                     style = MaterialTheme.typography.titleLarge,
                     fontWeight = FontWeight.Bold
                 )
                 Text(
-                    text = "usuario@email.com",
+                    text = email.ifEmpty { "usuario@email.com" },
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )

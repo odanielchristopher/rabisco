@@ -20,11 +20,12 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.rabisco.domain.models.Text
+import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun MyTextsScreen(
     onNavigateToWrite: () -> Unit,
-    viewModel: MyTextsViewModel = viewModel()
+    viewModel: MyTextsViewModel = koinViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
 

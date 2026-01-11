@@ -3,6 +3,7 @@ package com.example.rabisco.navigation
 sealed class Routes(val path: String) {
 
     data object Auth : Routes("auth")
+    data object App : Routes("app")
 
     // Rotas protegidas (após login)
     data object Home : Routes("home")

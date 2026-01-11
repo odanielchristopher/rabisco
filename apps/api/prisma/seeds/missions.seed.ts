@@ -4,7 +4,10 @@ import { prisma } from './lib/prisma-client.lib';
 
 export async function seedMissions() {
   await prisma.dailyMission.createMany({
-    data: MISSIONS,
+    data: MISSIONS.map((mission) => ({
+      ...mission,
+      availableDate: new Date(), // Setando a data de disponibilidade para hoje
+    })),
     skipDuplicates: true,
   });
 

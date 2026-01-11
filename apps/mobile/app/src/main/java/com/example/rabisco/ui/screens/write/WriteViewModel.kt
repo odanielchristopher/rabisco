@@ -3,7 +3,7 @@ package com.example.rabisco.ui.screens.write
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.rabisco.domain.models.Text
-import com.example.rabisco.data.repositories.TextRepositoryImpl
+import com.example.rabisco.domain.repositories.TextRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -13,9 +13,10 @@ import kotlinx.coroutines.launch
 
 //essa data class vai para o uiState (estudar isso)
 
-class WriteViewModel : ViewModel() {
+class WriteViewModel(
+    private val textRepository: TextRepository
+) : ViewModel() {
 
-    private val repository = TextRepositoryImpl.getInstance()
     private val _uiState = MutableStateFlow(WriteUiState())
     val uiState: StateFlow<WriteUiState> = _uiState.asStateFlow()
 
@@ -66,7 +67,7 @@ class WriteViewModel : ViewModel() {
                     wordCount = currentState.wordCount,
                 )
 
-                val result = repository.saveText(text)
+                val result = textRepository.saveText(text)
 
                 result.onSuccess { textId ->
                     _uiState.update {

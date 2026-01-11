@@ -1,20 +1,20 @@
 package com.example.rabisco.ui.screens.auth
 
-import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.rabisco.data.local.SessionRepository
-import com.example.rabisco.data.remote.dto.request.SignInDto
-import com.example.rabisco.data.remote.dto.request.SignUpDto
-import com.example.rabisco.data.remote.repositories.AuthRepository
+import com.example.rabisco.data.remote.dto.auth.request.SignInDto
+import com.example.rabisco.data.remote.dto.auth.request.SignUpDto
+import com.example.rabisco.domain.repositories.AuthRepository
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
-class AuthViewModel(context: Context) : ViewModel() {
 
-    private val sessionRepo = SessionRepository(context)
-    private val authRepo = AuthRepository(sessionRepo)
+class AuthViewModel(
+    private val sessionRepository: SessionRepository,
+    private val authRepository: AuthRepository
+) : ViewModel() {
 
     private val _uiState = MutableStateFlow(AuthUiState())
     val uiState = _uiState.asStateFlow()
@@ -37,7 +37,9 @@ class AuthViewModel(context: Context) : ViewModel() {
                 setLoading(true)
                 setError(null)
 
-                authRepo.signin(SignInDto(email, password))
+                authRepository.signin(SignInDto(email, password)).onSuccess {
+                    body -> sessionRepository.saveToken(body.accessToken)
+                }
 
                 setSuccess(true)
             } catch (e: Exception) {
@@ -54,7 +56,9 @@ class AuthViewModel(context: Context) : ViewModel() {
                 setLoading(true)
                 setError(null)
 
-                authRepo.signup(SignUpDto(name, email, password))
+                authRepository.signup(SignUpDto(name, email, password)).onSuccess {
+                    body -> sessionRepository.saveToken(body.accessToken)
+                }
 
                 setSuccess(true)
             } catch (e: Exception) {

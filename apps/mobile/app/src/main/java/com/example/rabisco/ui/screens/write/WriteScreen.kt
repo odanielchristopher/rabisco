@@ -43,6 +43,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.rabisco.ui.theme.RabiscoTheme
+import org.koin.androidx.compose.koinViewModel
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -50,7 +51,7 @@ import com.example.rabisco.ui.theme.RabiscoTheme
 fun WriteScreen(
     onNavigateBack: () -> Unit = {},
     onTextSaved: () -> Unit = {},
-    viewModel: WriteViewModel = viewModel()
+    viewModel: WriteViewModel = koinViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
 

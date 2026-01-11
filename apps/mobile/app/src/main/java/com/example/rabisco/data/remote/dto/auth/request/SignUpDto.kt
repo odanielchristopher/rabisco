@@ -1,4 +1,4 @@
-package com.example.rabisco.data.remote.dto.request
+package com.example.rabisco.data.remote.dto.auth.request
 
 data class SignUpDto(
     val name: String,

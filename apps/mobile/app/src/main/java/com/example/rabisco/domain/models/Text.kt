@@ -32,3 +32,9 @@ data class Text(
         return tags.firstOrNull() ?: "Sem categorais"
     }
 }
+
+enum class TextType {
+    DIARY,
+    DAY_PROMPT,
+    FREE
+}
