@@ -37,7 +37,9 @@ class AuthViewModel(
                 setLoading(true)
                 setError(null)
 
-                authRepository.signin(SignInDto(email, password))
+                authRepository.signin(SignInDto(email, password)).onSuccess {
+                    body -> sessionRepository.saveToken(body.accessToken)
+                }
 
                 setSuccess(true)
             } catch (e: Exception) {
@@ -54,7 +56,9 @@ class AuthViewModel(
                 setLoading(true)
                 setError(null)
 
-                authRepository.signup(SignUpDto(name, email, password))
+                authRepository.signup(SignUpDto(name, email, password)).onSuccess {
+                    body -> sessionRepository.saveToken(body.accessToken)
+                }
 
                 setSuccess(true)
             } catch (e: Exception) {

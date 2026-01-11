@@ -12,3 +12,4 @@ data class ProfileUiState(
     val isLoggedOut: Boolean = false,
     val shouldRequestPermission: Boolean = false
 )
+

@@ -33,10 +33,13 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
+import com.example.rabisco.domain.repositories.AchievementsRepository
+import com.example.rabisco.domain.repositories.AuthRepository
 import com.example.rabisco.ui.components.Container
 import com.example.rabisco.ui.screens.auth.components.FooterSection
 import com.example.rabisco.ui.screens.auth.components.HeaderSection
 import com.example.rabisco.ui.theme.RabiscoTheme
+import org.koin.compose.getKoin
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

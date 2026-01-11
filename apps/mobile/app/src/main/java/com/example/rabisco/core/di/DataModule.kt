@@ -40,11 +40,12 @@ val DataModule = module {
 
 
     // ---- Repositories ----
-    single<AuthRepository> { AuthRepositoryImpl(get(), get())}
+    single<AuthRepository> { AuthRepositoryImpl(get())}
 
     single<TextRepository> { TextRepositoryImpl() } // LOCAL (PARA TESTES)
     single<TextsRepository>{ TextsRepositoryImpl(get()) } // REMOTO (CONECTADO COM A API)
 
+    single<UserRepository>{ UserRepositoryImpl(get()) }
     single<PromptsRepository> { PromptsRepositoryImpl(get()) }
     single<TagsRepository> { TagsRepositoryImpl(get()) }
     single<AchievementsRepository> { AchievementsRepositoryImpl(get()) }

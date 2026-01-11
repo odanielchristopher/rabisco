@@ -11,38 +11,41 @@ import kotlinx.coroutines.delay
 
 
 class AuthRepositoryImpl(
-    private val sessionRepository: SessionRepository,
     private val authService: AuthService
 ) : AuthRepository {
-    override suspend fun signin(body: SignInDto): AuthResponse {
-        // Versão MOCKADA (para testes)
-        delay(1500) // simula atraso da rede
-
-        val fakeResponse = AuthResponse(
-            accessToken = "mocked-token-123",
-        )
-
-        sessionRepository.saveToken(fakeResponse.accessToken)
-        return fakeResponse
-
-        // val response = authService.signin(body)
-        // sessionRepository.saveToken(response.accessToken)
-        // return response
+    override suspend fun signin(body: SignInDto): Result<AuthResponse> {
+        return try {
+            val response = authService.signin(body)
+            if (response.isSuccessful && response.body() != null) {
+                Result.success(response.body()!!)
+            } else {
+                Result.failure(Exception("Erro ao autenticar usuário: ${response.code()}"))
+            }
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
     }
 
-    override suspend fun signup(body: SignUpDto): AuthResponse {
-        // Versão MOCKADA (para testes)
-        delay(1500)
+    override suspend fun signup(body: SignUpDto): Result<AuthResponse> {
 
-        val fakeResponse = AuthResponse(
-            accessToken = "mocked-token-abc",
-        )
-
-        sessionRepository.saveToken(fakeResponse.accessToken)
-        return fakeResponse
-
-        // val response = authService.signup(body)
-        // sessionRepository.saveToken(response.accessToken)
-        // return response
+        return try {
+            val response = authService.signup(body)
+            if (response.isSuccessful && response.body() != null) {
+                Result.success(response.body()!!)
+            } else {
+                Result.failure(Exception("Erro ao criar usuário: ${response.code()}"))
+            }
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+//        // Versão MOCKADA (para testes)
+//        delay(1500)
+//
+//        val fakeResponse = AuthResponse(
+//            accessToken = "mocked-token-abc",
+//        )
+//
+//        sessionRepository.saveToken(fakeResponse.accessToken)
+//        return fakeResponse
     }
 }

@@ -217,7 +217,7 @@ private fun UserInfoCard(name: String, email: String) {
             ) {
                 Box(contentAlignment = Alignment.Center) {
                     Text(
-                        text = "U",
+                        text = name.firstOrNull()?.uppercase() ?: "U",
                         style = MaterialTheme.typography.headlineMedium,
                         color = MaterialTheme.colorScheme.primary,
                         fontWeight = FontWeight.Bold
@@ -230,12 +230,12 @@ private fun UserInfoCard(name: String, email: String) {
             // Nome e email
             Column {
                 Text(
-                    text = "Usuário",
+                    text = name.ifEmpty { "Usuário" },
                     style = MaterialTheme.typography.titleLarge,
                     fontWeight = FontWeight.Bold
                 )
                 Text(
-                    text = "usuario@email.com",
+                    text = email.ifEmpty { "usuario@email.com" },
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
