@@ -1,108 +1,131 @@
 package com.example.rabisco.ui.screens.auth
 
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SegmentedButton
-import androidx.compose.material3.SegmentedButtonDefaults
-import androidx.compose.material3.SingleChoiceSegmentedButtonRow
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavHostController
-import androidx.navigation.compose.rememberNavController
-import com.example.rabisco.domain.repositories.AchievementsRepository
-import com.example.rabisco.domain.repositories.AuthRepository
+import com.example.rabisco.data.local.SessionViewModel
 import com.example.rabisco.ui.components.Container
+import com.example.rabisco.ui.screens.auth.components.AuthTabSelector
 import com.example.rabisco.ui.screens.auth.components.FooterSection
 import com.example.rabisco.ui.screens.auth.components.HeaderSection
+import com.example.rabisco.ui.screens.auth.components.SignInForm
+import com.example.rabisco.ui.screens.auth.components.SignUpForm
 import com.example.rabisco.ui.theme.RabiscoTheme
+import org.koin.androidx.compose.koinViewModel
 import org.koin.compose.getKoin
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AuthScreen() {
-    var selectedIndex by remember { mutableIntStateOf(0) }
-    val options = listOf("Entrar", "Cadastrar")
+fun AuthScreen(
+    authViewModel: AuthViewModel = koinViewModel(),
+    sessionViewModel: SessionViewModel = getKoin().get()
+) {
+    val authUiState by authViewModel.uiState.collectAsState()
+    var selectedTab by remember { mutableIntStateOf(0) }
 
+    // Quando autenticação for bem-sucedida, notifica SessionViewModel
+    LaunchedEffect(authUiState.success) {
+        if (authUiState.success && authUiState.accessToken != null) {
+            sessionViewModel.login(authUiState.accessToken!!)
+        }
+    }
+
+    AuthScreenContent(
+        selectedTab = selectedTab,
+        onTabSelected = { selectedTab = it },
+        isLoading = authUiState.loading,
+        errorMessage = authUiState.error,
+        onSignIn = authViewModel::signin,
+        onSignUp = authViewModel::signup
+    )
+}
+
+
+@Composable
+private fun AuthScreenContent(
+    selectedTab: Int,
+    onTabSelected: (Int) -> Unit,
+    isLoading: Boolean,
+    errorMessage: String?,
+    onSignIn: (email: String, password: String) -> Unit,
+    onSignUp: (name: String, email: String, password: String) -> Unit
+) {
     Column(
         modifier = Modifier
             .fillMaxSize()
             .background(color = MaterialTheme.colorScheme.background)
-            .padding(horizontal = 24.dp)
-        ,
+            .padding(horizontal = 24.dp),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
-
+        // Header
         HeaderSection()
 
-        Spacer(Modifier.height(32.dp))
+        Spacer(modifier = Modifier.height(32.dp))
 
-        Spacer(Modifier.height(24.dp))
-
-        Container{
+        // Form Container
+        Container {
             Column(
-                Modifier.padding(20.dp),
+                modifier = Modifier.padding(20.dp),
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
-                SingleChoiceSegmentedButtonRow(
-                ) {
-                    options.forEachIndexed { index, label ->
-                        SegmentedButton(
-                            selected = selectedIndex == index,
-                            onClick = { selectedIndex = index },
-                            shape = SegmentedButtonDefaults.itemShape(index, options.size),
-                            icon = {},
-                            label = { Text(label) },
-                            modifier = Modifier.border(0.dp, color = Color.Transparent),
-                            border = BorderStroke(0.dp, Color.Transparent)
-                        )
-                    }
+                // Tab Selector
+                AuthTabSelector(
+                    selectedIndex = selectedTab,
+                    onTabSelected = onTabSelected
+                )
+
+                Spacer(modifier = Modifier.height(24.dp))
+
+                // Forms
+                when (selectedTab) {
+                    0 -> SignInForm(
+                        isLoading = isLoading,
+                        errorMessage = errorMessage,
+                        onSignIn = onSignIn
+                    )
+                    1 -> SignUpForm(
+                        isLoading = isLoading,
+                        errorMessage = errorMessage,
+                        onSignUp = onSignUp
+                    )
                 }
-
-                Spacer(Modifier.height(24.dp))
-
-                if (selectedIndex == 0)
-                    SignInScreen()
-                else
-                    SignUpScreen()
             }
         }
 
-        Spacer(Modifier.height(32.dp))
+        Spacer(modifier = Modifier.height(32.dp))
 
+        // Footer
         FooterSection()
     }
 }
 
-
 @Preview
 @Composable
-fun AuthPreview() {
+private fun AuthScreenPreview() {
     RabiscoTheme {
-        AuthScreen()
+        AuthScreenContent(
+            selectedTab = 0,
+            onTabSelected = {},
+            isLoading = false,
+            errorMessage = null,
+            onSignIn = { _, _ -> },
+            onSignUp = { _, _, _ -> }
+        )
     }
 }

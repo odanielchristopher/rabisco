@@ -24,8 +24,11 @@ class SessionViewModel(
         }
     }
 
-    fun login() {
-        _isLoggedIn.value = true
+    fun login(accessToken: String) {
+        viewModelScope.launch {
+            sessionRepository.saveToken(accessToken)
+            _isLoggedIn.value = true
+        }
     }
 
     fun logout() {

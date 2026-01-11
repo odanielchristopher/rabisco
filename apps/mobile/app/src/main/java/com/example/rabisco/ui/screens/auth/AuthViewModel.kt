@@ -12,7 +12,6 @@ import kotlinx.coroutines.flow.asStateFlow
 
 
 class AuthViewModel(
-    private val sessionRepository: SessionRepository,
     private val authRepository: AuthRepository
 ) : ViewModel() {
 
@@ -31,6 +30,10 @@ class AuthViewModel(
         _uiState.value = _uiState.value.copy(success = value)
     }
 
+    private fun setAccessToken(accessToken: String) {
+        _uiState.value = _uiState.value.copy(accessToken = accessToken)
+    }
+
     fun signin(email: String, password: String) {
         viewModelScope.launch {
             try {
@@ -38,7 +41,7 @@ class AuthViewModel(
                 setError(null)
 
                 authRepository.signin(SignInDto(email, password)).onSuccess {
-                    body -> sessionRepository.saveToken(body.accessToken)
+                    body -> setAccessToken(body.accessToken)
                 }
 
                 setSuccess(true)
@@ -57,7 +60,7 @@ class AuthViewModel(
                 setError(null)
 
                 authRepository.signup(SignUpDto(name, email, password)).onSuccess {
-                    body -> sessionRepository.saveToken(body.accessToken)
+                    body -> setAccessToken(body.accessToken)
                 }
 
                 setSuccess(true)
