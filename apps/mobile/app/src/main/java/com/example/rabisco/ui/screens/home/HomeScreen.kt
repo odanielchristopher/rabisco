@@ -53,22 +53,18 @@ fun HomeScreen(
     viewModel: HomeViewModel = koinViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
-    Scaffold() { paddingValues ->
-        if (uiState.isLoading) {
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(paddingValues),
-                contentAlignment = Alignment.Center) {
-                CircularProgressIndicator()
-            }
-        } else {
-            HomeContent(
-                modifier = Modifier.padding(paddingValues),
-                uiState = uiState,
-                onNavigateToWrite = onNavigateToWrite
-            )
+    if (uiState.isLoading) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize(),
+            contentAlignment = Alignment.Center) {
+            CircularProgressIndicator()
         }
+    } else {
+        HomeContent(
+            uiState = uiState,
+            onNavigateToWrite = onNavigateToWrite
+        )
     }
 }
 
