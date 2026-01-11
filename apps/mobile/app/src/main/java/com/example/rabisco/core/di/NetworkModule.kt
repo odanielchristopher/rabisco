@@ -2,6 +2,7 @@ package com.example.rabisco.core.di
 
 import com.example.rabisco.data.local.SessionRepository
 import com.example.rabisco.data.remote.interceptors.AuthInterceptor
+import com.example.rabisco.data.remote.interceptors.TokenExpirationInterceptor
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import org.koin.core.qualifier.named
@@ -26,10 +27,15 @@ val NetworkModule = module {
         AuthInterceptor { get<SessionRepository>().getToken() }
     }
 
+    single {
+        TokenExpirationInterceptor(get())
+    }
+
     // OkHttpClient AUTENTICADO (com token)
     single(named("authenticated")) {
         OkHttpClient.Builder()
             .addInterceptor(get<AuthInterceptor>())
+            .addInterceptor(get<TokenExpirationInterceptor>())
             .addInterceptor(get<HttpLoggingInterceptor>())
             .build()
     }
