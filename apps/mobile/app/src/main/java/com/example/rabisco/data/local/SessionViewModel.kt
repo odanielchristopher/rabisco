@@ -15,6 +15,15 @@ class SessionViewModel(
 
     init {
         checkSession()
+        observeToken()
+    }
+
+    private fun observeToken() {
+        viewModelScope.launch {
+            sessionRepository.observeToken().collect { token ->
+                _isLoggedIn.value = !token.isNullOrBlank()
+            }
+        }
     }
 
     private fun checkSession() {
@@ -24,11 +33,17 @@ class SessionViewModel(
         }
     }
 
-    fun login() {
-        _isLoggedIn.value = true
+    fun login(accessToken: String) {
+        viewModelScope.launch {
+            sessionRepository.saveToken(accessToken)
+            _isLoggedIn.value = true
+        }
     }
 
     fun logout() {
-        _isLoggedIn.value = false
+        viewModelScope.launch {
+            sessionRepository.clearToken()
+            _isLoggedIn.value = false
+        }
     }
 }

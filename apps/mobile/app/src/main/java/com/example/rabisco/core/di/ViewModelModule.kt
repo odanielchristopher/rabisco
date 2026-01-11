@@ -12,7 +12,7 @@ import org.koin.core.module.dsl.viewModel
 import org.koin.dsl.module
 
 val ViewModelModule = module {
-    viewModel { AuthViewModel(get(), get()) }
+    viewModel { AuthViewModel(get()) }
     viewModel { WriteViewModel(get()) }
     viewModel { HomeViewModel(get(), get()) }
     viewModel { ProfileViewModel(androidContext(), get(), get()) }

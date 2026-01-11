@@ -53,11 +53,11 @@ fun ProfileScreen(
         }
     }
 
-    LaunchedEffect(uiState.isLoggedOut) {
-        if (uiState.isLoggedOut) {
-            sessionViewModel.logout()
-        }
-    }
+//    LaunchedEffect(uiState.isLoggedOut) {
+//        if (uiState.isLoggedOut) {
+//            sessionViewModel.logout()
+//        }
+//    }
 
 
     Column(
