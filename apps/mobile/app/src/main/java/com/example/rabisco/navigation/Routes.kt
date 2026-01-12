@@ -11,6 +11,7 @@ sealed class Routes(val path: String) {
     data object Stats : Routes("stats")
     data object Profile : Routes("profile")
 
+    // ✅ CORREÇÃO: Rota Write com mode: create, edit, view
     data object Write : Routes("write?type={type}&textId={textId}&mode={mode}") {
         fun createRoute(
             type: String = "free",
@@ -20,5 +21,4 @@ sealed class Routes(val path: String) {
             return "write?type=$type&textId=${textId ?: ""}&mode=$mode"
         }
     }
-
 }
