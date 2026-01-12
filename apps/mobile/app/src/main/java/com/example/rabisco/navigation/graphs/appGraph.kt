@@ -4,7 +4,9 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.composable
+import androidx.navigation.navArgument
 import androidx.navigation.navigation
 import com.example.rabisco.navigation.Routes
 import com.example.rabisco.ui.screens.home.HomeScreen
@@ -29,10 +31,32 @@ fun NavGraphBuilder.appGraph(
                 }
             )
         }
+        composable(
+            route = Routes.Write.path,
+            arguments = listOf(
+                navArgument("type") {
+                    type = NavType.StringType
+                    defaultValue = "free"
+                },
+                navArgument("textId") {
+                    type = NavType.StringType
+                    defaultValue = ""
+                },
+                navArgument("mode") {
+                    type = NavType.StringType
+                    defaultValue = "create"
+                }
+            )
+        ) { backStackEntry ->
+            val type = backStackEntry.arguments?.getString("type") ?: "free"
+            val textId = backStackEntry.arguments?.getString("textId")?.takeIf { it.isNotBlank() }
+            val mode = backStackEntry.arguments?.getString("mode") ?: "create"
 
-        composable(Routes.Write.path) {
             WriteScreen(
-                onNavigateBack = { navController.popBackStack() }
+                onNavigateBack = { navController.popBackStack() },
+                onTextSaved = { navController.popBackStack() },
+                textId = textId,
+                mode = mode
             )
         }
 
@@ -41,6 +65,24 @@ fun NavGraphBuilder.appGraph(
                 onNavigateToWrite = {
                     navController.navigate(Routes.Write.createRoute(type = "free"))
                 },
+                onNavigateToEdit = { textId ->
+                    navController.navigate(
+                        Routes.Write.createRoute(
+                            type = "free",
+                            textId = textId,
+                            mode = "edit"
+                        )
+                    )
+                },
+                onNavigateToView = { textId ->
+                    navController.navigate(
+                        Routes.Write.createRoute(
+                            type = "free",
+                            textId = textId,
+                            mode = "view"
+                        )
+                    )
+                }
             )
         }
 

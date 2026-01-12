@@ -51,9 +51,18 @@ import org.koin.androidx.compose.koinViewModel
 fun WriteScreen(
     onNavigateBack: () -> Unit = {},
     onTextSaved: () -> Unit = {},
+    textId: String? = null,
+    mode: String = "create",
     viewModel: WriteViewModel = koinViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
+    val isViewMode = mode == "view"
+
+    LaunchedEffect(textId) {
+        textId?.let {
+            viewModel.loadTextForEdit(it)
+        }
+    }
 
     LaunchedEffect(uiState.textSaved) {
         if(uiState.textSaved) {
@@ -66,11 +75,12 @@ fun WriteScreen(
             WriteTopBar(
                 wordCount = uiState.wordCount,
                 onNavigateBack = onNavigateBack,
-                onSave = { viewModel.saveText() }
+                onSave = { viewModel.saveText() },
+                isViewMode = isViewMode
             )
         }
     ) {
-        paddingValues ->
+            paddingValues ->
         WriteContent (
             modifier = Modifier.padding(paddingValues),
             title = uiState.title,
@@ -81,7 +91,8 @@ fun WriteScreen(
             onTagClick = { viewModel.toggleTag(it) },
             onSave = { viewModel.saveText() },
             isLoading = uiState.isLoading,
-            errorMessage = uiState.errorMessage
+            errorMessage = uiState.errorMessage,
+            isViewMode = isViewMode
         )
     }
 }
@@ -91,7 +102,8 @@ fun WriteScreen(
 fun WriteTopBar(
     wordCount: Int,
     onNavigateBack: () -> Unit,
-    onSave: () -> Unit
+    onSave: () -> Unit,
+    isViewMode: Boolean = false
 ) {
     TopAppBar(
         title = {
@@ -106,7 +118,6 @@ fun WriteTopBar(
                     text = "$wordCount palavras",
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
-
                 )
             }
         },
@@ -135,7 +146,8 @@ fun WriteContent (
     onTagClick: (String) -> Unit,
     onSave: () -> Unit,
     isLoading: Boolean = false,
-    errorMessage: String? = null
+    errorMessage: String? = null,
+    isViewMode: Boolean = false
 ) {
     Column(
         modifier = modifier
@@ -158,6 +170,8 @@ fun WriteContent (
                 focusedBorderColor = Color.Black,
                 unfocusedBorderColor = Color.Gray
             ),
+            enabled = !isViewMode,
+            readOnly = isViewMode
         )
 
         Spacer( modifier = Modifier.height(8.dp) )
@@ -179,14 +193,17 @@ fun WriteContent (
                 unfocusedBorderColor = Color.Gray
             ),
             minLines = 15,
-            maxLines = 20
+            maxLines = 20,
+            enabled = !isViewMode,
+            readOnly = isViewMode
         )
 
         Spacer(modifier = Modifier.height(24.dp))
 
         CategorieSection(
             selectedTags = selectedTags,
-            onTagClick = onTagClick
+            onTagClick = if (isViewMode) { {} } else onTagClick,
+            isViewMode = isViewMode
         )
 
         Spacer(modifier = Modifier.height(24.dp))
@@ -200,18 +217,20 @@ fun WriteContent (
             )
         }
 
-        Button(
-            onClick = onSave,
-            modifier = Modifier.fillMaxWidth(),
-            enabled = !isLoading
-        ) {
-            if(isLoading) {
-                CircularProgressIndicator(
-                    modifier = Modifier.size(20.dp),
-                    color = MaterialTheme.colorScheme.onPrimary
-                )
-            } else {
-                Text("Salvar")
+        if (!isViewMode) {
+            Button(
+                onClick = onSave,
+                modifier = Modifier.fillMaxWidth(),
+                enabled = !isLoading
+            ) {
+                if(isLoading) {
+                    CircularProgressIndicator(
+                        modifier = Modifier.size(20.dp),
+                        color = MaterialTheme.colorScheme.onPrimary
+                    )
+                } else {
+                    Text("Salvar")
+                }
             }
         }
     }
@@ -220,8 +239,10 @@ fun WriteContent (
 @Composable
 private fun CategorieSection(
     selectedTags: Set<String>,
-    onTagClick: (String) -> Unit
+    onTagClick: (String) -> Unit,
+    isViewMode: Boolean = false
 ) {
+    // Todo: Puxar as tags do banco de dados
     val tags = listOf(
         "Pessoal", "Escola", "Família", "Amigos", "Sonhos", "Reflexões", "Gratidão", "Objetivos", "Criatividade", "Aventuras"
     )
@@ -245,8 +266,6 @@ private fun CategorieSection(
                 modifier = Modifier.padding(bottom = 12.dp)
             )
 
-            //var currentRow by remember { mutableStateOf(listOf<String>()) }
-
             Column(
                 verticalArrangement = Arrangement.spacedBy(4.dp)
             ) {
@@ -260,7 +279,8 @@ private fun CategorieSection(
                                 text = tag,
                                 isSelected = selectedTags.contains(tag),
                                 onClick = { onTagClick(tag) },
-                                modifier = Modifier.weight(1f)
+                                modifier = Modifier.weight(1f),
+                                enabled = !isViewMode
                             )
                         }
 
@@ -279,7 +299,8 @@ private fun TagChip(
     text: String,
     isSelected: Boolean,
     onClick: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    enabled: Boolean = true
 ) {
     FilterChip(
         selected = isSelected,
@@ -293,10 +314,11 @@ private fun TagChip(
             )
         },
         modifier = modifier,
-         colors = FilterChipDefaults.filterChipColors(
-             selectedContainerColor = MaterialTheme.colorScheme.primaryContainer,
-             selectedLabelColor = MaterialTheme.colorScheme.onPrimaryContainer
-         )
+        colors = FilterChipDefaults.filterChipColors(
+            selectedContainerColor = MaterialTheme.colorScheme.primaryContainer,
+            selectedLabelColor = MaterialTheme.colorScheme.onPrimaryContainer
+        ),
+        enabled = enabled
     )
 }
 

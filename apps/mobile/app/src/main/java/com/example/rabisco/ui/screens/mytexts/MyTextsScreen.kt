@@ -4,7 +4,6 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Search
@@ -26,6 +25,7 @@ import org.koin.androidx.compose.koinViewModel
 fun MyTextsScreen(
     onNavigateToWrite: () -> Unit,
     onNavigateToEdit: (String) -> Unit = {},
+    onNavigateToView: (String) -> Unit = {},
     viewModel: MyTextsViewModel = koinViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
@@ -34,48 +34,54 @@ fun MyTextsScreen(
         viewModel.refresh()
     }
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-    ) {
-        SearchBar(
-            query = uiState.searchQuery,
-            onQueryChanged = viewModel::onSearchQueryChanged
-        )
-
-        CategoryTabs(
-            selectedTab = uiState.selectedTab,
-            onTabSelected = viewModel::onTabSelected
-        )
-
-        if (uiState.isLoading) {
-            Box(
-                modifier = Modifier.fillMaxSize(),
-                contentAlignment = Alignment.Center
-            ) {
-                CircularProgressIndicator()
-            }
-        } else if (uiState.errorMessage != null) {
-            ErrorState(
-                message = uiState.errorMessage!!,
-                onRetry = { viewModel.refresh() }
+    Scaffold(
+        topBar = { MyTextsTopBar() }
+    ) { paddingValues ->
+        Column(
+            modifier = Modifier
+                .padding(paddingValues)
+                .fillMaxSize()
+        ) {
+            SearchBar(
+                query = uiState.searchQuery,
+                onQueryChanged = viewModel::onSearchQueryChanged
             )
-        } else if (uiState.filteredTexts.isEmpty()) {
-            EmptyState()
-        } else {
-            TextsList(
-                texts = uiState.filteredTexts,
-                onDeleteClick = viewModel::onDeleteConfirmation,
-                onEditClick = onNavigateToEdit
+
+            CategoryTabs(
+                selectedTab = uiState.selectedTab,
+                onTabSelected = viewModel::onTabSelected
+            )
+
+            if (uiState.isLoading) {
+                Box(
+                    modifier = Modifier.fillMaxSize(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    CircularProgressIndicator()
+                }
+            } else if (uiState.errorMessage != null) {
+                ErrorState(
+                    message = uiState.errorMessage!!,
+                    onRetry = { viewModel.refresh() }
+                )
+            } else if (uiState.filteredTexts.isEmpty()) {
+                EmptyState()
+            } else {
+                TextsList(
+                    texts = uiState.filteredTexts,
+                    onDeleteClick = viewModel::onDeleteConfirmation,
+                    onEditClick = onNavigateToEdit,
+                    onViewClick = onNavigateToView
+                )
+            }
+        }
+
+        if (uiState.showDeleteConfirmation) {
+            DeleteConfirmationDialog(
+                onConfirm = viewModel::deleteText,
+                onDismiss = viewModel::onDismissDeleteConfirmation
             )
         }
-    }
-
-    if (uiState.showDeleteConfirmation) {
-        DeleteConfirmationDialog(
-            onConfirm = viewModel::deleteText,
-            onDismiss = viewModel::onDismissDeleteConfirmation
-        )
     }
 }
 
@@ -178,18 +184,36 @@ fun ErrorState(message: String, onRetry: () -> Unit) {
 }
 
 @Composable
-fun TextsList(texts: List<Text>, onDeleteClick: (Text) -> Unit, onEditClick: (String) -> Unit) {
+fun TextsList(
+    texts: List<Text>,
+    onDeleteClick: (Text) -> Unit,
+    onEditClick: (String) -> Unit,
+    onViewClick: (String) -> Unit
+) {
     LazyColumn(modifier = Modifier.padding(16.dp)) {
         items(texts) { text ->
-            TextCard(text, onDeleteClick, onEditClick = onEditClick)
+            TextCard(
+                text = text,
+                onDeleteClick = onDeleteClick,
+                onEditClick = onEditClick,
+                onViewClick = onViewClick
+            )
             Spacer(modifier = Modifier.height(16.dp))
         }
     }
 }
 
 @Composable
-fun TextCard(text: Text, onDeleteClick: (Text) -> Unit, onEditClick: (String) -> Unit) {
-    Card(modifier = Modifier.fillMaxWidth()) {
+fun TextCard(
+    text: Text,
+    onDeleteClick: (Text) -> Unit,
+    onEditClick: (String) -> Unit,
+    onViewClick: (String) -> Unit
+) {
+    Card(
+        modifier = Modifier.fillMaxWidth(),
+        onClick = { onViewClick(text.id) }
+    ) {
         Column(modifier = Modifier.padding(16.dp)) {
             Text(text.title, style = MaterialTheme.typography.titleMedium)
 

@@ -14,8 +14,6 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 
-//essa data class vai para o uiState (estudar isso)
-
 class WriteViewModel(
     private val textsRepository: TextsRepository
 ) : ViewModel() {
@@ -36,7 +34,7 @@ class WriteViewModel(
                         it.copy(
                             title = text.title,
                             content = text.content,
-                            selectedTags = text.tags.toSet(),
+                            selectedTags = text.tags?.toSet() ?: emptySet(),
                             wordCount = text.wordCount,
                             isLoading = false
                         )
@@ -52,6 +50,7 @@ class WriteViewModel(
                 }
         }
     }
+
     fun updateTitle(newTitle: String) {
         _uiState.update { currentState -> currentState.copy(title = newTitle) }
     }
@@ -87,7 +86,7 @@ class WriteViewModel(
                     _uiState.update {
                         it.copy(
                             isLoading = false,
-                            errorMessage = "O coneteúdo não pode estar vazio"
+                            errorMessage = "O conteúdo não pode estar vazio"
                         )
                     }
                     return@launch
@@ -163,14 +162,14 @@ class WriteViewModel(
                 _uiState.update {
                     it.copy(
                         isLoading = false,
-                        errorMessage = "erro aoa atualizar :( ${exception.message}"
+                        errorMessage = "erro ao atualizar :( ${exception.message}"
                     )
                 }
             }
     }
+
     private fun calculateWordCount(text: String): Int {
         if (text.isBlank()) return 0
         return text.trim().split("\\s+".toRegex()).size
     }
 }
-
