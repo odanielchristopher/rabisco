@@ -96,8 +96,8 @@ private fun StatsContent(
         StatsCardsSection(
             textsWritten = uiState.textsWritten,
             totalXp = uiState.totalXp,
-            xpToday = uiState.xpToday,
-            xpGoal = uiState.xpGoal,
+            textsToday = uiState.textsToday,
+            textsGoal = uiState.textsGoal,
             streak = uiState.streak
         )
 
@@ -109,7 +109,6 @@ private fun StatsContent(
                     MissionCard(
                         title = mission.title,
                         description = mission.description,
-                        progressText = mission.progressText,
                         rewardText = mission.rewardText,
                         isCompleted = mission.isCompleted
                     )
@@ -170,8 +169,8 @@ private fun StatsHeader() {
 private fun StatsCardsSection(
     textsWritten: Int,
     totalXp: Int,
-    xpToday: Int,
-    xpGoal: Int,
+    textsToday: Int,
+    textsGoal: Int,
     streak: Int
 ) {
     Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
@@ -200,12 +199,12 @@ private fun StatsCardsSection(
         ) {
             StatCard(
                 icon = Icons.Default.Bolt,
-                value = "+$xpToday",
-                label = "XP hoje",
-                color = Color(0xFF00C853),
+                value = "$textsToday",
+                label = "Textos hoje",
+                color = Color(0xFF008FC8),
                 modifier = Modifier.weight(1f),
                 showGoal = true,
-                goalText = "Meta: $xpGoal XP"
+                goalText = "Meta: $textsGoal textos"
             )
             StatCard(
                 icon = Icons.Default.LocalFireDepartment,
@@ -413,7 +412,6 @@ private fun AchievementContent(
 fun MissionCard(
     title: String,
     description: String,
-    progressText: String,
     rewardText: String,
     isCompleted: Boolean
 ) {
@@ -533,8 +531,8 @@ fun StatsPreview() {
                 uiState = StatsUiState(
                     textsWritten = 42,
                     totalXp = 1250,
-                    xpToday = 50,
-                    xpGoal = 150,
+                    textsToday = 50,
+                    textsGoal = 150,
                     streak = 7,
                     achievements = listOf(
                         UiAchievement(
@@ -586,8 +584,8 @@ fun StatsDarkPreview() {
                 uiState = StatsUiState(
                     textsWritten = 42,
                     totalXp = 1250,
-                    xpToday = 50,
-                    xpGoal = 150,
+                    textsToday = 50,
+                    textsGoal = 150,
                     streak = 7
                 )
             )

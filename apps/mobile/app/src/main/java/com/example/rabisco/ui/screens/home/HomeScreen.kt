@@ -114,26 +114,6 @@ private fun HomeContent (
             )
         }
 
-        Spacer(modifier = Modifier.height(16.dp))
-
-        Row(
-            modifier = Modifier.fillMaxSize(),
-            horizontalArrangement = Arrangement.spacedBy(16.dp)
-        ) {
-            SmallStatCard(
-                title = "Textos escritos",
-                value = uiState.totalTexts.toString(),
-                icon = Icons.Default.Description,
-                modifier = Modifier.weight(1f)
-            )
-            SmallStatCard(
-                title = "Esta semana",
-                value = uiState.textsWeek.toString(),
-                icon = Icons.Default.CalendarToday,
-                modifier = Modifier.weight(1f)
-            )
-        }
-
         Spacer(modifier = Modifier.height(24.dp))
 
         PromptCard(
@@ -215,51 +195,6 @@ private fun StatCard(
                     color = Color.White.copy(alpha = 0.9f)
                 )
             }
-        }
-    }
-}
-
-@Composable
-private fun SmallStatCard(
-    title: String,
-    value: String,
-    icon: ImageVector,
-    modifier: Modifier = Modifier
-) {
-    Card(
-        modifier = modifier.height(100.dp),
-        colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surface
-        ),
-        shape = RoundedCornerShape(16.dp),
-        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
-    ) {
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(16.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
-        ) {
-            Icon(
-                imageVector = icon,
-                contentDescription = null,
-                tint = MaterialTheme.colorScheme.primary,
-                modifier = Modifier.size(32.dp)
-            )
-            Spacer(modifier = Modifier.height(8.dp))
-            Text(
-                text = value,
-                style = MaterialTheme.typography.headlineSmall,
-                fontWeight = FontWeight.Bold,
-                color = MaterialTheme.colorScheme.onSurface
-            )
-            Text(
-                text = title,
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                textAlign = TextAlign.Center
-            )
         }
     }
 }

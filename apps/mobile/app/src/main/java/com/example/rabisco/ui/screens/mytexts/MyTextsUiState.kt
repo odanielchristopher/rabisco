@@ -8,5 +8,7 @@ data class MyTextsUiState(
     val selectedTab: String = "Todos",
     val searchQuery: String = "",
     val showDeleteConfirmation: Boolean = false,
-    val textToDelete: Text? = null
+    val textToDelete: Text? = null,
+    val isLoading: Boolean = false,
+    val errorMessage: String? = null
 )

@@ -2,8 +2,11 @@ package com.example.rabisco.ui.screens.write
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.rabisco.data.remote.dto.texts.request.CreateTextDto
+import com.example.rabisco.data.remote.dto.texts.request.UpdateTextDto
 import com.example.rabisco.domain.models.Text
-import com.example.rabisco.domain.repositories.TextRepository
+import com.example.rabisco.domain.models.TextType
+import com.example.rabisco.domain.repositories.TextsRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -14,12 +17,41 @@ import kotlinx.coroutines.launch
 //essa data class vai para o uiState (estudar isso)
 
 class WriteViewModel(
-    private val textRepository: TextRepository
+    private val textsRepository: TextsRepository
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(WriteUiState())
     val uiState: StateFlow<WriteUiState> = _uiState.asStateFlow()
 
+    private var textIdToEdit: String? = null
+
+    fun loadTextForEdit(textId: String) {
+        viewModelScope.launch {
+            _uiState.update { it.copy(isLoading = true) }
+
+            textsRepository.getTextById(textId)
+                .onSuccess { text ->
+                    textIdToEdit = textId
+                    _uiState.update {
+                        it.copy(
+                            title = text.title,
+                            content = text.content,
+                            selectedTags = text.tags.toSet(),
+                            wordCount = text.wordCount,
+                            isLoading = false
+                        )
+                    }
+                }
+                .onFailure { exception ->
+                    _uiState.update {
+                        it.copy(
+                            isLoading = false,
+                            errorMessage = "Erro carregando texto: ${exception.message}"
+                        )
+                    }
+                }
+        }
+    }
     fun updateTitle(newTitle: String) {
         _uiState.update { currentState -> currentState.copy(title = newTitle) }
     }
@@ -60,30 +92,11 @@ class WriteViewModel(
                     }
                     return@launch
                 }
-                val text = Text(
-                    title = currentState.title.ifBlank { "Sem título" },
-                    content = currentState.content,
-                    tags = currentState.selectedTags.toList(),
-                    wordCount = currentState.wordCount,
-                )
 
-                val result = textRepository.saveText(text)
-
-                result.onSuccess { textId ->
-                    _uiState.update {
-                        it.copy(
-                            isLoading = false,
-                            textSaved = true
-                        )
-                    }
-                    println("Texto salvo")
-                }.onFailure { exception ->
-                    _uiState.update {
-                        it.copy(
-                            isLoading = false,
-                            errorMessage = "erro ao salvar: ${exception.message}"
-                        )
-                    }
+                if(textIdToEdit != null) {
+                    updateExistingText(textIdToEdit!!, currentState)
+                } else {
+                    createNewText(currentState)
                 }
             } catch (e: Exception) {
                 _uiState.update {
@@ -96,6 +109,65 @@ class WriteViewModel(
         }
     }
 
+    private suspend fun createNewText(currentState: WriteUiState) {
+        val createDto = CreateTextDto(
+            title = currentState.title.ifBlank { "Sem título" },
+            content = currentState.content,
+            type = TextType.FREE,
+            categoryIds = null,
+            dailyPromptId = null,
+            tagsIds = null
+        )
+
+        textsRepository.createText(createDto)
+            .onSuccess { text ->
+                _uiState.update {
+                    it.copy(
+                        isLoading = false,
+                        textSaved = true
+                    )
+                }
+                println("texto criado :) parabens ${text.id}")
+            }
+            .onFailure { exception ->
+                _uiState.update {
+                    it.copy(
+                        isLoading = false,
+                        errorMessage = "Erro ao salvar :( ${exception.message}"
+                    )
+                }
+            }
+    }
+
+    private suspend fun updateExistingText(textId: String, currentState: WriteUiState) {
+        val updateDto = UpdateTextDto(
+            title = currentState.title.ifBlank { "Sem título" },
+            content = currentState.content,
+            type = TextType.FREE,
+            categoryIds = null,
+            dailyPromptId = null,
+            tagsIds = null
+        )
+
+        textsRepository.updateText(textId, updateDto)
+            .onSuccess { text ->
+                _uiState.update {
+                    it.copy(
+                        isLoading = false,
+                        textSaved = true
+                    )
+                }
+                println("texto atualizado :) ${text.id}")
+            }
+            .onFailure { exception ->
+                _uiState.update {
+                    it.copy(
+                        isLoading = false,
+                        errorMessage = "erro aoa atualizar :( ${exception.message}"
+                    )
+                }
+            }
+    }
     private fun calculateWordCount(text: String): Int {
         if (text.isBlank()) return 0
         return text.trim().split("\\s+".toRegex()).size

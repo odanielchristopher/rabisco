@@ -10,6 +10,7 @@ import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -18,16 +19,20 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.rabisco.domain.models.Text
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun MyTextsScreen(
     onNavigateToWrite: () -> Unit,
+    onNavigateToEdit: (String) -> Unit = {},
     viewModel: MyTextsViewModel = koinViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
+
+    LaunchedEffect(Unit) {
+        viewModel.refresh()
+    }
 
     Column(
         modifier = Modifier
@@ -43,12 +48,25 @@ fun MyTextsScreen(
             onTabSelected = viewModel::onTabSelected
         )
 
-        if (uiState.filteredTexts.isEmpty()) {
+        if (uiState.isLoading) {
+            Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center
+            ) {
+                CircularProgressIndicator()
+            }
+        } else if (uiState.errorMessage != null) {
+            ErrorState(
+                message = uiState.errorMessage!!,
+                onRetry = { viewModel.refresh() }
+            )
+        } else if (uiState.filteredTexts.isEmpty()) {
             EmptyState()
         } else {
             TextsList(
                 texts = uiState.filteredTexts,
-                onDeleteClick = viewModel::onDeleteConfirmation
+                onDeleteClick = viewModel::onDeleteConfirmation,
+                onEditClick = onNavigateToEdit
             )
         }
     }
@@ -130,17 +148,47 @@ fun EmptyState() {
 }
 
 @Composable
-fun TextsList(texts: List<Text>, onDeleteClick: (Text) -> Unit) {
+fun ErrorState(message: String, onRetry: () -> Unit) {
+    Column(
+        modifier = Modifier.fillMaxSize(),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
+    ) {
+        Text(
+            text = "Erro ao carregar textos",
+            style = MaterialTheme.typography.titleMedium,
+            color = MaterialTheme.colorScheme.error
+        )
+
+        Spacer(modifier = Modifier.height(8.dp))
+
+        Text(
+            text = message,
+            style = MaterialTheme.typography.bodyMedium,
+            textAlign = TextAlign.Center,
+            modifier = Modifier.padding(horizontal = 32.dp)
+        )
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        Button(onClick = onRetry) {
+            Text("Tentar novamente")
+        }
+    }
+}
+
+@Composable
+fun TextsList(texts: List<Text>, onDeleteClick: (Text) -> Unit, onEditClick: (String) -> Unit) {
     LazyColumn(modifier = Modifier.padding(16.dp)) {
         items(texts) { text ->
-            TextCard(text, onDeleteClick)
+            TextCard(text, onDeleteClick, onEditClick = onEditClick)
             Spacer(modifier = Modifier.height(16.dp))
         }
     }
 }
 
 @Composable
-fun TextCard(text: Text, onDeleteClick: (Text) -> Unit) {
+fun TextCard(text: Text, onDeleteClick: (Text) -> Unit, onEditClick: (String) -> Unit) {
     Card(modifier = Modifier.fillMaxWidth()) {
         Column(modifier = Modifier.padding(16.dp)) {
             Text(text.title, style = MaterialTheme.typography.titleMedium)
@@ -153,7 +201,7 @@ fun TextCard(text: Text, onDeleteClick: (Text) -> Unit) {
 
             Spacer(modifier = Modifier.height(8.dp))
 
-            if(text.tags.isNotEmpty()) {
+            if(!text.tags.isNullOrEmpty()) {
                 Row(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
@@ -180,7 +228,7 @@ fun TextCard(text: Text, onDeleteClick: (Text) -> Unit) {
 
                 Spacer(modifier = Modifier.weight(1f))
 
-                IconButton(onClick = { /* TODO */ }) {
+                IconButton(onClick = { onEditClick(text.id) }) {
                     Icon(Icons.Default.Edit, contentDescription = "Editar")
                 }
 
