@@ -1,17 +1,15 @@
 import { User } from 'src/modules/users/entities/user.entity';
 
-export const IUsersRepository = Symbol('IUsersRepository');
-
-export interface IUsersRepository {
-  findUniquetById(
+export abstract class IUsersRepository {
+  abstract findUniquetById(
     findUniqueByIdDto: FindUniqueUserByIdDto,
   ): Promise<User | null>;
-  findUniqueByEmail(
+  abstract findUniqueByEmail(
     findUniqueByEmail: FindUniqueUserByEmailDto,
   ): Promise<User | null>;
-  create(createUserDto: CreateUserDto): Promise<User>;
-  update(updateUserDto: UpdateUserDto): Promise<User>;
-  delete(deleteUserDto: DeleteUserDto): Promise<void>;
+  abstract create(createUserDto: CreateUserDto): Promise<User>;
+  abstract update(updateUserDto: UpdateUserDto): Promise<User>;
+  abstract delete(deleteUserDto: DeleteUserDto): Promise<void>;
 }
 
 export type FindUniqueUserByIdDto = {
@@ -24,6 +22,10 @@ export type FindUniqueUserByEmailDto = {
 
 export type CreateUserDto = {
   data: User | Omit<User, 'id'>;
+  relations?: {
+    categories?: { name: string }[];
+    tags?: { name: string }[];
+  };
 };
 
 export type UpdateUserDto = {

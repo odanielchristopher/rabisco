@@ -1,0 +1,21 @@
+model Category {
+  id     String @id @default(uuid()) @db.Uuid
+  userId String @map("user_id") @db.Uuid
+  name   String
+
+  user  User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  texts TextCategory[]
+
+  @@map("categories")
+}
+
+model TextCategory {
+  categoryId String @map("category_id") @db.Uuid
+  textId     String @map("text_id") @db.Uuid
+
+  text     Text     @relation(fields: [textId], references: [id], onDelete: Cascade)
+  category Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+
+  @@unique([categoryId, textId])
+  @@map("texts_categories")
+}

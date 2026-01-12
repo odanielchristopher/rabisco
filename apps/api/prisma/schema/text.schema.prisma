@@ -1,0 +1,39 @@
+enum TextType {
+  DIARY
+  DAY_PROMPT
+  FREE
+
+  @@map("text_type")
+}
+
+model Text {
+  id        String   @id @default(uuid()) @db.Uuid
+  userId    String   @map("user_id") @db.Uuid
+  type      TextType @default(FREE)
+  title     String
+  content   String
+  wordCount Int      @default(0) @map("word_count")
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz()
+  updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz()
+
+  dailyPromptId String? @map("daily_prompt_id") @db.Uuid
+
+  categories  TextCategory[]
+  tags        TextTag[]
+  user        User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  dailyPrompt DailyPrompt?   @relation(fields: [dailyPromptId], references: [id])
+
+  @@map("texts")
+}
+
+model DailyPrompt {
+  id        String   @id @default(uuid()) @db.Uuid
+  prompt    String
+  date      DateTime @unique @db.Date
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz()
+  updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz()
+
+  texts Text[]
+
+  @@map("daily_prompts")
+}
